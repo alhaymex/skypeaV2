@@ -6,10 +6,10 @@ import {
   Mail,
   Menu,
   X,
-  PenSquare,
   BarChart,
   Settings,
   User,
+  Feather,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -37,23 +37,21 @@ export default function Navbar() {
             <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
-                  <a
+                  <Link
                     className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                     href="/"
                   >
-                    <PenSquare className="h-6 w-6" />
-                    <div className="mb-2 mt-4 text-lg font-medium">
-                      New Newsletter
-                    </div>
+                    <Feather className="h-6 w-6" />
+                    <div className="mb-2 mt-4 text-lg font-medium">Skypea</div>
                     <p className="text-sm leading-tight text-muted-foreground">
                       Start crafting your next engaging newsletter.
                     </p>
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </li>
               <li>
                 <NavigationMenuLink asChild>
-                  <a
+                  <Link
                     className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                     href="/"
                   >
@@ -63,12 +61,12 @@ export default function Navbar() {
                     <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                       Choose from our pre-designed templates.
                     </p>
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </li>
               <li>
                 <NavigationMenuLink asChild>
-                  <a
+                  <Link
                     className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                     href="/"
                   >
@@ -78,7 +76,7 @@ export default function Navbar() {
                     <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                       {`Personalize your newsletter's look and feel.`}
                     </p>
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </li>
             </ul>
@@ -149,8 +147,8 @@ export default function Navbar() {
         href="/new-newsletter"
         className="flex items-center space-x-2 text-lg font-medium"
       >
-        <PenSquare className="h-5 w-5" />
-        <span>New Newsletter</span>
+        <Feather className="h-5 w-5" />
+        <span>Skypea</span>
       </Link>
       <Link
         href="/templates"
@@ -210,8 +208,8 @@ export default function Navbar() {
       <div className="container flex h-16 items-center justify-between px-4 lg:justify-center lg:gap-8">
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
-            <Mail className="h-6 w-6" />
-            <span className="text-xl font-bold">NewsletterPro</span>
+            <Feather className="h-6 w-6" />
+            <span className="text-xl font-bold">Skypea</span>
           </Link>
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-center">

@@ -1,18 +1,21 @@
 "use client";
+
 import {
   Home,
-  Inbox,
-  Calendar,
-  Search,
+  FileText,
+  Users,
+  BarChart,
   Settings,
   ChevronDown,
-  // User2,
-  // ChevronUp,
+  User2,
+  ChevronUp,
+  Mail,
+  PenTool,
 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  // SidebarFooter,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -26,45 +29,56 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-// import { auth } from "@/auth";
+} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const DashboardSidebar = () => {
-  // const session = await auth();
+export default function DashboardSidebar() {
   const currentPath = usePathname();
-  // Menu items.
+
+  // Menu items for a Blog/Newsletter creating website
   const items = [
     {
-      title: "Home",
-      url: "#",
+      title: "Dashboard",
+      url: "/dashboard",
       icon: Home,
       isActive: currentPath === "/dashboard",
     },
     {
-      title: "Inbox",
-      url: "#",
-      icon: Inbox,
-      isActive: currentPath === "/inbox",
+      title: "Posts",
+      url: "/dashboard/posts",
+      icon: FileText,
+      isActive: currentPath === "/dashboard/posts",
     },
     {
-      title: "Calendar",
-      url: "#",
-      icon: Calendar,
-      isActive: currentPath === "/calendar",
+      title: "Editor",
+      url: "/dashboard/editor",
+      icon: PenTool,
+      isActive: currentPath === "/dashboard/editor",
     },
     {
-      title: "Search",
-      url: "#",
-      icon: Search,
-      isActive: currentPath === "/search",
+      title: "Subscribers",
+      url: "/dashboard/subscribers",
+      icon: Users,
+      isActive: currentPath === "/dashboard/subscribers",
+    },
+    {
+      title: "Newsletters",
+      url: "/dashboard/newsletters",
+      icon: Mail,
+      isActive: currentPath === "/dashboard/newsletters",
+    },
+    {
+      title: "Analytics",
+      url: "/dashboard/analytics",
+      icon: BarChart,
+      isActive: currentPath === "/dashboard/analytics",
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/dashboard/settings",
       icon: Settings,
-      isActive: currentPath === "/settings",
+      isActive: currentPath === "/dashboard/settings",
     },
   ];
 
@@ -76,16 +90,16 @@ const DashboardSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  Select Workspace
+                  Select Blog
                   <ChevronDown className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
                 <DropdownMenuItem>
-                  <span>Acme Inc</span>
+                  <span>Tech Insights</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Acme Corp.</span>
+                  <span>Travel Adventures</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -94,7 +108,7 @@ const DashboardSidebar = () => {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Blog Management</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -104,7 +118,7 @@ const DashboardSidebar = () => {
                       className={item.isActive ? "bg-secondary" : ""}
                       href={item.url}
                     >
-                      <item.icon />
+                      <item.icon className="mr-2 h-4 w-4" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -114,13 +128,13 @@ const DashboardSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {/* <SidebarFooter>
+      <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> {session?.user?.name}
+                  <User2 className="mr-2 h-4 w-4" /> John Doe
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -129,7 +143,7 @@ const DashboardSidebar = () => {
                 className="w-[--radix-popper-anchor-width]"
               >
                 <DropdownMenuItem>
-                  <span>Account</span>
+                  <span>Profile</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <span>Billing</span>
@@ -141,9 +155,7 @@ const DashboardSidebar = () => {
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
-      </SidebarFooter> */}
+      </SidebarFooter>
     </Sidebar>
   );
-};
-
-export default DashboardSidebar;
+}
