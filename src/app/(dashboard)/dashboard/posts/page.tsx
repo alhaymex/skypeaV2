@@ -20,7 +20,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PenSquare, MoreHorizontal, Trash2, Eye, Plus } from "lucide-react";
+import {
+  PenSquare,
+  MoreHorizontal,
+  Trash2,
+  Eye,
+  Plus,
+  Filter,
+} from "lucide-react";
 
 // Sample data for blog posts
 const posts = [
@@ -83,6 +90,7 @@ export default function PostsPage() {
       <div className="mb-4 flex justify-between items-center">
         <Input placeholder="Search posts..." className="max-w-sm" />
         <Button variant="outline" className="ml-2">
+          <Filter />
           Filter
         </Button>
       </div>
