@@ -37,7 +37,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <Button asChild size="lg" className="w-full sm:w-auto">
-                <Link href="/signup">Start Your Blog</Link>
+                <Link href="/login">Start Your Blog</Link>
               </Button>
               <Button
                 asChild

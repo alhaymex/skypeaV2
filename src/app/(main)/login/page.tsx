@@ -3,6 +3,7 @@ import React from "react";
 
 export const metadata = {
   title: "Login to Skypea",
+  description: "Login to Skypea",
 };
 
 const page = () => {
