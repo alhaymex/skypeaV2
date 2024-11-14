@@ -16,7 +16,10 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Skypea - Elevate Your Blogging Experience",
+  title: {
+    default: "Skypea - Elevate Your Blogging Experience",
+    template: "%s - Skypea",
+  },
   description:
     "Craft compelling stories, engage your audience, and soar to new heights with Skypea's innovative blogging and newsletter platform.",
   keywords: [
