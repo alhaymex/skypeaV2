@@ -1,5 +1,5 @@
-import DashboardNavbar from "@/components/common/DashboardNavbar";
-import DashboardSidebar from "@/components/common/DashboardSidebar";
+import DashboardNavbar from "@/components/pages/dashboard/DashboardNavbar";
+import DashboardSidebar from "@/components/pages/dashboard/DashboardSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import getSession from "@/lib/getSession";
 import { redirect } from "next/navigation";

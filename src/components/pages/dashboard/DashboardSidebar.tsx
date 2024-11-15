@@ -6,11 +6,13 @@ import {
   Users,
   BarChart,
   Settings,
-  ChevronDown,
   User2,
   ChevronUp,
   Mail,
   PenTool,
+  AudioWaveform,
+  Command,
+  GalleryVerticalEnd,
 } from "lucide-react";
 import {
   Sidebar,
@@ -32,11 +34,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ProjectSwitcher } from "./ProjectSwitcher";
 
 export default function DashboardSidebar() {
   const currentPath = usePathname();
 
-  // Menu items for a Blog/Newsletter creating website
   const items = [
     {
       title: "Dashboard",
@@ -82,29 +84,28 @@ export default function DashboardSidebar() {
     },
   ];
 
+  const projects = [
+    {
+      name: "TechTalk Blog",
+      logo: GalleryVerticalEnd,
+      plan: "Pro",
+    },
+    {
+      name: "Code Insights",
+      logo: AudioWaveform,
+      plan: "Free",
+    },
+    {
+      name: "DevHub Daily",
+      logo: Command,
+      plan: "Premium",
+    },
+  ];
+
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  Select Blog
-                  <ChevronDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem>
-                  <span>Tech Insights</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Travel Adventures</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <ProjectSwitcher projects={projects} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

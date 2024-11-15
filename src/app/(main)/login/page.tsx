@@ -1,4 +1,6 @@
 import LoginPage from "@/components/pages/login/LoginForm";
+import getSession from "@/lib/getSession";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export const metadata = {
@@ -6,7 +8,11 @@ export const metadata = {
   description: "Login to Skypea",
 };
 
-const page = () => {
+const page = async () => {
+  const session = await getSession();
+
+  if (session) redirect("/dashboard");
+
   return (
     <main>
       <LoginPage />
