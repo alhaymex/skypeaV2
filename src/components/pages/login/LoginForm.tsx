@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,29 +10,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { Loader, LogInIcon } from "lucide-react";
+import Image from "next/image";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // TODO: Implement magic link login logic here
-    console.log("Magic link login for:", email);
-    setIsLoading(false);
-  };
-
-  const handleGoogleLogin = async () => {
-    setIsLoading(true);
-    // TODO: Implement Google login logic here
-    console.log("Google login initiated");
-    setIsLoading(false);
-  };
-
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-100px)] bg-background">
+    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
@@ -46,19 +25,21 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleGoogleLogin}
-            disabled={isLoading}
+          <form
+            action={async () => {
+              "use server";
+            }}
           >
-            {isLoading ? (
-              <Loader className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <LogInIcon className="mr-2 h-4 w-4" />
-            )}
-            Continue with Google
-          </Button>
+            <Button variant="outline" className="w-full">
+              <Image
+                src="/icons/google.svg"
+                alt="Google"
+                width={16}
+                height={16}
+              />
+              <span>Continue with Google</span>
+            </Button>
+          </form>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
@@ -69,22 +50,17 @@ export default function LoginPage() {
               </span>
             </div>
           </div>
-          <form onSubmit={handleEmailLogin}>
+          <form>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="m@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
-            <Button className="w-full mt-4" type="submit" disabled={isLoading}>
-              {isLoading && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              )}
+            <Button className="w-full mt-4" type="submit">
               Send Magic Link
             </Button>
           </form>
