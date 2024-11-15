@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import getSession from "@/lib/getSession";
 import { redirect } from "next/navigation";
 import React from "react";
+import { SessionProvider } from "next-auth/react";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getSession();
@@ -13,13 +14,15 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SidebarProvider>
-      <DashboardSidebar />
-      <main className="w-full">
-        <DashboardNavbar />
-        {children}
-      </main>
-    </SidebarProvider>
+    <SessionProvider session={session}>
+      <SidebarProvider>
+        <DashboardSidebar />
+        <main className="w-full">
+          <DashboardNavbar />
+          {children}
+        </main>
+      </SidebarProvider>
+    </SessionProvider>
   );
 };
 

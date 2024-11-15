@@ -28,15 +28,17 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ProjectSwitcher } from "./ProjectSwitcher";
-import { UserMenu } from "./UserMenu";
+import { UserMenu, UserMenuProps } from "./UserMenu";
+import { useSession } from "next-auth/react";
 
 export default function DashboardSidebar() {
   const currentPath = usePathname();
+  const session = useSession();
 
   const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: "/placeholder.svg?height=100&width=100",
+    name: session.data?.user?.name,
+    email: session.data?.user?.email,
+    avatar: session.data?.user?.image,
   };
 
   const items = [
@@ -130,7 +132,7 @@ export default function DashboardSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <UserMenu user={user} />
+        <UserMenu user={user as UserMenuProps} />
       </SidebarFooter>
     </Sidebar>
   );

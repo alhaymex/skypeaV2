@@ -26,15 +26,13 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-export function UserMenu({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export type UserMenuProps = {
+  name: string;
+  email: string;
+  avatar: string;
+};
+
+export function UserMenu({ user }: { user: UserMenuProps }) {
   const { isMobile } = useSidebar();
 
   return (
