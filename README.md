@@ -1,6 +1,6 @@
 # Skypea - Elevate Your Blogging Experience
 
-![Skypea Logo](/public/SKYPEA.svg)
+![Skypea Logo](/public/Skypea-white.svg)
 
 Skypea is a powerful, intuitive platform designed to elevate your blogging and newsletter experience. Whether you're a seasoned content creator or just starting out, Skypea provides the tools you need to craft compelling stories, engage your audience, and grow your online presence.
 
