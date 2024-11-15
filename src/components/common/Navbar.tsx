@@ -20,6 +20,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import Image from "next/image";
 
 const VisuallyHidden = ({ children }: { children: React.ReactNode }) => (
   <span className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0">
@@ -140,8 +141,12 @@ export default function LandingPageNav() {
     <header className="border-b flex justify-center">
       <div className="container flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <Pen className="h-6 w-6" />
-          <span className="text-xl font-bold">Skypea</span>
+          <Image
+            src="/Skypea-black.svg"
+            alt="Skypea Logo"
+            width={120}
+            height={120}
+          />
         </Link>
         <div className="hidden md:flex">
           <NavigationMenu>
