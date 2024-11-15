@@ -6,8 +6,6 @@ import {
   Users,
   BarChart,
   Settings,
-  User2,
-  ChevronUp,
   Mail,
   PenTool,
   AudioWaveform,
@@ -26,18 +24,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ProjectSwitcher } from "./ProjectSwitcher";
+import { UserMenu } from "./UserMenu";
 
 export default function DashboardSidebar() {
   const currentPath = usePathname();
+
+  const user = {
+    name: "John Doe",
+    email: "john@example.com",
+    avatar: "/placeholder.svg?height=100&width=100",
+  };
 
   const items = [
     {
@@ -130,32 +130,7 @@ export default function DashboardSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 className="mr-2 h-4 w-4" /> John Doe
-                  <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
-                <DropdownMenuItem>
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Billing</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <UserMenu user={user} />
       </SidebarFooter>
     </Sidebar>
   );
