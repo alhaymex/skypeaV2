@@ -1,5 +1,8 @@
 "use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { Pen, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +21,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-// VisuallyHidden component
 const VisuallyHidden = ({ children }: { children: React.ReactNode }) => (
   <span className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0">
     {children}
@@ -26,18 +28,49 @@ const VisuallyHidden = ({ children }: { children: React.ReactNode }) => (
 );
 
 export default function LandingPageNav() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isHome, setIsHome] = useState(true);
+
+  useEffect(() => {
+    setIsHome(pathname === "/");
+  }, [pathname]);
+
+  const handleNavigation = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    e.preventDefault();
+    if (isHome) {
+      const targetId = href.replace("#", "");
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+        window.history.pushState(null, "", `/#${targetId}`);
+      }
+    } else {
+      router.push(`/?scrollTo=${href.replace("#", "")}`);
+    }
+  };
+
   const NavLinks = () => (
     <>
       <NavigationMenuItem>
         <Link href="#features" legacyBehavior passHref>
-          <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+          <NavigationMenuLink
+            className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+            onClick={(e) => handleNavigation(e, "#features")}
+          >
             Features
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>
       <NavigationMenuItem>
         <Link href="#pricing" legacyBehavior passHref>
-          <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+          <NavigationMenuLink
+            className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+            onClick={(e) => handleNavigation(e, "#pricing")}
+          >
             Pricing
           </NavigationMenuLink>
         </Link>
@@ -140,10 +173,18 @@ export default function LandingPageNav() {
                 </VisuallyHidden>
               </SheetHeader>
               <nav className="flex flex-col space-y-4">
-                <Link href="#features" className="text-lg font-medium">
+                <Link
+                  href="#features"
+                  className="text-lg font-medium"
+                  onClick={(e) => handleNavigation(e, "#features")}
+                >
                   Features
                 </Link>
-                <Link href="#pricing" className="text-lg font-medium">
+                <Link
+                  href="#pricing"
+                  className="text-lg font-medium"
+                  onClick={(e) => handleNavigation(e, "#pricing")}
+                >
                   Pricing
                 </Link>
                 <Link href="/templates" className="text-lg font-medium">
