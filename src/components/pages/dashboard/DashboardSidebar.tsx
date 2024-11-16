@@ -105,7 +105,7 @@ export default function DashboardSidebar() {
   ];
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <ProjectSwitcher projects={projects} />
       </SidebarHeader>
