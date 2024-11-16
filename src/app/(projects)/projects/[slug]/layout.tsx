@@ -6,17 +6,25 @@ import { redirect } from "next/navigation";
 import React from "react";
 import { SessionProvider } from "next-auth/react";
 
-const layout = async ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { slug: string };
+}) => {
   const session = await getSession();
 
   if (!session || !session.user) {
     redirect("/login");
   }
 
+  const slug = params.slug;
+
   return (
     <SessionProvider session={session}>
       <SidebarProvider>
-        <DashboardSidebar />
+        <DashboardSidebar slug={slug} />
         <main className="w-full">
           <DashboardNavbar />
           {children}
@@ -26,4 +34,4 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default layout;
+export default Layout;

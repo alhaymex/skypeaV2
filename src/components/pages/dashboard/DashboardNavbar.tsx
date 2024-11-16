@@ -25,9 +25,11 @@ const DashboardNavbar = () => {
       <React.Fragment key={href}>
         <BreadcrumbItem>
           {isLast ? (
-            <BreadcrumbPage>{title}</BreadcrumbPage>
+            <BreadcrumbPage className="lowercase">{title}</BreadcrumbPage>
           ) : (
-            <BreadcrumbLink href={href}>{title}</BreadcrumbLink>
+            <BreadcrumbLink className="lowercase" href={href}>
+              {title}
+            </BreadcrumbLink>
           )}
         </BreadcrumbItem>
         {!isLast && <BreadcrumbSeparator />}

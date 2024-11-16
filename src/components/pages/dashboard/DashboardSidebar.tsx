@@ -31,7 +31,7 @@ import { ProjectSwitcher } from "./ProjectSwitcher";
 import { UserMenu, UserMenuProps } from "./UserMenu";
 import { useSession } from "next-auth/react";
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ slug }: { slug: string }) {
   const currentPath = usePathname();
   const session = useSession();
 
@@ -44,45 +44,45 @@ export default function DashboardSidebar() {
   const items = [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: `/projects/${slug}`,
       icon: Home,
-      isActive: currentPath === "/dashboard",
+      isActive: currentPath === `/project/${slug}`,
     },
     {
       title: "Posts",
-      url: "/dashboard/posts",
+      url: `/projects/${slug}/posts`,
       icon: FileText,
-      isActive: currentPath === "/dashboard/posts",
+      isActive: currentPath === `/project/${slug}/posts`,
     },
     {
       title: "Editor",
-      url: "/dashboard/editor",
+      url: `/projects/${slug}/editor`,
       icon: PenTool,
-      isActive: currentPath === "/dashboard/editor",
+      isActive: currentPath === `/project/${slug}/editor`,
     },
     {
       title: "Subscribers",
-      url: "/dashboard/subscribers",
+      url: `/projects/${slug}/subscribers`,
       icon: Users,
-      isActive: currentPath === "/dashboard/subscribers",
+      isActive: currentPath === `/project/${slug}/subscribers`,
     },
     {
       title: "Newsletters",
-      url: "/dashboard/newsletters",
+      url: `/projects/${slug}/newsletters`,
       icon: Mail,
-      isActive: currentPath === "/dashboard/newsletters",
+      isActive: currentPath === `/project/${slug}/newsletters`,
     },
     {
       title: "Analytics",
-      url: "/dashboard/analytics",
+      url: `/projects/${slug}/analytics`,
       icon: BarChart,
-      isActive: currentPath === "/dashboard/analytics",
+      isActive: currentPath === `/project/${slug}/analytics`,
     },
     {
       title: "Settings",
-      url: "/dashboard/settings",
+      url: `/projects/${slug}/settings`,
       icon: Settings,
-      isActive: currentPath === "/dashboard/settings",
+      isActive: currentPath === `/project/${slug}/settings`,
     },
   ];
 
