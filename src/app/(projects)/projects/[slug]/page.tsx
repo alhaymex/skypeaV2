@@ -76,7 +76,7 @@ const upcomingNewsletters = [
 
 export default function DashboardPage() {
   return (
-    <div className="mx-auto max-w-7xl p-2 sm:p-4 md:p-6 lg:p-8">
+    <div className="p-8">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>

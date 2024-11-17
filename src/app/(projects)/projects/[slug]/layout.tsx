@@ -10,7 +10,7 @@ const Layout = async ({
   params,
 }: {
   children: React.ReactNode;
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) => {
   const session = await getSession();
 
@@ -18,17 +18,15 @@ const Layout = async ({
     redirect("/login");
   }
 
-  const slug = params.slug;
+  const slug = (await params).slug;
 
   return (
     <SidebarProvider>
-      <div>
-        <DashboardSidebar slug={slug} />
-        <main className="w-full">
-          <DashboardNavbar />
-          {children}
-        </main>
-      </div>
+      <DashboardSidebar slug={slug} />
+      <main className="w-full">
+        <DashboardNavbar />
+        {children}
+      </main>
     </SidebarProvider>
   );
 };
