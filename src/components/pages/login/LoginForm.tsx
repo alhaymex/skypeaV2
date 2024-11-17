@@ -30,7 +30,7 @@ export default function LoginPage() {
             action={async () => {
               "use server";
 
-              await signIn("google", { redirectTo: "/dashboard" });
+              await signIn("google", { redirectTo: "/projects" });
             }}
           >
             <Button variant="outline" className="w-full">

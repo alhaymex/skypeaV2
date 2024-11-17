@@ -11,7 +11,7 @@ export const metadata = {
 const page = async () => {
   const session = await getSession();
 
-  if (session) redirect("/dashboard");
+  if (session) redirect("/projects");
 
   return (
     <main>
