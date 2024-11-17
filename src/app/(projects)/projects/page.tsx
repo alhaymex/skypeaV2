@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import ProjectsNavbar from "@/components/pages/projects/ProjectsNavbar";
+import NewProjectButton from "@/components/pages/projects/NewProjectButton";
 
 interface Project {
   id: string;
@@ -123,7 +124,7 @@ export default function ProjectsDashboard() {
                 className="pl-9"
               />
             </div>
-            <Button>New project</Button>
+            <NewProjectButton />
           </div>
           <div className="space-y-8">
             {pinnedProjects.length > 0 && (
