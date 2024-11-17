@@ -1,12 +1,13 @@
 "use client";
 
-import { Bell, HelpCircle, Moon } from "lucide-react";
+import { Bell, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import { AccountDropdown } from "./AccountDropdown";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 export default function ProjectsNavbar() {
   const pathname = usePathname();
@@ -78,10 +79,7 @@ export default function ProjectsNavbar() {
             <HelpCircle className="h-5 w-5" />
             <span className="sr-only">Help</span>
           </Button>
-          <Button variant="ghost" size="icon">
-            <Moon className="h-5 w-5" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
+          <ThemeToggleButton />
           <AccountDropdown />
         </div>
       </div>
