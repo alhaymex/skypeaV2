@@ -4,7 +4,6 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import getSession from "@/lib/getSession";
 import { redirect } from "next/navigation";
 import React from "react";
-import { SessionProvider } from "next-auth/react";
 
 const Layout = async ({
   children,
@@ -22,15 +21,15 @@ const Layout = async ({
   const slug = params.slug;
 
   return (
-    <SessionProvider session={session}>
-      <SidebarProvider>
+    <SidebarProvider>
+      <div>
         <DashboardSidebar slug={slug} />
         <main className="w-full">
           <DashboardNavbar />
           {children}
         </main>
-      </SidebarProvider>
-    </SessionProvider>
+      </div>
+    </SidebarProvider>
   );
 };
 
