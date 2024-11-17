@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
+import { AccountDropdown } from "./AccountDropdown";
 
 export default function ProjectsNavbar() {
   const pathname = usePathname();
@@ -81,17 +82,7 @@ export default function ProjectsNavbar() {
             <Moon className="h-5 w-5" />
             <span className="sr-only">Toggle theme</span>
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={session?.user?.image ?? ""}
-                alt={session?.user?.name ?? ""}
-              />
-              <AvatarFallback>
-                {session?.user?.name?.charAt(0) ?? "U"}
-              </AvatarFallback>
-            </Avatar>
-          </Button>
+          <AccountDropdown />
         </div>
       </div>
     </header>
