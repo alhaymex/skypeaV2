@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, HelpCircle } from "lucide-react";
+import { Bell } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -75,10 +75,7 @@ export default function ProjectsNavbar() {
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
           </Button>
-          <Button variant="ghost" size="icon">
-            <HelpCircle className="h-5 w-5" />
-            <span className="sr-only">Help</span>
-          </Button>
+
           <ThemeToggleButton />
           <AccountDropdown />
         </div>
