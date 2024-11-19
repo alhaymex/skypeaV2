@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -41,6 +41,8 @@ import {
   Star,
   Utensils,
 } from "lucide-react";
+import { blogSchema } from "../../../../schema";
+import { createBlog } from "@/actions/blogs-actions";
 
 const blogIcons = [
   { value: "pencil", label: "Pencil", icon: Pencil },
@@ -73,42 +75,18 @@ const blogCategories = [
   "Entertainment",
 ];
 
-const formSchema = z.object({
-  name: z.string().min(3, {
-    message: "Blog name must be at least 3 characters.",
-  }),
-  description: z
-    .string()
-    .min(10, {
-      message: "Description must be at least 10 characters.",
-    })
-    .max(300, {
-      message: "Description must not exceed 300 characters.",
-    }),
-  icon: z.string({
-    required_error: "Please select a blog icon.",
-  }),
-  category: z.string({
-    required_error: "Please select a blog category.",
-  }),
-  initialPostTitle: z.string().min(3, {
-    message: "Initial post title must be at least 3 characters.",
-  }),
-});
-
 export default function NewBlogForm() {
-  const router = useRouter();
+  // const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [slug, setSlug] = useState("");
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<blogSchema>({
+    resolver: zodResolver(blogSchema),
     defaultValues: {
       name: "",
       description: "",
       icon: "",
       category: "",
-      initialPostTitle: "",
     },
   });
 
@@ -122,16 +100,10 @@ export default function NewBlogForm() {
     setSlug(newSlug);
   }, [watchName]);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof blogSchema>) {
     setIsLoading(true);
     try {
-      // Here you would typically send a request to your API to create the blog
-      // For now, we'll simulate an API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      console.log({ ...values, slug });
-
-      router.push(`/blog/${slug}`);
+      await createBlog(values);
     } catch (error) {
       console.log(error);
     } finally {
@@ -221,20 +193,6 @@ export default function NewBlogForm() {
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="initialPostTitle"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Initial Post Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Welcome to My Blog!" {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
