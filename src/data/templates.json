@@ -1,0 +1,97 @@
+{
+  "navbars": [
+    {
+      "id": "simple-navbar",
+      "name": "Simple Navbar",
+      "template": {
+        "logo": "Logo",
+        "links": [
+          { "text": "Home", "href": "/" },
+          { "text": "About", "href": "/about" },
+          { "text": "Contact", "href": "/contact" }
+        ]
+      }
+    },
+    {
+      "id": "centered-navbar",
+      "name": "Centered Navbar",
+      "template": {
+        "logo": "Logo",
+        "links": [
+          { "text": "Home", "href": "/" },
+          { "text": "Services", "href": "/services" },
+          { "text": "Blog", "href": "/blog" },
+          { "text": "Contact", "href": "/contact" }
+        ]
+      }
+    }
+  ],
+  "heroes": [
+    {
+      "id": "simple-hero",
+      "name": "Simple Hero",
+      "template": {
+        "title": "Welcome to Our Blog",
+        "subtitle": "Discover amazing content and stay informed",
+        "cta": { "text": "Get Started", "href": "#" }
+      }
+    },
+    {
+      "id": "image-hero",
+      "name": "Image Hero",
+      "template": {
+        "title": "Explore Our World",
+        "subtitle": "Journey through our curated content",
+        "image": "/placeholder.jpg",
+        "cta": { "text": "Learn More", "href": "#" }
+      }
+    }
+  ],
+  "grids": [
+    {
+      "id": "two-column-grid",
+      "name": "Two Column Grid",
+      "template": {
+        "columns": 2,
+        "items": [
+          { "title": "Item 1", "content": "Content for item 1" },
+          { "title": "Item 2", "content": "Content for item 2" }
+        ]
+      }
+    },
+    {
+      "id": "three-column-grid",
+      "name": "Three Column Grid",
+      "template": {
+        "columns": 3,
+        "items": [
+          { "title": "Item 1", "content": "Content for item 1" },
+          { "title": "Item 2", "content": "Content for item 2" },
+          { "title": "Item 3", "content": "Content for item 3" }
+        ]
+      }
+    }
+  ],
+  "forms": [
+    {
+      "id": "contact-form",
+      "name": "Contact Form",
+      "template": {
+        "fields": [
+          { "type": "text", "name": "name", "label": "Name" },
+          { "type": "email", "name": "email", "label": "Email" },
+          { "type": "textarea", "name": "message", "label": "Message" }
+        ],
+        "submitButton": "Send Message"
+      }
+    },
+    {
+      "id": "newsletter-form",
+      "name": "Newsletter Form",
+      "template": {
+        "fields": [{ "type": "email", "name": "email", "label": "Email" }],
+        "submitButton": "Subscribe"
+      }
+    }
+  ]
+}

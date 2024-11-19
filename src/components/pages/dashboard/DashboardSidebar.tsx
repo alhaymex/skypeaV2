@@ -55,10 +55,10 @@ export default function DashboardSidebar({ slug }: { slug: string }) {
       isActive: currentPath === `/project/${slug}/posts`,
     },
     {
-      title: "Editor",
-      url: `/projects/${slug}/editor`,
+      title: "Builder",
+      url: `/projects/${slug}/builder`,
       icon: PenTool,
-      isActive: currentPath === `/project/${slug}/editor`,
+      isActive: currentPath === `/project/${slug}/builder`,
     },
     {
       title: "Subscribers",
