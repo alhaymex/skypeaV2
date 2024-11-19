@@ -45,7 +45,7 @@ export default function ProjectsDashboard() {
           .filter((blog): blog is NonNullable<typeof blog> => blog !== null)
           .map((blog) => ({
             id: blog.id,
-            name: blog.name || "Untitled Project", // Provide a default name if null
+            name: blog.name || "Untitled Project",
             slug: blog.slug,
             icon: blog.icon ?? "",
             status: blog.isLive ? ("live" as const) : ("building" as const),
