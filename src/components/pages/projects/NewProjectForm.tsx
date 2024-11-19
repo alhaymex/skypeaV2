@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { blogSchema } from "../../../../schema";
 import { createBlog } from "@/actions/blogs-actions";
+import { Sheet } from "@/components/ui/sheet";
 
 const blogIcons = [
   { value: "pencil", label: "Pencil", icon: Pencil },
@@ -79,6 +80,7 @@ export default function NewBlogForm() {
   // const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [slug, setSlug] = useState("");
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const form = useForm<blogSchema>({
     resolver: zodResolver(blogSchema),
@@ -103,120 +105,130 @@ export default function NewBlogForm() {
   async function onSubmit(values: z.infer<typeof blogSchema>) {
     setIsLoading(true);
     try {
-      await createBlog(values);
+      const result = await createBlog(values);
+      if (result.success) {
+        setSheetOpen(false);
+        form.reset();
+      } else {
+        console.error(result.message);
+      }
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
+      setSheetOpen(false);
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Blog Name</FormLabel>
-              <FormControl>
-                <Input placeholder="My Awesome Blog" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="A brief description of your blog..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="icon"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Blog Icon</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+    <Sheet open={sheetOpen}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Blog Name</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select an icon" />
-                  </SelectTrigger>
+                  <Input placeholder="My Awesome Blog" {...field} />
                 </FormControl>
-                <SelectContent>
-                  {blogIcons.map((icon) => (
-                    <SelectItem key={icon.value} value={icon.value}>
-                      <div className="flex items-center">
-                        <icon.icon className="mr-2 h-4 w-4" />
-                        <span>{icon.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Blog Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
+                  <Textarea
+                    placeholder="A brief description of your blog..."
+                    {...field}
+                  />
                 </FormControl>
-                <SelectContent>
-                  {blogCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div>
-          <FormLabel>Blog URL</FormLabel>
-          <div className="flex items-center space-x-2">
-            <Input value={slug} readOnly className="w-[200px]" />
-            <span className="text-sm text-muted-foreground">.skypea.net</span>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="icon"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Blog Icon</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an icon" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {blogIcons.map((icon) => (
+                      <SelectItem key={icon.value} value={icon.value}>
+                        <div className="flex items-center">
+                          <icon.icon className="mr-2 h-4 w-4" />
+                          <span>{icon.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Blog Category</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {blogCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div>
+            <FormLabel>Blog URL</FormLabel>
+            <div className="flex items-center space-x-2">
+              <Input value={slug} readOnly className="w-[200px]" />
+              <span className="text-sm text-muted-foreground">.skypea.net</span>
+            </div>
           </div>
-        </div>
-
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating...
-            </>
-          ) : (
-            "Create Blog"
-          )}
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              "Create Blog"
+            )}
+          </Button>
+        </form>
+      </Form>
+    </Sheet>
   );
 }
