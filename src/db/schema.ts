@@ -4,6 +4,7 @@ import {
   text,
   primaryKey,
   integer,
+  boolean,
 } from "drizzle-orm/pg-core";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -73,3 +74,19 @@ export const verificationTokens = pgTable(
     }),
   })
 );
+
+export const blogs = pgTable("blog", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name"),
+  description: text("description"),
+  slug: text("slug"),
+  icon: text("icon"),
+  isLive: boolean("isLive").default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }),
+  updatedAt: timestamp("updatedAt", { mode: "date" }),
+});
