@@ -16,7 +16,7 @@ export async function createBlog(data: z.infer<typeof blogSchema>) {
       return { success: false, message: "User not authenticated" };
 
     const userId = session.user.id;
-    const slug = slugify(data.name);
+    const slug = await slugify(data.name);
 
     const blog = { ...data, slug, userId };
 

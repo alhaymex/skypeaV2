@@ -84,9 +84,10 @@ export const blogs = pgTable("blog", {
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name"),
   description: text("description"),
-  slug: text("slug").unique(),
+  slug: text("slug").notNull().unique(),
   icon: text("icon"),
   isLive: boolean("isLive").default(false),
+  isPinned: boolean("isPinned").default(false),
   createdAt: timestamp("createdAt", { mode: "date" }),
   updatedAt: timestamp("updatedAt", { mode: "date" }),
 });
