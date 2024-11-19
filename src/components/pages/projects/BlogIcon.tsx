@@ -6,6 +6,16 @@ import {
   Star,
   Palette,
   LucideIcon,
+  Coffee,
+  Camera,
+  Music,
+  Code,
+  Globe,
+  Heart,
+  Utensils,
+  Plane,
+  Gamepad,
+  Film,
 } from "lucide-react";
 
 interface BlogIconProps {
@@ -19,6 +29,16 @@ const iconMap: Record<string, LucideIcon> = {
   lightbulb: Lightbulb,
   star: Star,
   palette: Palette,
+  coffee: Coffee,
+  camera: Camera,
+  music: Music,
+  code: Code,
+  globe: Globe,
+  heart: Heart,
+  utensils: Utensils,
+  plane: Plane,
+  gamepad: Gamepad,
+  film: Film,
 };
 
 export function BlogIcon({ icon, className }: BlogIconProps) {

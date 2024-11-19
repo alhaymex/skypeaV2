@@ -7,8 +7,16 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import getSession from "@/lib/getSession";
 import { slugify } from "@/lib/slugify";
+import { eq } from "drizzle-orm";
 
-export async function createBlog(data: z.infer<typeof blogSchema>) {
+export const getBlogs = async () => {
+  const session = await getSession();
+  if (!session || !session.user || !session.user.id) return [];
+
+  return await db.select().from(blogs).where(eq(blogs.userId, session.user.id));
+};
+
+export const createBlog = async (data: z.infer<typeof blogSchema>) => {
   try {
     const session = await getSession();
 
@@ -16,7 +24,7 @@ export async function createBlog(data: z.infer<typeof blogSchema>) {
       return { success: false, message: "User not authenticated" };
 
     const userId = session.user.id;
-    const slug = slugify(data.name);
+    const slug = await slugify(data.name);
 
     const blog = { ...data, slug, userId };
 
@@ -39,4 +47,4 @@ export async function createBlog(data: z.infer<typeof blogSchema>) {
     console.error("Error creating blog:", err);
     return { success: false, message: "Failed to create blog" };
   }
-}
+};

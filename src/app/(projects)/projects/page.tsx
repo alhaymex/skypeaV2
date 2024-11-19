@@ -1,18 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Search,
-  MoreVertical,
-  Pin,
-  Layers,
-  Newspaper,
-  Plane,
-  Dumbbell,
-  UtensilsCrossed,
-  BookOpen,
-  PiggyBank,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Search, MoreVertical, Pin, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -25,87 +14,72 @@ import {
 import Link from "next/link";
 import ProjectsNavbar from "@/components/pages/projects/ProjectsNavbar";
 import NewProjectButton from "@/components/pages/projects/NewProjectButton";
+import { getBlogs } from "@/actions/blogs-actions";
+import { BlogIcon } from "@/components/pages/projects/BlogIcon";
+import SkeletonProjectList from "@/components/pages/projects/BlogsListSkeleton";
 
 interface Project {
   id: string;
   name: string;
   slug: string;
-  icon: React.ElementType;
+  icon: string;
   status: "live" | "building";
   lastUpdated: string;
   pinned: boolean;
 }
 
-const projects: Project[] = [
-  {
-    id: "1",
-    name: "Tech Insights Newsletter",
-    slug: "tech-insights-newsletter",
-    icon: Newspaper,
-    status: "live",
-    lastUpdated: "1 day ago",
-    pinned: true,
-  },
-  {
-    id: "2",
-    name: "Travel Blog",
-    slug: "travel-blog",
-    icon: Plane,
-    status: "live",
-    lastUpdated: "13 days ago",
-    pinned: true,
-  },
-  {
-    id: "3",
-    name: "Fitness Tips",
-    slug: "fitness-tips",
-    icon: Dumbbell,
-    status: "building",
-    lastUpdated: "2 days ago",
-    pinned: true,
-  },
-  {
-    id: "4",
-    name: "Cooking Chronicles",
-    slug: "cooking-chronicles",
-    icon: UtensilsCrossed,
-    status: "live",
-    lastUpdated: "33 days ago",
-    pinned: false,
-  },
-  {
-    id: "5",
-    name: "Book Reviews",
-    slug: "book-reviews",
-    icon: BookOpen,
-    status: "building",
-    lastUpdated: "27 days ago",
-    pinned: false,
-  },
-  {
-    id: "6",
-    name: "Personal Finance Tips",
-    slug: "personal-finance-tips",
-    icon: PiggyBank,
-    status: "building",
-    lastUpdated: "30 days ago",
-    pinned: false,
-  },
-];
-
 export default function ProjectsDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [projectList, setProjectList] = useState(projects);
+  const [projectList, setProjectList] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const pinnedProjects = projectList.filter((p) => p.pinned);
   const otherProjects = projectList.filter((p) => !p.pinned);
 
-  const togglePin = (id: string) => {
-    setProjectList(
-      projectList.map((project) =>
-        project.id === id ? { ...project, pinned: !project.pinned } : project
-      )
-    );
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        setIsLoading(true);
+        const blogs = await getBlogs();
+        const formattedProjects = blogs
+          .filter((blog): blog is NonNullable<typeof blog> => blog !== null)
+          .map((blog) => ({
+            id: blog.id,
+            name: blog.name || "Untitled Project", // Provide a default name if null
+            slug: blog.slug,
+            icon: blog.icon ?? "",
+            status: blog.isLive ? ("live" as const) : ("building" as const),
+            lastUpdated: blog.updatedAt
+              ? formatDate(blog.updatedAt.toString())
+              : "No date",
+            pinned: blog.isPinned || false,
+          }));
+        setProjectList(formattedProjects);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  const togglePin = async (id: string) => {
+    console.log("Toggle pin for project:", id);
+  };
+
+  const formatDate = (date: string) => {
+    const now = new Date();
+    const updated = new Date(date);
+    const diffTime = Math.abs(now.getTime() - updated.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return `${Math.floor(diffDays / 30)} months ago`;
   };
 
   return (
@@ -127,42 +101,48 @@ export default function ProjectsDashboard() {
             <NewProjectButton />
           </div>
           <div className="space-y-8">
-            {pinnedProjects.length > 0 && (
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <Pin className="h-5 w-5" />
-                  <h2 className="text-lg font-semibold">Pinned Projects</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {pinnedProjects.map((project) => (
-                    <ProjectCard
-                      key={project.id}
-                      project={project}
-                      togglePin={togglePin}
-                    />
-                  ))}
-                </div>
-              </section>
+            {isLoading ? (
+              <SkeletonProjectList />
+            ) : (
+              <>
+                {pinnedProjects.length > 0 && (
+                  <section>
+                    <div className="flex items-center gap-2 mb-4">
+                      <Pin className="h-5 w-5" />
+                      <h2 className="text-lg font-semibold">Pinned Projects</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {pinnedProjects.map((project) => (
+                        <ProjectCard
+                          key={project.id}
+                          project={project}
+                          togglePin={togglePin}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+                <section>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Layers className="h-5 w-5" />
+                    <h2 className="text-lg font-semibold">
+                      {pinnedProjects.length > 0
+                        ? "Other Projects"
+                        : "All Projects"}
+                    </h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {otherProjects.map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                        togglePin={togglePin}
+                      />
+                    ))}
+                  </div>
+                </section>
+              </>
             )}
-            <section>
-              <div className="flex items-center gap-2 mb-4">
-                <Layers className="h-5 w-5" />
-                <h2 className="text-lg font-semibold">
-                  {pinnedProjects.length > 0
-                    ? "Other Projects"
-                    : "All Projects"}
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {otherProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    togglePin={togglePin}
-                  />
-                ))}
-              </div>
-            </section>
           </div>
         </div>
       </div>
@@ -182,7 +162,7 @@ function ProjectCard({
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <project.icon className="h-6 w-6 text-primary" />
+            <BlogIcon icon={project.icon} className="h-6 w-6 text-primary" />
           </div>
           <div>
             <h3 className="font-medium">{project.name}</h3>
