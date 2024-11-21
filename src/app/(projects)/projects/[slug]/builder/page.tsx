@@ -50,6 +50,13 @@ interface NavLink {
   dropdownItems?: NavLink[];
 }
 
+interface GridItem {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
 const navbarLayouts = [
   { value: "default", label: "Default" },
   { value: "centered", label: "Centered" },
@@ -97,6 +104,23 @@ export default function BlogBuilder() {
   const [heroCtaText, setHeroCtaText] = useState("Get Started");
   const [heroCtaLink, setHeroCtaLink] = useState("#");
 
+  // Grid state
+  const [gridItems, setGridItems] = useState<GridItem[]>([
+    {
+      id: "1",
+      title: "Item 1",
+      description: "Description for Item 1",
+      imageUrl: "/placeholder.svg?height=200&width=200",
+    },
+    {
+      id: "2",
+      title: "Item 2",
+      description: "Description for Item 2",
+      imageUrl: "/placeholder.svg?height=200&width=200",
+    },
+  ]);
+  const [gridColumns, setGridColumns] = useState(3);
+
   const addComponent = (componentType: string) => {
     let newComponent: ComponentData;
     switch (componentType) {
@@ -123,6 +147,16 @@ export default function BlogBuilder() {
             backgroundImage: heroBackgroundImage,
             ctaText: heroCtaText,
             ctaLink: heroCtaLink,
+          },
+        };
+        break;
+      case "grid":
+        newComponent = {
+          type: "grid",
+          id: `grid-${Date.now()}`,
+          data: {
+            items: gridItems,
+            columns: gridColumns,
           },
         };
         break;
@@ -282,6 +316,26 @@ export default function BlogBuilder() {
       </div>
     </div>
   );
+
+  const addGridItem = () => {
+    const newItem: GridItem = {
+      id: Date.now().toString(),
+      title: `Item ${gridItems.length + 1}`,
+      description: `Description for Item ${gridItems.length + 1}`,
+      imageUrl: "/placeholder.svg?height=200&width=200",
+    };
+    setGridItems([...gridItems, newItem]);
+  };
+
+  const updateGridItem = (id: string, field: keyof GridItem, value: string) => {
+    setGridItems((items) =>
+      items.map((item) => (item.id === id ? { ...item, [field]: value } : item))
+    );
+  };
+
+  const removeGridItem = (id: string) => {
+    setGridItems((items) => items.filter((item) => item.id !== id));
+  };
 
   return (
     <div className="flex h-screen">
@@ -552,7 +606,111 @@ export default function BlogBuilder() {
                 </div>
               </AccordionContent>
             </AccordionItem>
-            {/* Add more AccordionItems for other component types */}
+            <AccordionItem value="grid">
+              <AccordionTrigger>Grid</AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Number of Columns</Label>
+                    <div className="flex items-center space-x-2">
+                      <Slider
+                        value={[gridColumns]}
+                        onValueChange={(value) => setGridColumns(value[0])}
+                        min={1}
+                        max={4}
+                        step={1}
+                      />
+                      <span>{gridColumns}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Grid Items</Label>
+                    {gridItems.map((item) => (
+                      <Accordion key={item.id} type="single" collapsible>
+                        <AccordionItem value={`grid-item-${item.id}`}>
+                          <AccordionTrigger>
+                            {item.title || `Item ${item.id}`}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Title"
+                                value={item.title}
+                                onChange={(e) =>
+                                  updateGridItem(
+                                    item.id,
+                                    "title",
+                                    e.target.value
+                                  )
+                                }
+                              />
+                              <Input
+                                placeholder="Description"
+                                value={item.description}
+                                onChange={(e) =>
+                                  updateGridItem(
+                                    item.id,
+                                    "description",
+                                    e.target.value
+                                  )
+                                }
+                              />
+                              <div className="flex space-x-2">
+                                <Input
+                                  placeholder="Image URL"
+                                  value={item.imageUrl}
+                                  onChange={(e) =>
+                                    updateGridItem(
+                                      item.id,
+                                      "imageUrl",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() =>
+                                    updateGridItem(
+                                      item.id,
+                                      "imageUrl",
+                                      "/placeholder.svg?height=200&width=200"
+                                    )
+                                  }
+                                >
+                                  <ImageIcon className="h-4 w-4" />
+                                </Button>
+                              </div>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => removeGridItem(item.id)}
+                              >
+                                Remove Item
+                              </Button>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={addGridItem}
+                      className="mt-2"
+                    >
+                      <Plus className="mr-2 h-4 w-4" /> Add Grid Item
+                    </Button>
+                  </div>
+                  <Button
+                    onClick={() => addComponent("grid")}
+                    className="w-full"
+                  >
+                    Add Grid
+                  </Button>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           </Accordion>
         </ScrollArea>
       </aside>
