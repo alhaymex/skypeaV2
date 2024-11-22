@@ -5,6 +5,7 @@ import {
   primaryKey,
   integer,
   boolean,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -88,6 +89,20 @@ export const blogs = pgTable("blog", {
   icon: text("icon"),
   isLive: boolean("isLive").default(false),
   isPinned: boolean("isPinned").default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }),
+  updatedAt: timestamp("updatedAt", { mode: "date" }),
+});
+
+export const blogComponents = pgTable("blog_component", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  blogId: text("blogId")
+    .notNull()
+    .references(() => blogs.id, { onDelete: "cascade" }),
+  type: text("type").notNull(), // e.g., "navbar", "hero", "grid", "form"
+  order: integer("order").notNull(),
+  data: jsonb("data").notNull(),
   createdAt: timestamp("createdAt", { mode: "date" }),
   updatedAt: timestamp("updatedAt", { mode: "date" }),
 });
