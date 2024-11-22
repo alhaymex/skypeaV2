@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Trash2 } from "lucide-react";
 import { ComponentData } from "@/types/types";
 
 interface MainContentProps {
@@ -56,7 +56,7 @@ export function MainContent({
                     className="absolute top-2 right-2 z-30"
                     onClick={() => removeComponent(index)}
                   >
-                    Remove
+                    <Trash2 />
                   </Button>
                 )}
               </div>
