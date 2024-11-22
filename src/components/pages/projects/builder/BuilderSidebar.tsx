@@ -3,6 +3,7 @@ import { Accordion } from "@/components/ui/accordion";
 import { NavbarAccordion } from "./NavbarAccordion";
 import { HeroAccordion } from "./HeroAccordion";
 import { GridAccordion } from "./GridAccordion";
+import { FormAccordion } from "./FormAccordion";
 
 interface SidebarProps {
   navbarState: any;
@@ -11,6 +12,8 @@ interface SidebarProps {
   setHeroState: (value: any) => void;
   gridState: any;
   setGridState: (value: any) => void;
+  formState: any;
+  setFormState: (value: any) => void;
   addComponent: (componentType: string) => void;
 }
 
@@ -21,6 +24,8 @@ export function Sidebar({
   setHeroState,
   gridState,
   setGridState,
+  formState,
+  setFormState,
   addComponent,
 }: SidebarProps) {
   return (
@@ -41,6 +46,11 @@ export function Sidebar({
           <GridAccordion
             gridState={gridState}
             setGridState={setGridState}
+            addComponent={addComponent}
+          />
+          <FormAccordion
+            formState={formState}
+            setFormState={setFormState}
             addComponent={addComponent}
           />
         </Accordion>

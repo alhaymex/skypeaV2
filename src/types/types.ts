@@ -24,3 +24,11 @@ export interface GridItem {
   rating?: number;
   role?: string;
 }
+
+export interface FormField {
+  id: string;
+  label: string;
+  type: "text" | "email" | "textarea" | "checkbox";
+  placeholder?: string;
+  required?: boolean;
+}

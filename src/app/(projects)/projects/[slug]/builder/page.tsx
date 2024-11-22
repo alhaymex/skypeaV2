@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { ComponentData, NavLink, GridItem } from "@/types/types";
+import { ComponentData, NavLink, GridItem, FormField } from "@/types/types";
 import { Navbar } from "@/components/templates/Navbar";
 import { Hero } from "@/components/templates/Hero";
 import { Grid } from "@/components/templates/Grid";
@@ -75,6 +75,36 @@ export default function BlogBuilder() {
     template: "blog" as "blog" | "testimonial" | "feature",
   });
 
+  const [formState, setFormState] = useState({
+    title: "Contact Us",
+    description:
+      "We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+    fields: [
+      {
+        id: "1",
+        label: "Name",
+        type: "text" as const,
+        placeholder: "Enter your name",
+        required: true,
+      },
+      {
+        id: "2",
+        label: "Email",
+        type: "email" as const,
+        placeholder: "Enter your email",
+        required: true,
+      },
+      {
+        id: "3",
+        label: "Message",
+        type: "textarea" as const,
+        placeholder: "Enter your message",
+        required: true,
+      },
+    ] as FormField[],
+    submitButtonText: "Send Message",
+  });
+
   const addComponent = (componentType: string) => {
     let newComponent: ComponentData;
     switch (componentType) {
@@ -107,6 +137,13 @@ export default function BlogBuilder() {
           type: "grid",
           id: `grid-${Date.now()}`,
           data: gridState,
+        };
+        break;
+      case "form":
+        newComponent = {
+          type: "form",
+          id: `form-${Date.now()}`,
+          data: formState,
         };
         break;
       default:
@@ -151,6 +188,8 @@ export default function BlogBuilder() {
         setHeroState={setHeroState}
         gridState={gridState}
         setGridState={setGridState}
+        formState={formState}
+        setFormState={setFormState}
         addComponent={addComponent}
       />
     </div>
