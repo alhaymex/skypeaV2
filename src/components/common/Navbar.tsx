@@ -21,6 +21,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 const VisuallyHidden = ({ children }: { children: React.ReactNode }) => (
   <span className="absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0">
@@ -32,6 +33,8 @@ export default function LandingPageNav() {
   const router = useRouter();
   const pathname = usePathname();
   const [isHome, setIsHome] = useState(true);
+
+  const session = useSession();
 
   useEffect(() => {
     setIsHome(pathname === "/");
@@ -156,12 +159,15 @@ export default function LandingPageNav() {
           </NavigationMenu>
         </div>
         <div className="hidden md:flex items-center space-x-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/login">Log in</Link>
-          </Button>
-          <Button size="sm" asChild>
-            <Link href="/signup">Sign up</Link>
-          </Button>
+          {session && session.data?.user ? (
+            <Button variant="default" size="sm" asChild>
+              <Link href="/projects">Dashboard</Link>
+            </Button>
+          ) : (
+            <Button size="sm" asChild>
+              <Link href="/login">Log in</Link>
+            </Button>
+          )}
         </div>
         <div className="md:hidden">
           <Sheet>
