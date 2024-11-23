@@ -63,3 +63,18 @@ export const getBlogBySlug = async (slug: string) => {
 
   return { success: true, data: blog[0] };
 };
+
+export const getUserProjects = async () => {
+  const session = await getSession();
+
+  if (!session || !session.user || !session.user.id) {
+    return { success: false, message: "User not authenticated" };
+  }
+
+  const userBlogs = await db
+    .select()
+    .from(blogs)
+    .where(eq(blogs.userId, session.user.id));
+
+  return { success: true, data: userBlogs };
+};

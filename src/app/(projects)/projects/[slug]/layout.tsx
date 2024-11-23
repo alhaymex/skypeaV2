@@ -4,6 +4,7 @@ import DashboardNavbar from "@/components/pages/dashboard/DashboardNavbar";
 import DashboardSidebar from "@/components/pages/dashboard/DashboardSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import getSession from "@/lib/getSession";
+import { UserMenuProps } from "@/types/types";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -19,6 +20,11 @@ const Layout = async ({
   if (!session || !session.user) {
     redirect("/login");
   }
+  const user = {
+    name: session?.user?.name,
+    email: session?.user?.email,
+    avatar: session?.user?.image,
+  };
 
   const slug = (await params).slug;
 
@@ -27,7 +33,7 @@ const Layout = async ({
 
   return (
     <SidebarProvider>
-      <DashboardSidebar slug={slug} />
+      <DashboardSidebar slug={slug} user={user as UserMenuProps} />
       <main className="w-full">
         <DashboardNavbar />
         {children}
