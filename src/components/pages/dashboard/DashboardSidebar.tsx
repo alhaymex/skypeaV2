@@ -28,8 +28,9 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ProjectSwitcher } from "./ProjectSwitcher";
-import { UserMenu, UserMenuProps } from "./UserMenu";
+import { UserMenu } from "./UserMenu";
 import { useSession } from "next-auth/react";
+import { UserMenuProps } from "@/types/types";
 
 export default function DashboardSidebar({ slug }: { slug: string }) {
   const currentPath = usePathname();
