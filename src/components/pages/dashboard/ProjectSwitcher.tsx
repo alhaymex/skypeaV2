@@ -82,8 +82,8 @@ export function ProjectSwitcher({
                 onClick={() => handleProjectSelect(project)}
                 className="gap-2 p-2 cursor-pointer "
               >
-                <div className="flex size-6 items-center justify-center bg-secondary p-1 rounded-sm">
-                  <BlogIcon icon={project.icon || ""} />
+                <div className="bg-secondary p-1 rounded-sm">
+                  <BlogIcon icon={project.icon || ""} className="h-4 w-4" />
                 </div>
                 {project.name}
               </DropdownMenuItem>
