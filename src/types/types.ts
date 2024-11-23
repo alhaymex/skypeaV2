@@ -38,3 +38,16 @@ export interface UserMenuProps {
   email: string;
   avatar: string;
 }
+
+export interface Blog {
+  id: string;
+  userId: string;
+  name: string | null;
+  description: string | null;
+  slug: string;
+  icon: string | null;
+  isLive: boolean;
+  isPinned: boolean;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+}
