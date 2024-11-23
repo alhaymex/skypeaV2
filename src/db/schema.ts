@@ -100,7 +100,7 @@ export const blogComponents = pgTable("blog_component", {
   blogId: text("blogId")
     .notNull()
     .references(() => blogs.id, { onDelete: "cascade" }),
-  type: text("type").notNull(), // e.g., "navbar", "hero", "grid", "form"
+  type: text("type").notNull(),
   order: integer("order").notNull(),
   data: jsonb("data").notNull(),
   createdAt: timestamp("createdAt", { mode: "date" }),

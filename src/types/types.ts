@@ -32,3 +32,9 @@ export interface FormField {
   placeholder?: string;
   required?: boolean;
 }
+
+export interface UserMenuProps {
+  name: string;
+  email: string;
+  avatar: string;
+}
