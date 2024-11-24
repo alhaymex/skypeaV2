@@ -8,7 +8,7 @@ interface MainContentProps {
   setIsPreviewMode: (value: boolean) => void;
   selectedComponents: ComponentData[];
   renderComponent: (component: ComponentData) => React.ReactNode;
-  removeComponent: (index: number) => void;
+  removeComponent: (id: string) => void;
 }
 
 export function MainContent({
@@ -46,7 +46,7 @@ export function MainContent({
           </div>
         ) : (
           <div className="space-y-8">
-            {selectedComponents.map((component, index) => (
+            {selectedComponents.map((component) => (
               <div key={component.id} className="relative">
                 {renderComponent(component)}
                 {!isPreviewMode && (
@@ -54,9 +54,9 @@ export function MainContent({
                     variant="destructive"
                     size="sm"
                     className="absolute top-2 right-2 z-30"
-                    onClick={() => removeComponent(index)}
+                    onClick={() => removeComponent(component.id)}
                   >
-                    <Trash2 />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 )}
               </div>
