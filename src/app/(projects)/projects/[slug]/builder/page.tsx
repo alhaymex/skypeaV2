@@ -9,6 +9,8 @@ import { Grid } from "@/components/templates/Grid";
 import { Form } from "@/components/templates/Form";
 import { MainContent } from "@/components/pages/projects/builder/MainContent";
 import { Sidebar } from "@/components/pages/projects/builder/BuilderSidebar";
+import { saveComponent } from "@/actions/blogs-actions";
+import { useToast } from "@/hooks/use-toast";
 
 export default function BlogBuilder() {
   const { slug } = useParams() as { slug: string };
@@ -16,8 +18,8 @@ export default function BlogBuilder() {
     []
   );
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const { toast } = useToast();
 
-  // Navbar state
   const [navbarState, setNavbarState] = useState({
     titleType: "text" as "text" | "image",
     title: "My Blog",
@@ -105,7 +107,7 @@ export default function BlogBuilder() {
     submitButtonText: "Send Message",
   });
 
-  const addComponent = (componentType: string) => {
+  const addComponent = async (componentType: string) => {
     let newComponent: ComponentData;
     switch (componentType) {
       case "navbar":
@@ -149,7 +151,35 @@ export default function BlogBuilder() {
       default:
         return;
     }
-    setSelectedComponents([...selectedComponents, newComponent]);
+
+    // Optimistically update the UI
+    setSelectedComponents((prevComponents) => [
+      ...prevComponents,
+      newComponent,
+    ]);
+
+    try {
+      const result = await saveComponent(slug as string, newComponent);
+
+      if (!result.success) {
+        throw new Error("Failed to save component");
+      }
+
+      toast({
+        title: "Component added",
+        description: `${componentType} component has been added successfully.`,
+      });
+    } catch (error) {
+      console.error("Failed to save component:", error);
+      setSelectedComponents((prevComponents) =>
+        prevComponents.filter((component) => component.id !== newComponent.id)
+      );
+      toast({
+        title: "Error",
+        description: "Failed to add component. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const removeComponent = (index: number) => {
