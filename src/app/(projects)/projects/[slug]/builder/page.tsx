@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { ComponentData, NavLink, GridItem, FormField } from "@/types/types";
 import { Navbar } from "@/components/templates/Navbar";
@@ -9,8 +9,13 @@ import { Grid } from "@/components/templates/Grid";
 import { Form } from "@/components/templates/Form";
 import { MainContent } from "@/components/pages/projects/builder/MainContent";
 import { Sidebar } from "@/components/pages/projects/builder/BuilderSidebar";
-import { deleteComponent, saveComponent } from "@/actions/blogs-actions";
+import {
+  deleteComponent,
+  getBlogComponents,
+  saveComponent,
+} from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function BlogBuilder() {
   const { slug } = useParams() as { slug: string };
@@ -18,6 +23,8 @@ export default function BlogBuilder() {
     []
   );
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const { toast } = useToast();
 
   const [navbarState, setNavbarState] = useState({
@@ -106,6 +113,27 @@ export default function BlogBuilder() {
     ] as FormField[],
     submitButtonText: "Send Message",
   });
+
+  useEffect(() => {
+    const fetchComponents = async () => {
+      setIsLoading(true);
+      try {
+        const components = await getBlogComponents(slug as string);
+        setSelectedComponents(components);
+      } catch (error) {
+        console.error("Failed to fetch components:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load components. Please refresh the page.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchComponents();
+  }, [slug]);
 
   const addComponent = async (componentType: string) => {
     let newComponent: ComponentData;
@@ -249,6 +277,14 @@ export default function BlogBuilder() {
         return null;
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen">

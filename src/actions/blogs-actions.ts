@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import getSession from "@/lib/getSession";
 import { slugify } from "@/lib/slugify";
-import { and, desc, eq, gt, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, sql } from "drizzle-orm";
 import { ComponentData } from "@/types/types";
 
 export const getBlogs = async () => {
@@ -166,5 +166,36 @@ export const deleteComponent = async (slug: string, componentId: string) => {
   } catch (error) {
     console.error("Error deleting component:", error);
     return { success: false, error: "Failed to delete component" };
+  }
+};
+
+export const getBlogComponents = async (slug: string) => {
+  try {
+    const blog = await db
+      .select()
+      .from(blogs)
+      .where(eq(blogs.slug, slug))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!blog) {
+      throw new Error("Blog not found");
+    }
+
+    const components = await db
+      .select()
+      .from(blogComponents)
+      .where(eq(blogComponents.blogId, blog.id))
+      .orderBy(asc(blogComponents.order));
+
+    return components.map((component) => ({
+      type: component.type,
+      id: `${component.type}-${component.id}`,
+      dbId: component.id,
+      data: component.data,
+    }));
+  } catch (error) {
+    console.error("Error fetching components:", error);
+    throw new Error("Failed to fetch components");
   }
 };
