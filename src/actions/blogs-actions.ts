@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import getSession from "@/lib/getSession";
 import { slugify } from "@/lib/slugify";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, gt, sql } from "drizzle-orm";
 import { ComponentData } from "@/types/types";
 
 export const getBlogs = async () => {
@@ -99,12 +99,72 @@ export const saveComponent = async (slug: string, component: ComponentData) => {
 
   const newOrder = lastComponent ? lastComponent.order + 1 : 1;
 
-  await db.insert(blogComponents).values({
-    blogId: blog.id,
-    type: component.type,
-    order: newOrder,
-    data: component.data,
-  });
+  const [newComponent] = await db
+    .insert(blogComponents)
+    .values({
+      blogId: blog.id,
+      type: component.type,
+      order: newOrder,
+      data: component.data,
+    })
+    .returning({ id: blogComponents.id });
 
-  return { success: true };
+  return { success: true, dbId: newComponent.id };
+};
+
+export const deleteComponent = async (slug: string, componentId: string) => {
+  try {
+    const blog = await db
+      .select()
+      .from(blogs)
+      .where(eq(blogs.slug, slug))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!blog) {
+      throw new Error("Blog not found");
+    }
+
+    const deletedComponent = await db
+      .select()
+      .from(blogComponents)
+      .where(
+        and(
+          eq(blogComponents.blogId, blog.id),
+          eq(blogComponents.id, componentId)
+        )
+      )
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!deletedComponent) {
+      throw new Error("Component not found");
+    }
+
+    await db
+      .delete(blogComponents)
+      .where(
+        and(
+          eq(blogComponents.blogId, blog.id),
+          eq(blogComponents.id, componentId)
+        )
+      );
+
+    await db
+      .update(blogComponents)
+      .set({
+        order: sql`${blogComponents.order} - 1`,
+      })
+      .where(
+        and(
+          eq(blogComponents.blogId, blog.id),
+          gt(blogComponents.order, deletedComponent.order)
+        )
+      );
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting component:", error);
+    return { success: false, error: "Failed to delete component" };
+  }
 };

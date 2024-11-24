@@ -9,7 +9,7 @@ import { Grid } from "@/components/templates/Grid";
 import { Form } from "@/components/templates/Form";
 import { MainContent } from "@/components/pages/projects/builder/MainContent";
 import { Sidebar } from "@/components/pages/projects/builder/BuilderSidebar";
-import { saveComponent } from "@/actions/blogs-actions";
+import { deleteComponent, saveComponent } from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
 
 export default function BlogBuilder() {
@@ -152,7 +152,6 @@ export default function BlogBuilder() {
         return;
     }
 
-    // Optimistically update the UI
     setSelectedComponents((prevComponents) => [
       ...prevComponents,
       newComponent,
@@ -162,8 +161,16 @@ export default function BlogBuilder() {
       const result = await saveComponent(slug as string, newComponent);
 
       if (!result.success) {
-        throw new Error("Failed to save component");
+        throw new Error(result.message || "Failed to save component");
       }
+
+      setSelectedComponents((prevComponents) =>
+        prevComponents.map((component) =>
+          component.id === newComponent.id
+            ? { ...component, dbId: result.dbId }
+            : component
+        )
+      );
 
       toast({
         title: "Component added",
@@ -182,8 +189,50 @@ export default function BlogBuilder() {
     }
   };
 
-  const removeComponent = (index: number) => {
-    setSelectedComponents(selectedComponents.filter((_, i) => i !== index));
+  const removeComponent = async (clientId: string) => {
+    const componentToRemove = selectedComponents.find((c) => c.id === clientId);
+    if (!componentToRemove || !componentToRemove.dbId) {
+      console.error("Component not found or has no database ID");
+      return;
+    }
+
+    // Optimistically update the UI
+    setSelectedComponents((prevComponents) =>
+      prevComponents.filter((component) => component.id !== clientId)
+    );
+
+    try {
+      // Delete the component from the database
+      const result = await deleteComponent(
+        slug as string,
+        componentToRemove.dbId
+      );
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to delete component");
+      }
+
+      toast({
+        title: "Component removed",
+        description: "The component has been removed successfully.",
+      });
+    } catch (error) {
+      console.error("Failed to delete component:", error);
+      // Revert the optimistic update if deletion fails
+      setSelectedComponents((prevComponents) => {
+        const deletedComponent = prevComponents.find(
+          (component) => component.id === clientId
+        );
+        return deletedComponent
+          ? [...prevComponents, deletedComponent]
+          : prevComponents;
+      });
+      toast({
+        title: "Error",
+        description: "Failed to remove component. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const renderComponent = (component: ComponentData) => {

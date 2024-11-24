@@ -1,6 +1,7 @@
 export interface ComponentData {
   type: string;
   id: string;
+  dbId?: string;
   data: any;
 }
 
