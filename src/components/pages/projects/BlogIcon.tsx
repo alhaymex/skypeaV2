@@ -5,7 +5,7 @@ import {
   Lightbulb,
   Star,
   Palette,
-  LucideIcon,
+  type LucideIcon,
   Coffee,
   Camera,
   Music,
@@ -16,6 +16,7 @@ import {
   Plane,
   Gamepad,
   Film,
+  HelpCircle,
 } from "lucide-react";
 
 interface BlogIconProps {
@@ -42,7 +43,7 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export function BlogIcon({ icon, className }: BlogIconProps) {
-  const IconComponent = iconMap[icon];
+  const IconComponent = iconMap[icon] || HelpCircle;
 
   return <IconComponent className={className} />;
 }
