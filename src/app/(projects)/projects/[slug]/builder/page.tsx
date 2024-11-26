@@ -114,6 +114,11 @@ export default function BlogBuilder() {
     submitButtonText: "Send Message",
   });
 
+  const [pageState, setPageState] = useState({
+    backgroundColor: "#ffffff",
+    fontFamily: "sans-serif",
+  });
+
   useEffect(() => {
     const fetchComponents = async () => {
       setIsLoading(true);
@@ -295,6 +300,7 @@ export default function BlogBuilder() {
         selectedComponents={selectedComponents}
         renderComponent={renderComponent}
         removeComponent={removeComponent}
+        pageState={pageState}
       />
       <Sidebar
         navbarState={navbarState}
@@ -305,6 +311,8 @@ export default function BlogBuilder() {
         setGridState={setGridState}
         formState={formState}
         setFormState={setFormState}
+        pageState={pageState}
+        setPageState={setPageState}
         addComponent={addComponent}
       />
     </div>
