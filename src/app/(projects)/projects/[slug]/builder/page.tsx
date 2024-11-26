@@ -12,7 +12,9 @@ import { Sidebar } from "@/components/pages/projects/builder/BuilderSidebar";
 import {
   deleteComponent,
   getBlogComponents,
+  getBlogSettings,
   saveComponent,
+  updateBlogSettings,
 } from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -45,7 +47,6 @@ export default function BlogBuilder() {
     linkBorderRadius: 4,
   });
 
-  // Hero state
   const [heroState, setHeroState] = useState({
     title: "Welcome to My Blog",
     subtitle: "Discover amazing content and insights",
@@ -54,7 +55,6 @@ export default function BlogBuilder() {
     ctaLink: "#",
   });
 
-  // Grid state
   const [gridState, setGridState] = useState({
     items: [
       {
@@ -114,17 +114,26 @@ export default function BlogBuilder() {
     submitButtonText: "Send Message",
   });
 
+  const [pageState, setPageState] = useState({
+    backgroundColor: "#ffffff",
+    fontFamily: "sans-serif",
+  });
+
   useEffect(() => {
-    const fetchComponents = async () => {
+    const loadData = async () => {
       setIsLoading(true);
       try {
-        const components = await getBlogComponents(slug as string);
+        const [components, settings] = await Promise.all([
+          getBlogComponents(slug),
+          getBlogSettings(slug),
+        ]);
         setSelectedComponents(components);
+        setPageState(settings);
       } catch (error) {
-        console.error("Failed to fetch components:", error);
+        console.error("Failed to load data:", error);
         toast({
           title: "Error",
-          description: "Failed to load components. Please refresh the page.",
+          description: "Failed to load blog data. Please try again.",
           variant: "destructive",
         });
       } finally {
@@ -132,8 +141,36 @@ export default function BlogBuilder() {
       }
     };
 
-    fetchComponents();
-  }, [slug]);
+    loadData();
+  }, [slug, toast]);
+
+  const updatePageSettings = async (newSettings: {
+    backgroundColor: string;
+    fontFamily: string;
+  }) => {
+    setIsLoading(true);
+    try {
+      await updateBlogSettings(
+        slug,
+        newSettings.backgroundColor,
+        newSettings.fontFamily
+      );
+      setPageState(newSettings);
+      toast({
+        title: "Success",
+        description: "Blog settings updated successfully.",
+      });
+    } catch (error) {
+      console.error("Failed to update blog settings:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update blog settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const addComponent = async (componentType: string) => {
     let newComponent: ComponentData;
@@ -186,7 +223,7 @@ export default function BlogBuilder() {
     ]);
 
     try {
-      const result = await saveComponent(slug as string, newComponent);
+      const result = await saveComponent(slug, newComponent);
 
       if (!result.success) {
         throw new Error(result.message || "Failed to save component");
@@ -219,8 +256,14 @@ export default function BlogBuilder() {
 
   const removeComponent = async (clientId: string) => {
     const componentToRemove = selectedComponents.find((c) => c.id === clientId);
-    if (!componentToRemove || !componentToRemove.dbId) {
-      console.error("Component not found or has no database ID");
+    if (!componentToRemove) {
+      console.error("Component not found");
+      toast({
+        title: "Error",
+        description:
+          "Component not found. Please refresh the page and try again.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -230,14 +273,16 @@ export default function BlogBuilder() {
     );
 
     try {
-      // Delete the component from the database
-      const result = await deleteComponent(
-        slug as string,
-        componentToRemove.dbId
-      );
+      // If the component has a dbId, delete it from the database
+      if (componentToRemove.dbId) {
+        const result = await deleteComponent(slug, componentToRemove.dbId);
 
-      if (!result.success) {
-        throw new Error(result.error || "Failed to delete component");
+        if (!result.success) {
+          throw new Error(result.error || "Failed to delete component");
+        }
+      } else {
+        // If there's no dbId, we assume it's a new, unsaved component
+        console.log("Removing unsaved component");
       }
 
       toast({
@@ -247,14 +292,10 @@ export default function BlogBuilder() {
     } catch (error) {
       console.error("Failed to delete component:", error);
       // Revert the optimistic update if deletion fails
-      setSelectedComponents((prevComponents) => {
-        const deletedComponent = prevComponents.find(
-          (component) => component.id === clientId
-        );
-        return deletedComponent
-          ? [...prevComponents, deletedComponent]
-          : prevComponents;
-      });
+      setSelectedComponents((prevComponents) => [
+        ...prevComponents,
+        componentToRemove,
+      ]);
       toast({
         title: "Error",
         description: "Failed to remove component. Please try again.",
@@ -295,6 +336,7 @@ export default function BlogBuilder() {
         selectedComponents={selectedComponents}
         renderComponent={renderComponent}
         removeComponent={removeComponent}
+        pageState={pageState}
       />
       <Sidebar
         navbarState={navbarState}
@@ -305,6 +347,8 @@ export default function BlogBuilder() {
         setGridState={setGridState}
         formState={formState}
         setFormState={setFormState}
+        pageState={pageState}
+        setPageState={updatePageSettings}
         addComponent={addComponent}
       />
     </div>

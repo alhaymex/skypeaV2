@@ -23,7 +23,7 @@ import {
 import Link from "next/link";
 import { ProjectSwitcher } from "./ProjectSwitcher";
 import { UserMenu } from "./UserMenu";
-import { getUserProjects } from "@/actions/blogs-actions";
+import { getBlogs } from "@/actions/blogs-actions";
 import { Blog, UserMenuProps } from "@/types/types";
 
 export default async function DashboardSidebar({
@@ -33,7 +33,7 @@ export default async function DashboardSidebar({
   slug: string;
   user: UserMenuProps;
 }) {
-  const { data: projects } = await getUserProjects();
+  const projects = await getBlogs();
 
   const items = [
     {
