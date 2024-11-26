@@ -184,3 +184,51 @@ export const getBlogComponents = async (slug: string) => {
     throw new Error("Failed to fetch components");
   }
 };
+
+export const updateBlogSettings = async (
+  slug: string,
+  backgroundColor: string,
+  fontFamily: string
+): Promise<void> => {
+  try {
+    await db
+      .update(blogs)
+      .set({
+        backgroundColor,
+        fontFamily,
+        updatedAt: new Date(),
+      })
+      .where(eq(blogs.slug, slug));
+  } catch (error) {
+    console.error("Error updating blog settings:", error);
+    throw new Error("Failed to update blog settings");
+  }
+};
+
+export const getBlogSettings = async (
+  slug: string
+): Promise<{ backgroundColor: string; fontFamily: string }> => {
+  try {
+    const blog = await db
+      .select({
+        backgroundColor: blogs.backgroundColor,
+        fontFamily: blogs.fontFamily,
+      })
+      .from(blogs)
+      .where(eq(blogs.slug, slug))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!blog) {
+      throw new Error(`Blog with slug ${slug} not found`);
+    }
+
+    return {
+      backgroundColor: blog.backgroundColor,
+      fontFamily: blog.fontFamily,
+    };
+  } catch (error) {
+    console.error("Error fetching blog settings:", error);
+    throw new Error("Failed to fetch blog settings");
+  }
+};

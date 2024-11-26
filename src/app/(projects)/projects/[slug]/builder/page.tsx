@@ -12,7 +12,9 @@ import { Sidebar } from "@/components/pages/projects/builder/BuilderSidebar";
 import {
   deleteComponent,
   getBlogComponents,
+  getBlogSettings,
   saveComponent,
+  updateBlogSettings,
 } from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -118,16 +120,20 @@ export default function BlogBuilder() {
   });
 
   useEffect(() => {
-    const fetchComponents = async () => {
+    const loadData = async () => {
       setIsLoading(true);
       try {
-        const components = await getBlogComponents(slug);
+        const [components, settings] = await Promise.all([
+          getBlogComponents(slug),
+          getBlogSettings(slug),
+        ]);
         setSelectedComponents(components);
+        setPageState(settings);
       } catch (error) {
-        console.error("Failed to fetch components:", error);
+        console.error("Failed to load data:", error);
         toast({
           title: "Error",
-          description: "Failed to load components. Please refresh the page.",
+          description: "Failed to load blog data. Please try again.",
           variant: "destructive",
         });
       } finally {
@@ -135,8 +141,36 @@ export default function BlogBuilder() {
       }
     };
 
-    fetchComponents();
+    loadData();
   }, [slug, toast]);
+
+  const updatePageSettings = async (newSettings: {
+    backgroundColor: string;
+    fontFamily: string;
+  }) => {
+    setIsLoading(true);
+    try {
+      await updateBlogSettings(
+        slug,
+        newSettings.backgroundColor,
+        newSettings.fontFamily
+      );
+      setPageState(newSettings);
+      toast({
+        title: "Success",
+        description: "Blog settings updated successfully.",
+      });
+    } catch (error) {
+      console.error("Failed to update blog settings:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update blog settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const addComponent = async (componentType: string) => {
     let newComponent: ComponentData;
@@ -314,7 +348,7 @@ export default function BlogBuilder() {
         formState={formState}
         setFormState={setFormState}
         pageState={pageState}
-        setPageState={setPageState}
+        setPageState={updatePageSettings}
         addComponent={addComponent}
       />
     </div>

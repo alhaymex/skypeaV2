@@ -89,6 +89,10 @@ export const blogs = pgTable("blog", {
   icon: text("icon"),
   isLive: boolean("isLive").default(false),
   isPinned: boolean("isPinned").default(false),
+
+  backgroundColor: text("backgroundColor").notNull().default("#ffffff"),
+  fontFamily: text("fontFamily").notNull().default("sans-serif"),
+
   createdAt: timestamp("createdAt", { mode: "date" }),
   updatedAt: timestamp("updatedAt", { mode: "date" }),
 });
