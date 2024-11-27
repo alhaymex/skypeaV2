@@ -148,7 +148,7 @@ export default function BlogBuilder() {
     backgroundColor: string;
     fontFamily: string;
   }) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       await updateBlogSettings(
         slug,
