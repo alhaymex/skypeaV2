@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Plus, Trash2, ImageIcon } from "lucide-react";
 import { NavLink } from "@/types/types";
 import { navbarLayouts } from "@/lib/constants";
@@ -25,6 +24,15 @@ interface NavbarAccordionProps {
   setNavbarState: (value: any) => void;
   addComponent: (componentType: string) => void;
 }
+
+const colorOptions = [
+  { label: "White", value: "#ffffff" },
+  { label: "Light Gray", value: "#f3f4f6" },
+  { label: "Dark Gray", value: "#374151" },
+  { label: "Black", value: "#000000" },
+  { label: "Primary", value: "#3b82f6" },
+  { label: "Secondary", value: "#10b981" },
+];
 
 export function NavbarAccordion({
   navbarState,
@@ -249,21 +257,59 @@ export function NavbarAccordion({
             </div>
           )}
           <div>
-            <Label>Link Border Radius</Label>
-            <div className="flex items-center space-x-2">
-              <Slider
-                value={[navbarState.linkBorderRadius]}
-                onValueChange={(value) =>
-                  setNavbarState((prev: any) => ({
-                    ...prev,
-                    linkBorderRadius: value[0],
-                  }))
-                }
-                max={20}
-                step={1}
-              />
-              <span>{navbarState.linkBorderRadius}px</span>
-            </div>
+            <Label>Background Color</Label>
+            <Select
+              value={navbarState.backgroundColor}
+              onValueChange={(value) =>
+                setNavbarState((prev: any) => ({
+                  ...prev,
+                  backgroundColor: value,
+                }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select background color" />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map((color) => (
+                  <SelectItem key={color.value} value={color.value}>
+                    <div className="flex items-center">
+                      <div
+                        className="w-4 h-4 rounded-full mr-2"
+                        style={{ backgroundColor: color.value }}
+                      />
+                      {color.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Text Color</Label>
+            <Select
+              value={navbarState.textColor}
+              onValueChange={(value) =>
+                setNavbarState((prev: any) => ({ ...prev, textColor: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select text color" />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map((color) => (
+                  <SelectItem key={color.value} value={color.value}>
+                    <div className="flex items-center">
+                      <div
+                        className="w-4 h-4 rounded-full mr-2"
+                        style={{ backgroundColor: color.value }}
+                      />
+                      {color.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label>Navigation Links</Label>

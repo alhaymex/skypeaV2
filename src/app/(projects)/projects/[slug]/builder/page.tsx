@@ -44,7 +44,8 @@ export default function BlogBuilder() {
       },
     ] as NavLink[],
     layout: "default" as "default" | "centered" | "split",
-    linkBorderRadius: 4,
+    backgroundColor: "#ffffff",
+    textColor: "#000000",
   });
 
   const [heroState, setHeroState] = useState({
@@ -188,7 +189,8 @@ export default function BlogBuilder() {
                 : undefined,
             links: navbarState.links,
             layout: navbarState.layout,
-            linkBorderRadius: navbarState.linkBorderRadius,
+            backgroundColor: navbarState.backgroundColor,
+            textColor: navbarState.textColor,
           },
         };
         break;
