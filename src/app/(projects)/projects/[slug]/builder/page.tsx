@@ -2,11 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ComponentData, NavLink, GridItem, FormField } from "@/types/types";
+import {
+  ComponentData,
+  NavLink,
+  GridItem,
+  FormField,
+  FooterColumn,
+} from "@/types/types";
 import { Navbar } from "@/components/templates/Navbar";
 import { Hero } from "@/components/templates/Hero";
 import { Grid } from "@/components/templates/Grid";
 import { Form } from "@/components/templates/Form";
+import { Footer } from "@/components/templates/Footer";
 import { MainContent } from "@/components/pages/projects/builder/MainContent";
 import { Sidebar } from "@/components/pages/projects/builder/BuilderSidebar";
 import {
@@ -108,6 +115,39 @@ export default function BlogBuilder() {
     submitButtonText: "Subscribe",
   });
 
+  const [footerState, setFooterState] = useState({
+    columns: [
+      {
+        title: "About Us",
+        links: [
+          { text: "Our Story", url: "#" },
+          { text: "Team", url: "#" },
+          { text: "Careers", url: "#" },
+        ],
+      },
+      {
+        title: "Services",
+        links: [
+          { text: "Web Design", url: "#" },
+          { text: "Development", url: "#" },
+          { text: "Marketing", url: "#" },
+        ],
+      },
+      {
+        title: "Contact",
+        links: [
+          { text: "Contact Us", url: "#" },
+          { text: "Support", url: "#" },
+        ],
+      },
+    ] as FooterColumn[],
+    backgroundColor: "#f3f4f6",
+    textColor: "#374151",
+    showNewsletter: true,
+    design: "simple" as "simple" | "multicolumn" | "newsletter",
+    companyName: "Your Company Name",
+  });
+
   const [pageState, setPageState] = useState({
     backgroundColor: "#ffffff",
     fontFamily: "sans-serif",
@@ -142,7 +182,6 @@ export default function BlogBuilder() {
     backgroundColor: string;
     fontFamily: string;
   }) => {
-    // setIsLoading(true);
     try {
       await updateBlogSettings(
         slug,
@@ -161,8 +200,6 @@ export default function BlogBuilder() {
         description: "Failed to update blog settings. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -206,6 +243,13 @@ export default function BlogBuilder() {
           type: "form",
           id: `form-${Date.now()}`,
           data: formState,
+        };
+        break;
+      case "footer":
+        newComponent = {
+          type: "footer",
+          id: `footer-${Date.now()}`,
+          data: footerState,
         };
         break;
       default:
@@ -262,13 +306,11 @@ export default function BlogBuilder() {
       return;
     }
 
-    // Optimistically update the UI
     setSelectedComponents((prevComponents) =>
       prevComponents.filter((component) => component.id !== clientId)
     );
 
     try {
-      // If the component has a dbId, delete it from the database
       if (componentToRemove.dbId) {
         const result = await deleteComponent(slug, componentToRemove.dbId);
 
@@ -276,7 +318,6 @@ export default function BlogBuilder() {
           throw new Error(result.error || "Failed to delete component");
         }
       } else {
-        // If there's no dbId, we assume it's a new, unsaved component
         console.log("Removing unsaved component");
       }
 
@@ -286,7 +327,6 @@ export default function BlogBuilder() {
       });
     } catch (error) {
       console.error("Failed to delete component:", error);
-      // Revert the optimistic update if deletion fails
       setSelectedComponents((prevComponents) => [
         ...prevComponents,
         componentToRemove,
@@ -309,6 +349,8 @@ export default function BlogBuilder() {
         return <Grid key={component.id} {...component.data} />;
       case "form":
         return <Form key={component.id} {...component.data} />;
+      case "footer":
+        return <Footer key={component.id} {...component.data} />;
       default:
         return null;
     }
@@ -342,6 +384,8 @@ export default function BlogBuilder() {
         setGridState={setGridState}
         formState={formState}
         setFormState={setFormState}
+        footerState={footerState}
+        setFooterState={setFooterState}
         pageState={pageState}
         setPageState={updatePageSettings}
         addComponent={addComponent}
