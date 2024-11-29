@@ -115,9 +115,9 @@ export const blogAnalytics = pgTable("blog_analytics", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  blogId: text("blogId")
+  blogSlug: text("blogSlug")
     .notNull()
-    .references(() => blogs.id, { onDelete: "cascade" }),
+    .references(() => blogs.slug, { onDelete: "cascade" }),
 
   // Tracking key metrics
   totalSubscribers: integer("totalSubscribers").default(0),

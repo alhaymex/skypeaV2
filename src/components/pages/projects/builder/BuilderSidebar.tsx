@@ -5,6 +5,7 @@ import { HeroAccordion } from "./HeroAccordion";
 import { GridAccordion } from "./GridAccordion";
 import { FormAccordion } from "./FormAccordion";
 import { PageCustomizationAccordion } from "./PageCustomizer";
+import { FooterAccordion } from "./FooterAccordion";
 
 interface SidebarProps {
   navbarState: any;
@@ -17,6 +18,8 @@ interface SidebarProps {
   setFormState: (value: any) => void;
   pageState: any;
   setPageState: (value: any) => void;
+  footerState: any;
+  setFooterState: (value: any) => void;
   addComponent: (componentType: string) => void;
 }
 
@@ -31,6 +34,8 @@ export function Sidebar({
   setFormState,
   pageState,
   setPageState,
+  footerState,
+  setFooterState,
   addComponent,
 }: SidebarProps) {
   return (
@@ -60,6 +65,11 @@ export function Sidebar({
           <FormAccordion
             formState={formState}
             setFormState={setFormState}
+            addComponent={addComponent}
+          />
+          <FooterAccordion
+            footerState={footerState}
+            setFooterState={setFooterState}
             addComponent={addComponent}
           />
         </Accordion>

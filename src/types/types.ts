@@ -52,3 +52,11 @@ export interface Blog {
   createdAt: Date | null;
   updatedAt: Date | null;
 }
+
+export interface FooterColumn {
+  title: string;
+  links: Array<{
+    text: string;
+    url: string;
+  }>;
+}
