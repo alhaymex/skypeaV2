@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { blogSchema } from "../../schema";
-import { blogComponents, blogs } from "@/db/schema";
+import { blogAnalytics, blogComponents, blogs } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import getSession from "@/lib/getSession";
@@ -29,7 +29,18 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
 
     const blog = { ...data, slug, userId };
 
-    await db.insert(blogs).values(blog);
+    const insertedBlogs = await db.insert(blogs).values(blog).returning();
+
+    if (insertedBlogs.length > 0) {
+      await db.insert(blogAnalytics).values({
+        blogId: insertedBlogs[0].id,
+        totalSubscribers: 0,
+        publishedPosts: 0,
+        totalViews: 0,
+        newslettersSent: 0,
+      });
+    }
+
     revalidatePath("/projects");
 
     return { success: true, message: "Blog created successfully" };

@@ -110,3 +110,36 @@ export const blogComponents = pgTable("blog_component", {
   createdAt: timestamp("createdAt", { mode: "date" }),
   updatedAt: timestamp("updatedAt", { mode: "date" }),
 });
+
+export const blogAnalytics = pgTable("blog_analytics", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  blogId: text("blogId")
+    .notNull()
+    .references(() => blogs.id, { onDelete: "cascade" }),
+
+  // Tracking key metrics
+  totalSubscribers: integer("totalSubscribers").default(0),
+  publishedPosts: integer("publishedPosts").default(0),
+  totalViews: integer("totalViews").default(0),
+  newslettersSent: integer("newslettersSent").default(0),
+
+  // Detailed analytics tracking
+  lastSubscriberAddedAt: timestamp("lastSubscriberAddedAt", { mode: "date" }),
+  lastNewsletterSentAt: timestamp("lastNewsletterSentAt", { mode: "date" }),
+
+  // Optional: Daily or periodic aggregation
+  dailyViewsHistory: text("dailyViewsHistory"), // Could store JSON of view counts
+  subscriberGrowthHistory: text("subscriberGrowthHistory"), // Could store JSON of subscriber counts
+
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
+export type BlogAnalytics = typeof blogAnalytics.$inferSelect;
+export type NewBlogAnalytics = typeof blogAnalytics.$inferInsert;
