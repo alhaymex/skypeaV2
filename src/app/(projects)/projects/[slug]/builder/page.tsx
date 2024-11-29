@@ -86,9 +86,9 @@ export default function BlogBuilder() {
   });
 
   const [formState, setFormState] = useState({
-    title: "Contact Us",
+    title: "Subscribe to our newsletter",
     description:
-      "We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+      "Subscribe to our newsletter to stay up to date with the latest news and updates from our team.",
     fields: [
       {
         id: "1",
@@ -104,15 +104,8 @@ export default function BlogBuilder() {
         placeholder: "Enter your email",
         required: true,
       },
-      {
-        id: "3",
-        label: "Message",
-        type: "textarea" as const,
-        placeholder: "Enter your message",
-        required: true,
-      },
     ] as FormField[],
-    submitButtonText: "Send Message",
+    submitButtonText: "Subscribe",
   });
 
   const [pageState, setPageState] = useState({

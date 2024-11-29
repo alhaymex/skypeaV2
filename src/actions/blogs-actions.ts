@@ -33,7 +33,7 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
 
     if (insertedBlogs.length > 0) {
       await db.insert(blogAnalytics).values({
-        blogId: insertedBlogs[0].id,
+        blogSlug: insertedBlogs[0].slug,
         totalSubscribers: 0,
         publishedPosts: 0,
         totalViews: 0,
@@ -241,5 +241,33 @@ export const getBlogSettings = async (
   } catch (error) {
     console.error("Error fetching blog settings:", error);
     throw new Error("Failed to fetch blog settings");
+  }
+};
+
+export const getBlogAnalytics = async (slug: string) => {
+  try {
+    const analytics = await db
+      .select()
+      .from(blogAnalytics)
+      .where(eq(blogAnalytics.blogSlug, slug))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!analytics) {
+      throw new Error("Blog analytics not found");
+    }
+
+    return {
+      ...analytics,
+      dailyViewsHistory: analytics.dailyViewsHistory
+        ? JSON.parse(analytics.dailyViewsHistory)
+        : [],
+      subscriberGrowthHistory: analytics.subscriberGrowthHistory
+        ? JSON.parse(analytics.subscriberGrowthHistory)
+        : [],
+    };
+  } catch (error) {
+    console.error("Error fetching blog analytics:", error);
+    throw new Error("Failed to fetch blog analytics");
   }
 };

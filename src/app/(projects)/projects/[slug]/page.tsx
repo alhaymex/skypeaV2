@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CalendarDays, Users, FileText, TrendingUp, Mail } from "lucide-react";
+import { Users, FileText, TrendingUp, Mail } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -19,62 +20,55 @@ import {
   YAxis,
 } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
+import { getBlogAnalytics } from "@/actions/blogs-actions";
+import { useParams } from "next/navigation";
 
-const pageViews = [
-  { name: "Jan", total: 1200 },
-  { name: "Feb", total: 2100 },
-  { name: "Mar", total: 1800 },
-  { name: "Apr", total: 2400 },
-  { name: "May", total: 2800 },
-  { name: "Jun", total: 3200 },
-  { name: "Jul", total: 3800 },
-];
-
-const topPosts = [
-  { name: "10 Productivity Tips", views: 2800 },
-  { name: "Future of AI", views: 2200 },
-  { name: "Learn React in 30 Days", views: 1800 },
-  { name: "Best Coding Practices", views: 1600 },
-  { name: "Mastering TypeScript", views: 1400 },
-];
-
-const recentPosts = [
-  {
-    title: "Boost Your Productivity with These 5 Tips",
-    excerpt:
-      "Learn how to maximize your efficiency and get more done in less time.",
-    date: "2 days ago",
-  },
-  {
-    title: "The Future of AI in Content Creation",
-    excerpt:
-      "Explore how artificial intelligence is revolutionizing the way we create and consume content.",
-    date: "4 days ago",
-  },
-  {
-    title: "10 Must-Read Books for Aspiring Entrepreneurs",
-    excerpt:
-      "Discover the essential reads that can help you on your entrepreneurial journey.",
-    date: "1 week ago",
-  },
-];
-
-const upcomingNewsletters = [
-  {
-    title: "Weekly Tech Roundup",
-    scheduledDate: "Monday, 10:00 AM",
-  },
-  {
-    title: "Monthly Subscriber Exclusive",
-    scheduledDate: "Wednesday, 2:00 PM",
-  },
-  {
-    title: "Breaking News Alert",
-    scheduledDate: "Friday, 9:00 AM",
-  },
-];
+interface BlogAnalytics {
+  id: string;
+  blogSlug: string;
+  totalSubscribers: number | null;
+  publishedPosts: number | null;
+  totalViews: number | null;
+  newslettersSent: number | null;
+  lastSubscriberAddedAt: Date | null;
+  lastNewsletterSentAt: Date | null;
+  dailyViewsHistory: Array<{ date: string; views: number }>;
+  subscriberGrowthHistory: Array<{ date: string; subscribers: number }>;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+}
 
 export default function DashboardPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const [analytics, setAnalytics] = useState<BlogAnalytics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchAnalytics() {
+      try {
+        const data = await getBlogAnalytics(slug);
+        setAnalytics(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAnalytics();
+  }, [slug]);
+
+  if (loading) return <div className="p-8 text-center">Loading...</div>;
+  if (error)
+    return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+  if (!analytics)
+    return <div className="p-8 text-center">No data available</div>;
+
   return (
     <div className="p-8">
       <div className="flex items-center justify-between space-y-2">
@@ -90,9 +84,16 @@ export default function DashboardPage() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">2,350</div>
+              <div className="text-2xl font-bold">
+                {analytics.totalSubscribers ?? "N/A"}
+              </div>
               <p className="text-xs text-muted-foreground">
-                +180 from last month
+                Last added:{" "}
+                {analytics.lastSubscriberAddedAt
+                  ? new Date(
+                      analytics.lastSubscriberAddedAt
+                    ).toLocaleDateString()
+                  : "N/A"}
               </p>
             </CardContent>
           </Card>
@@ -104,10 +105,9 @@ export default function DashboardPage() {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">48</div>
-              <p className="text-xs text-muted-foreground">
-                +6 in the last 7 days
-              </p>
+              <div className="text-2xl font-bold">
+                {analytics.publishedPosts ?? "N/A"}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -118,10 +118,9 @@ export default function DashboardPage() {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">124,566</div>
-              <p className="text-xs text-muted-foreground">
-                +14% from last month
-              </p>
+              <div className="text-2xl font-bold">
+                {analytics.totalViews ?? "N/A"}
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -132,9 +131,16 @@ export default function DashboardPage() {
               <Mail className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">12</div>
+              <div className="text-2xl font-bold">
+                {analytics.newslettersSent ?? "N/A"}
+              </div>
               <p className="text-xs text-muted-foreground">
-                3 scheduled for next week
+                Last sent:{" "}
+                {analytics.lastNewsletterSentAt
+                  ? new Date(
+                      analytics.lastNewsletterSentAt
+                    ).toLocaleDateString()
+                  : "N/A"}
               </p>
             </CardContent>
           </Card>
@@ -142,12 +148,12 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-full lg:col-span-4">
             <CardHeader>
-              <CardTitle>Page Views</CardTitle>
+              <CardTitle>Page Views History</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
               <ChartContainer
                 config={{
-                  total: {
+                  views: {
                     label: "Page Views",
                     color: "hsl(var(--chart-1))",
                   },
@@ -156,16 +162,18 @@ export default function DashboardPage() {
               >
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
-                    data={pageViews}
+                    data={analytics.dailyViewsHistory}
                     margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
                   >
                     <XAxis
-                      dataKey="name"
+                      dataKey="date"
                       stroke="#888888"
                       fontSize={12}
                       tickLine={false}
                       axisLine={false}
-                      tickFormatter={(value) => value.substring(0, 3)}
+                      tickFormatter={(value) =>
+                        new Date(value).toLocaleDateString()
+                      }
                     />
                     <YAxis
                       stroke="#888888"
@@ -173,12 +181,11 @@ export default function DashboardPage() {
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(value) => `${value}`}
-                      ticks={[0, 1000, 2000, 3000, 4000]}
                     />
                     <Tooltip content={<ChartTooltipContent />} />
                     <Line
                       type="monotone"
-                      dataKey="total"
+                      dataKey="views"
                       strokeWidth={2}
                       activeDot={{ r: 8 }}
                     />
@@ -189,16 +196,14 @@ export default function DashboardPage() {
           </Card>
           <Card className="col-span-full lg:col-span-3">
             <CardHeader>
-              <CardTitle>Top Posts by Views</CardTitle>
-              <CardDescription>
-                Your most popular content this month
-              </CardDescription>
+              <CardTitle>Subscriber Growth</CardTitle>
+              <CardDescription>Subscriber count over time</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer
                 config={{
-                  views: {
-                    label: "Views",
+                  subscribers: {
+                    label: "Subscribers",
                     color: "hsl(var(--chart-2))",
                   },
                 }}
@@ -206,16 +211,18 @@ export default function DashboardPage() {
               >
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={topPosts}
+                    data={analytics.subscriberGrowthHistory}
                     margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
                   >
                     <XAxis
-                      dataKey="name"
+                      dataKey="date"
                       stroke="#888888"
                       fontSize={12}
                       tickLine={false}
                       axisLine={false}
-                      tickFormatter={(value) => value.split(" ")[0]}
+                      tickFormatter={(value) =>
+                        new Date(value).toLocaleDateString()
+                      }
                     />
                     <YAxis
                       stroke="#888888"
@@ -223,71 +230,16 @@ export default function DashboardPage() {
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(value) => `${value}`}
-                      ticks={[0, 1000, 2000, 3000, 4000]}
                     />
                     <Tooltip content={<ChartTooltipContent />} />
                     <Bar
-                      dataKey="views"
+                      dataKey="subscribers"
                       fill="currentColor"
                       radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-full lg:col-span-4">
-            <CardHeader>
-              <CardTitle>Recent Posts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-8">
-                {recentPosts.map((post, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col sm:flex-row sm:items-center"
-                  >
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {post.title}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {post.excerpt}
-                      </p>
-                    </div>
-                    <div className="mt-2 sm:mt-0 sm:ml-auto font-medium">
-                      {post.date}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-full lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Upcoming Newsletters</CardTitle>
-              <CardDescription>
-                You have 3 newsletters scheduled for the next 7 days.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-8">
-                {upcomingNewsletters.map((newsletter, index) => (
-                  <div key={index} className="flex items-center">
-                    <CalendarDays className="h-4 w-4 text-muted-foreground" />
-                    <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {newsletter.title}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {newsletter.scheduledDate}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </CardContent>
           </Card>
         </div>
