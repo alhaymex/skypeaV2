@@ -1,5 +1,6 @@
 "use server";
 
+import { slugifyPost } from "@/lib/slugify";
 import { BlogPostSchema } from "../../schema";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -7,7 +8,6 @@ import { redirect } from "next/navigation";
 export async function createPost(formData: FormData) {
   const validatedFields = BlogPostSchema.safeParse({
     title: formData.get("title"),
-    slug: formData.get("slug"),
     description: formData.get("description"),
     content: formData.get("content"),
     publishOption: formData.get("publishOption"),
@@ -24,7 +24,6 @@ export async function createPost(formData: FormData) {
 
   const {
     title,
-    slug,
     description,
     content,
     publishOption,
@@ -32,6 +31,8 @@ export async function createPost(formData: FormData) {
     isDistributed,
     blogSlug,
   } = validatedFields.data;
+
+  const slug = await slugifyPost(title);
 
   const post = {
     title,

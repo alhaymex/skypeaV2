@@ -45,7 +45,7 @@ export async function slugifyPost(name: string) {
     const existingPost = await db
       .select()
       .from(posts)
-      .where(eq(blogs.slug, uniqueSlug))
+      .where(eq(posts.slug, uniqueSlug))
       .limit(1);
 
     if (!existingPost.length) {
