@@ -21,12 +21,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader } from "lucide-react";
 import { createPost } from "@/actions/posts-actions";
 import { Editor } from "@/components/pages/projects/posts/Editor";
 import { blogFormSchema } from "../../../../../../../schema";
 
 export default function NewPostPage() {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -34,20 +35,23 @@ export default function NewPostPage() {
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
       title: "",
+      coverImage: "",
       description: "",
       content: "<p>Start writing your blog post here...</p>",
       publishOption: "draft",
       scheduledTime: "",
       isDistributed: false,
+      blogSlug: "syferpool",
     },
   });
 
   async function onSubmit(values: z.infer<typeof blogFormSchema>) {
+    setIsLoading(true);
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       formData.append(key, value.toString());
     });
-    formData.append("blogSlug", "syferpool"); // Replace
+    // formData.append("blogSlug", "syferpool"); // Replace
 
     try {
       const result = await createPost(formData);
@@ -64,8 +68,8 @@ export default function NewPostPage() {
       } else if (result && "message" in result) {
         setServerError(result.message || "An unexpected error occurred.");
       } else {
-        // router.push("./");
-        console.log("Post created successfully");
+        setIsLoading(false);
+        router.push("./");
       }
     } catch (error) {
       setServerError("An unexpected error occurred. Please try again.");
@@ -89,6 +93,20 @@ export default function NewPostPage() {
                     <FormLabel>Title</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter blog post title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="coverImage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cover Image</FormLabel>
+                    <FormControl>
+                      <Input type="file" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -215,7 +233,15 @@ export default function NewPostPage() {
                 </Alert>
               )}
 
-              <Button type="submit">Create Post</Button>
+              <Button disabled={isLoading} type="submit">
+                {isLoading ? (
+                  <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" /> Creating...
+                  </>
+                ) : (
+                  "Create Post"
+                )}
+              </Button>
             </form>
           </Form>
         </CardContent>
