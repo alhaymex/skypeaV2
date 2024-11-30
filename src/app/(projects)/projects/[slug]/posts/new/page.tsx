@@ -34,7 +34,6 @@ export default function NewPostPage() {
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
       title: "",
-      slug: "",
       description: "",
       content: "<p>Start writing your blog post here...</p>",
       publishOption: "draft",
@@ -48,10 +47,11 @@ export default function NewPostPage() {
     Object.entries(values).forEach(([key, value]) => {
       formData.append(key, value.toString());
     });
-    formData.append("blogSlug", "your-blog-slug-here"); // Replace with actual blog slug
+    formData.append("blogSlug", "syferpool"); // Replace
 
     try {
       const result = await createPost(formData);
+      console.log(result);
       if (result && "errors" in result && result.errors) {
         Object.entries(result.errors).forEach(([key, value]) => {
           if (Array.isArray(value) && value.length > 0) {
@@ -64,7 +64,8 @@ export default function NewPostPage() {
       } else if (result && "message" in result) {
         setServerError(result.message || "An unexpected error occurred.");
       } else {
-        router.push("./posts");
+        // router.push("./");
+        console.log("Post created successfully");
       }
     } catch (error) {
       setServerError("An unexpected error occurred. Please try again.");
@@ -89,23 +90,6 @@ export default function NewPostPage() {
                     <FormControl>
                       <Input placeholder="Enter blog post title" {...field} />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Slug</FormLabel>
-                    <FormControl>
-                      <Input placeholder="enter-post-slug" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      This will be used in the URL of your post.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
