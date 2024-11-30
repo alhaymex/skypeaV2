@@ -26,13 +26,19 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
+interface Page {
+  id: string;
+  name: string;
+  slug: string;
+  components: ComponentData[];
+}
+
 export default function BlogBuilder() {
   const { slug } = useParams() as { slug: string };
-  const [selectedComponents, setSelectedComponents] = useState<ComponentData[]>(
-    []
-  );
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [pages, setPages] = useState<Page[]>([]);
+  const [currentPageId, setCurrentPageId] = useState<string | null>(null);
 
   const { toast } = useToast();
 
@@ -157,11 +163,12 @@ export default function BlogBuilder() {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const [components, settings] = await Promise.all([
+        const [pagesWithComponents, settings] = await Promise.all([
           getBlogComponents(slug),
           getBlogSettings(slug),
         ]);
-        setSelectedComponents(components);
+        setPages(pagesWithComponents);
+        setCurrentPageId(pagesWithComponents[0]?.id || null);
         setPageState(settings);
       } catch (error) {
         console.error("Failed to load data:", error);
@@ -204,6 +211,16 @@ export default function BlogBuilder() {
   };
 
   const addComponent = async (componentType: string) => {
+    if (!currentPageId) {
+      toast({
+        title: "Error",
+        description:
+          "No page selected. Please select a page before adding a component.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     let newComponent: ComponentData;
     switch (componentType) {
       case "navbar":
@@ -256,23 +273,33 @@ export default function BlogBuilder() {
         return;
     }
 
-    setSelectedComponents((prevComponents) => [
-      ...prevComponents,
-      newComponent,
-    ]);
+    setPages((prevPages) =>
+      prevPages.map((page) =>
+        page.id === currentPageId
+          ? { ...page, components: [...page.components, newComponent] }
+          : page
+      )
+    );
 
     try {
-      const result = await saveComponent(slug, newComponent);
+      const result = await saveComponent(slug, newComponent, currentPageId);
 
       if (!result.success) {
         throw new Error(result.message || "Failed to save component");
       }
 
-      setSelectedComponents((prevComponents) =>
-        prevComponents.map((component) =>
-          component.id === newComponent.id
-            ? { ...component, dbId: result.dbId }
-            : component
+      setPages((prevPages) =>
+        prevPages.map((page) =>
+          page.id === currentPageId
+            ? {
+                ...page,
+                components: page.components.map((component) =>
+                  component.id === newComponent.id
+                    ? { ...component, dbId: result.dbId }
+                    : component
+                ),
+              }
+            : page
         )
       );
 
@@ -282,8 +309,17 @@ export default function BlogBuilder() {
       });
     } catch (error) {
       console.error("Failed to save component:", error);
-      setSelectedComponents((prevComponents) =>
-        prevComponents.filter((component) => component.id !== newComponent.id)
+      setPages((prevPages) =>
+        prevPages.map((page) =>
+          page.id === currentPageId
+            ? {
+                ...page,
+                components: page.components.filter(
+                  (component) => component.id !== newComponent.id
+                ),
+              }
+            : page
+        )
       );
       toast({
         title: "Error",
@@ -293,21 +329,42 @@ export default function BlogBuilder() {
     }
   };
 
-  const removeComponent = async (clientId: string) => {
-    const componentToRemove = selectedComponents.find((c) => c.id === clientId);
-    if (!componentToRemove) {
-      console.error("Component not found");
+  const removeComponent = async (pageId: string, componentId: string) => {
+    const pageToUpdate = pages.find((page) => page.id === pageId);
+    if (!pageToUpdate) {
+      console.error("Page not found");
       toast({
         title: "Error",
-        description:
-          "Component not found. Please refresh the page and try again.",
+        description: "Page not found. Please refresh and try again.",
         variant: "destructive",
       });
       return;
     }
 
-    setSelectedComponents((prevComponents) =>
-      prevComponents.filter((component) => component.id !== clientId)
+    const componentToRemove = pageToUpdate.components.find(
+      (c) => c.id === componentId
+    );
+    if (!componentToRemove) {
+      console.error("Component not found");
+      toast({
+        title: "Error",
+        description: "Component not found. Please refresh and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setPages((prevPages) =>
+      prevPages.map((page) =>
+        page.id === pageId
+          ? {
+              ...page,
+              components: page.components.filter(
+                (component) => component.id !== componentId
+              ),
+            }
+          : page
+      )
     );
 
     try {
@@ -327,10 +384,13 @@ export default function BlogBuilder() {
       });
     } catch (error) {
       console.error("Failed to delete component:", error);
-      setSelectedComponents((prevComponents) => [
-        ...prevComponents,
-        componentToRemove,
-      ]);
+      setPages((prevPages) =>
+        prevPages.map((page) =>
+          page.id === pageId
+            ? { ...page, components: [...page.components, componentToRemove] }
+            : page
+        )
+      );
       toast({
         title: "Error",
         description: "Failed to remove component. Please try again.",
@@ -370,10 +430,14 @@ export default function BlogBuilder() {
         slug={slug}
         isPreviewMode={isPreviewMode}
         setIsPreviewMode={setIsPreviewMode}
-        selectedComponents={selectedComponents}
+        pages={pages}
+        currentPageId={currentPageId}
+        setCurrentPageId={setCurrentPageId}
         renderComponent={renderComponent}
         removeComponent={removeComponent}
         pageState={pageState}
+        setPages={setPages}
+        addComponent={addComponent}
       />
       <Sidebar
         navbarState={navbarState}
@@ -389,6 +453,8 @@ export default function BlogBuilder() {
         pageState={pageState}
         setPageState={updatePageSettings}
         addComponent={addComponent}
+        pages={pages}
+        currentPageId={currentPageId}
       />
     </div>
   );

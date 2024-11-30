@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { blogSchema } from "../../schema";
-import { blogAnalytics, blogComponents, blogs } from "@/db/schema";
+import { blogAnalytics, blogComponents, blogPages, blogs } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import getSession from "@/lib/getSession";
@@ -76,40 +76,112 @@ export const getBlogBySlug = async (slug: string) => {
   return { success: true, data: blog[0] };
 };
 
-export const saveComponent = async (slug: string, component: ComponentData) => {
-  const blog = await db
-    .select()
-    .from(blogs)
-    .where(eq(blogs.slug, slug))
-    .limit(1)
-    .then((rows) => rows[0]);
-  if (!blog) return { success: false, message: "Blog not found" };
+export const addBlogPage = async (
+  blogSlug: string,
+  pageName: string,
+  pageSlug: string
+) => {
+  try {
+    const blog = await db
+      .select()
+      .from(blogs)
+      .where(eq(blogs.slug, blogSlug))
+      .limit(1)
+      .then((rows) => rows[0]);
 
-  const lastComponent = await db
-    .select()
-    .from(blogComponents)
-    .where(eq(blogComponents.blogId, blog.id as string))
-    .orderBy(desc(blogComponents.order))
-    .limit(1)
-    .then((rows) => rows[0]);
+    if (!blog) {
+      throw new Error("Blog not found");
+    }
 
-  const newOrder = lastComponent ? lastComponent.order + 1 : 1;
+    const lastPage = await db
+      .select()
+      .from(blogPages)
+      .where(eq(blogPages.blogId, blog.id))
+      .orderBy(asc(blogPages.order))
+      .limit(1)
+      .then((rows) => rows[0]);
 
-  const [newComponent] = await db
-    .insert(blogComponents)
-    .values({
-      blogId: blog.id,
-      type: component.type,
-      order: newOrder,
-      data: component.data,
-    })
-    .returning({ id: blogComponents.id });
+    const newOrder = lastPage ? lastPage.order + 1 : 1;
 
-  return { success: true, dbId: newComponent.id };
+    const [newPage] = await db
+      .insert(blogPages)
+      .values({
+        blogId: blog.id,
+        name: pageName,
+        slug: pageSlug,
+        order: newOrder,
+      })
+      .returning();
+
+    return { success: true, page: newPage };
+  } catch (error) {
+    console.error("Error adding blog page:", error);
+    return { success: false, error: "Failed to add blog page" };
+  }
+};
+
+export const saveComponent = async (
+  slug: string,
+  component: ComponentData,
+  pageId: string
+) => {
+  try {
+    // Fetch the blog
+    const blog = await db
+      .select()
+      .from(blogs)
+      .where(eq(blogs.slug, slug))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!blog) {
+      return { success: false, message: "Blog not found" };
+    }
+
+    // Fetch the page
+    const page = await db
+      .select()
+      .from(blogPages)
+      .where(eq(blogPages.id, pageId))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!page) {
+      return { success: false, message: "Page not found" };
+    }
+
+    // Get the last component's order for the page
+    const lastComponent = await db
+      .select()
+      .from(blogComponents)
+      .where(eq(blogComponents.pageId, pageId))
+      .orderBy(desc(blogComponents.order))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    const newOrder = lastComponent ? lastComponent.order + 1 : 1;
+
+    // Insert the new component
+    const [newComponent] = await db
+      .insert(blogComponents)
+      .values({
+        pageId: pageId,
+        type: component.type,
+        order: newOrder,
+        data: component.data,
+      })
+      .returning({ id: blogComponents.id });
+
+    return { success: true, dbId: newComponent.id };
+  } catch (error) {
+    console.error("Error saving component:", error);
+    return { success: false, message: "Failed to save component" };
+  }
 };
 
 export const deleteComponent = async (slug: string, componentId: string) => {
   try {
+    // Fetch the blog
     const blog = await db
       .select()
       .from(blogs)
@@ -121,31 +193,39 @@ export const deleteComponent = async (slug: string, componentId: string) => {
       throw new Error("Blog not found");
     }
 
-    const deletedComponent = await db
+    // Fetch the component to be deleted
+    const componentToDelete = await db
       .select()
       .from(blogComponents)
+      .where(eq(blogComponents.id, componentId))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!componentToDelete) {
+      throw new Error("Component not found");
+    }
+
+    // Verify that the component belongs to a page in the correct blog
+    const page = await db
+      .select()
+      .from(blogPages)
       .where(
         and(
-          eq(blogComponents.blogId, blog.id),
-          eq(blogComponents.id, componentId)
+          eq(blogPages.id, componentToDelete.pageId),
+          eq(blogPages.blogId, blog.id)
         )
       )
       .limit(1)
       .then((rows) => rows[0]);
 
-    if (!deletedComponent) {
-      throw new Error("Component not found");
+    if (!page) {
+      throw new Error("Component does not belong to the specified blog");
     }
 
-    await db
-      .delete(blogComponents)
-      .where(
-        and(
-          eq(blogComponents.blogId, blog.id),
-          eq(blogComponents.id, componentId)
-        )
-      );
+    // Delete the component
+    await db.delete(blogComponents).where(eq(blogComponents.id, componentId));
 
+    // Update the order of remaining components on the same page
     await db
       .update(blogComponents)
       .set({
@@ -153,8 +233,8 @@ export const deleteComponent = async (slug: string, componentId: string) => {
       })
       .where(
         and(
-          eq(blogComponents.blogId, blog.id),
-          gt(blogComponents.order, deletedComponent.order)
+          eq(blogComponents.pageId, componentToDelete.pageId),
+          gt(blogComponents.order, componentToDelete.order)
         )
       );
 
@@ -167,6 +247,7 @@ export const deleteComponent = async (slug: string, componentId: string) => {
 
 export const getBlogComponents = async (slug: string) => {
   try {
+    // Fetch the blog
     const blog = await db
       .select()
       .from(blogs)
@@ -178,21 +259,41 @@ export const getBlogComponents = async (slug: string) => {
       throw new Error("Blog not found");
     }
 
-    const components = await db
+    // Fetch all pages for the blog
+    const pages = await db
       .select()
-      .from(blogComponents)
-      .where(eq(blogComponents.blogId, blog.id))
-      .orderBy(asc(blogComponents.order));
+      .from(blogPages)
+      .where(eq(blogPages.blogId, blog.id))
+      .orderBy(asc(blogPages.order));
 
-    return components.map((component) => ({
-      type: component.type,
-      id: `${component.type}-${component.id}`,
-      dbId: component.id,
-      data: component.data,
-    }));
+    // Fetch components for each page
+    const pagesWithComponents = await Promise.all(
+      pages.map(async (page) => {
+        const components = await db
+          .select()
+          .from(blogComponents)
+          .where(eq(blogComponents.pageId, page.id))
+          .orderBy(asc(blogComponents.order));
+
+        return {
+          id: page.id,
+          name: page.name,
+          slug: page.slug,
+          order: page.order,
+          components: components.map((component) => ({
+            type: component.type,
+            id: `${component.type}-${component.id}`,
+            dbId: component.id,
+            data: component.data,
+          })),
+        };
+      })
+    );
+
+    return pagesWithComponents;
   } catch (error) {
-    console.error("Error fetching components:", error);
-    throw new Error("Failed to fetch components");
+    console.error("Error fetching blog pages and components:", error);
+    throw new Error("Failed to fetch blog pages and components");
   }
 };
 
