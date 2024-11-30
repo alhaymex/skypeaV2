@@ -10,6 +10,7 @@ import {
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import type { AdapterAccountType } from "next-auth/adapters";
+import { relations } from "drizzle-orm";
 
 const pool = postgres(process.env.DATABASE_URL as string, { max: 1 });
 
@@ -83,33 +84,76 @@ export const blogs = pgTable("blog", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  name: text("name"),
+  name: text("name").notNull(),
   description: text("description"),
   slug: text("slug").notNull().unique(),
   icon: text("icon"),
   isLive: boolean("isLive").default(false),
   isPinned: boolean("isPinned").default(false),
-
   backgroundColor: text("backgroundColor").notNull().default("#ffffff"),
   fontFamily: text("fontFamily").notNull().default("sans-serif"),
-
-  createdAt: timestamp("createdAt", { mode: "date" }),
-  updatedAt: timestamp("updatedAt", { mode: "date" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
 });
 
-export const blogComponents = pgTable("blog_component", {
+export const blogRelations = relations(blogs, ({ many }) => ({
+  pages: many(blogPages),
+}));
+
+export const blogPages = pgTable("blog_page", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   blogId: text("blogId")
     .notNull()
     .references(() => blogs.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  slug: text("slug").notNull(),
+  order: integer("order").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
+export const blogPageRelations = relations(blogPages, ({ one, many }) => ({
+  blog: one(blogs, {
+    fields: [blogPages.blogId],
+    references: [blogs.id],
+  }),
+  components: many(blogComponents),
+}));
+
+export const blogComponents = pgTable("blog_component", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  pageId: text("pageId")
+    .notNull()
+    .references(() => blogPages.id, { onDelete: "cascade" }),
   type: text("type").notNull(),
   order: integer("order").notNull(),
   data: jsonb("data").notNull(),
-  createdAt: timestamp("createdAt", { mode: "date" }),
-  updatedAt: timestamp("updatedAt", { mode: "date" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
 });
+
+export const blogComponentRelations = relations(blogComponents, ({ one }) => ({
+  page: one(blogPages, {
+    fields: [blogComponents.pageId],
+    references: [blogPages.id],
+  }),
+}));
 
 export const blogAnalytics = pgTable("blog_analytics", {
   id: text("id")
