@@ -141,5 +141,31 @@ export const blogAnalytics = pgTable("blog_analytics", {
   ),
 });
 
+export const posts = pgTable("posts", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  blogSlug: text("blogSlug")
+    .notNull()
+    .references(() => blogs.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description"),
+  content: text("content").notNull(),
+  publishOption: text("publishOption", {
+    enum: ["draft", "published", "scheduled"],
+  })
+    .notNull()
+    .default("draft"),
+  scheduledTime: timestamp("scheduledTime", { mode: "date" }),
+  isDistributed: boolean("isDistributed").default(false),
+  status: text("status", { enum: ["draft", "published", "archived"] })
+    .notNull()
+    .default("draft"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+});
+
 export type BlogAnalytics = typeof blogAnalytics.$inferSelect;
 export type NewBlogAnalytics = typeof blogAnalytics.$inferInsert;

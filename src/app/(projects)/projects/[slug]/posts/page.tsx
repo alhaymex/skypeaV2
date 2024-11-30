@@ -28,6 +28,7 @@ import {
   Plus,
   Filter,
 } from "lucide-react";
+import Link from "next/link";
 
 // Sample data for blog posts
 const posts = [
@@ -83,8 +84,10 @@ export default function PostsPage() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Posts</h1>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> New Post
+        <Button asChild>
+          <Link href="./posts/new">
+            <Plus className="mr-2 h-4 w-4" /> New Post
+          </Link>
         </Button>
       </div>
       <div className="mb-4 flex justify-between items-center">

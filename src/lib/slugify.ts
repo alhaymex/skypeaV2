@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { blogs } from "@/db/schema";
+import { blogs, posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 function createSlug(text: string) {
@@ -28,6 +28,27 @@ export async function slugify(name: string) {
       .limit(1);
 
     if (!existingBlog.length) {
+      return uniqueSlug;
+    }
+
+    counter++;
+    uniqueSlug = `${slug}-${counter}`;
+  }
+}
+
+export async function slugifyPost(name: string) {
+  const slug = createSlug(name);
+  let counter = 0;
+  let uniqueSlug = slug;
+
+  while (true) {
+    const existingPost = await db
+      .select()
+      .from(posts)
+      .where(eq(blogs.slug, uniqueSlug))
+      .limit(1);
+
+    if (!existingPost.length) {
       return uniqueSlug;
     }
 

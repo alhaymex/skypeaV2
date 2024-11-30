@@ -20,4 +20,44 @@ export const blogSchema = z.object({
   }),
 });
 
+export const BlogPostSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(100, "Title must be 100 characters or less"),
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .max(100, "Slug must be 100 characters or less"),
+  description: z
+    .string()
+    .max(500, "Description must be 500 characters or less")
+    .optional(),
+  content: z.string().min(1, "Content is required"),
+  publishOption: z.enum(["draft", "published", "scheduled"]),
+  scheduledTime: z.string().optional(),
+  isDistributed: z.boolean().default(false),
+  blogSlug: z.string().min(1, "Blog slug is required"),
+});
+
+export const blogFormSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(100, "Title must be 100 characters or less"),
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .max(100, "Slug must be 100 characters or less"),
+  description: z
+    .string()
+    .max(500, "Description must be 500 characters or less")
+    .optional(),
+  content: z.string().min(1, "Content is required"),
+  publishOption: z.enum(["draft", "published", "scheduled"]),
+  scheduledTime: z.string().optional(),
+  isDistributed: z.boolean().default(false),
+});
+
+export type BlogPostSchema = z.infer<typeof BlogPostSchema>;
 export type blogSchema = z.infer<typeof blogSchema>;

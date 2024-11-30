@@ -42,14 +42,14 @@ export default async function DashboardSidebar({
       icon: Home,
     },
     {
-      title: "Posts",
-      url: `/projects/${slug}/posts`,
-      icon: FileText,
-    },
-    {
       title: "Builder",
       url: `/projects/${slug}/builder`,
       icon: PenTool,
+    },
+    {
+      title: "Posts",
+      url: `/projects/${slug}/posts`,
+      icon: FileText,
     },
     {
       title: "Subscribers",
