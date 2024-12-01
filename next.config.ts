@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   async rewrites() {
-    const ROOT_DOMAIN = process.env.ROOT_DOMAIN || "yourdomain.com";
+    const ROOT_DOMAIN = process.env.ROOT_DOMAIN || "skypea.net";
     return [
       {
         source: "/:path*",
