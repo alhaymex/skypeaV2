@@ -86,6 +86,28 @@ export const getBlogBySlug = async (slug: string) => {
   return { success: true, data: blog[0] };
 };
 
+export const getBlog = async (slug: string) => {
+  try {
+    const blog = await db
+      .select()
+      .from(blogs)
+      .where(eq(blogs.slug, slug))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!blog) {
+      console.log("Blog not found for slug:", slug); // Add this line for debugging
+      return { success: false, message: "Blog not found" };
+    }
+
+    console.log("Found blog:", blog); // Add this line for debugging
+    return { success: true, data: blog };
+  } catch (error) {
+    console.error("Error fetching blog:", error);
+    return { success: false, message: "Error fetching blog" };
+  }
+};
+
 export const addBlogPage = async (
   blogSlug: string,
   pageName: string,

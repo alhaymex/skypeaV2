@@ -1,4 +1,4 @@
-import { getBlogBySlug } from "@/actions/blogs-actions";
+import { getBlog } from "@/actions/blogs-actions";
 
 export default async function BlogPage({
   params,
@@ -8,7 +8,7 @@ export default async function BlogPage({
   const blogSlug = (await params).blogSlug;
   console.log("Rendering blog page for slug:", blogSlug);
 
-  const blogResult = await getBlogBySlug(blogSlug);
+  const blogResult = await getBlog(blogSlug);
 
   if (!blogResult.success) {
     console.log("Blog not found for slug:", blogSlug);
