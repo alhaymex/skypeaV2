@@ -9,21 +9,6 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  async rewrites() {
-    const ROOT_DOMAIN = process.env.ROOT_DOMAIN || "skypea.net";
-    return [
-      {
-        source: "/:path*",
-        has: [
-          {
-            type: "host",
-            value: `(?<subdomain>[^.]+).${ROOT_DOMAIN}`,
-          },
-        ],
-        destination: "/app/:subdomain/:path*",
-      },
-    ];
-  },
 };
 
 export default nextConfig;
