@@ -3,10 +3,10 @@ import { getBlogBySlug } from "@/actions/blogs-actions";
 export default async function BlogPage({
   params,
 }: {
-  params: { blogSlug: string };
+  params: Promise<{ blogSlug: string }>;
 }) {
-  const { blogSlug } = params;
-  console.log("Accessed blogSlug:", blogSlug); // Add this line
+  const blogSlug = (await params).blogSlug;
+  console.log("Accessed blogSlug:", blogSlug);
 
   const blogResult = await getBlogBySlug(blogSlug);
 
