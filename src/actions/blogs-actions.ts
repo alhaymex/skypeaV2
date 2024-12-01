@@ -9,6 +9,7 @@ import getSession from "@/lib/getSession";
 import { slugify } from "@/lib/slugify";
 import { and, asc, desc, eq, gt, sql } from "drizzle-orm";
 import { ComponentData } from "@/types/types";
+import { createSubdomain } from "@/lib/vercel";
 
 export const getBlogs = async () => {
   const session = await getSession();
@@ -26,6 +27,15 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
 
     const userId = session.user.id;
     const slug = await slugify(data.name);
+
+    // Create the subdomain
+    let subdomain;
+    try {
+      subdomain = await createSubdomain(slug);
+    } catch (subdomainError) {
+      console.error("Error creating subdomain:", subdomainError);
+      return { success: false, message: "Failed to create subdomain" };
+    }
 
     const blog = { ...data, slug, userId };
 
@@ -117,6 +127,56 @@ export const addBlogPage = async (
   } catch (error) {
     console.error("Error adding blog page:", error);
     return { success: false, error: "Failed to add blog page" };
+  }
+};
+
+export const deleteBlogPage = async (blogSlug: string, pageId: string) => {
+  try {
+    const blog = await db
+      .select()
+      .from(blogs)
+      .where(eq(blogs.slug, blogSlug))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!blog) {
+      throw new Error("Blog not found");
+    }
+
+    const pageToDelete = await db
+      .select()
+      .from(blogPages)
+      .where(and(eq(blogPages.id, pageId), eq(blogPages.blogId, blog.id)))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    if (!pageToDelete) {
+      throw new Error("Page not found");
+    }
+
+    // Delete all components associated with the page
+    await db.delete(blogComponents).where(eq(blogComponents.pageId, pageId));
+
+    // Delete the page
+    await db.delete(blogPages).where(eq(blogPages.id, pageId));
+
+    // Update the order of remaining pages
+    await db
+      .update(blogPages)
+      .set({
+        order: sql`${blogPages.order} - 1`,
+      })
+      .where(
+        and(
+          eq(blogPages.blogId, blog.id),
+          gt(blogPages.order, pageToDelete.order)
+        )
+      );
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting blog page:", error);
+    return { success: false, error: "Failed to delete blog page" };
   }
 };
 
