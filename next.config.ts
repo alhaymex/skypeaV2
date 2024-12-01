@@ -10,13 +10,14 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   async rewrites() {
+    const ROOT_DOMAIN = process.env.ROOT_DOMAIN || "yourdomain.com";
     return [
       {
         source: "/:path*",
         has: [
           {
             type: "host",
-            value: "(?<subdomain>[^.]+).yourdomain.com",
+            value: `(?<subdomain>[^.]+).${ROOT_DOMAIN}`,
           },
         ],
         destination: "/app/:subdomain/:path*",
