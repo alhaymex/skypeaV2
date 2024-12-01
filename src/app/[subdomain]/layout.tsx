@@ -1,12 +1,7 @@
-import { useRouter } from "next/router";
+import React from "react";
 
-export default function SubdomainPage() {
-  const router = useRouter();
-  const { subdomain } = router.query;
+const layout = () => {
+  return <div>layout</div>;
+};
 
-  return (
-    <div>
-      <h1>Welcome to {subdomain} subdomain!</h1>
-    </div>
-  );
-}
+export default layout;

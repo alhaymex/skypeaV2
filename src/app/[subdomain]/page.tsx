@@ -1,7 +1,13 @@
-import React from "react";
+"use client";
+import { useRouter } from "next/router";
 
-const page = () => {
-  return <div>page</div>;
-};
+export default function Page() {
+  const router = useRouter();
+  const { subdomain } = router.query;
 
-export default page;
+  return (
+    <div>
+      <h1>Welcome to {subdomain} subdomain!</h1>
+    </div>
+  );
+}
