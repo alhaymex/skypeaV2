@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { addBlogPage } from "@/actions/blogs-actions";
+import { addBlogPage, deleteBlogPage } from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
 
 interface Page {
@@ -38,6 +38,7 @@ interface MainContentProps {
   };
   setPages: React.Dispatch<React.SetStateAction<Page[]>>;
   addComponent: (componentType: string) => Promise<void>;
+  deletePage: (pageId: string) => Promise<void>;
 }
 
 export function MainContent({
@@ -52,6 +53,7 @@ export function MainContent({
   pageState,
   setPages,
   addComponent,
+  deletePage,
 }: MainContentProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPageName, setNewPageName] = useState("");
@@ -87,6 +89,12 @@ export function MainContent({
     }
   };
 
+  const handleDeletePage = async (pageId: string) => {
+    if (window.confirm("Are you sure you want to delete this page?")) {
+      await deletePage(pageId);
+    }
+  };
+
   const currentPage = pages.find((page) => page.id === currentPageId);
 
   return (
@@ -117,8 +125,21 @@ export function MainContent({
         <div className="flex items-center border-b px-4">
           <TabsList>
             {pages.map((page) => (
-              <TabsTrigger key={page.id} value={page.id}>
-                {page.name}
+              <TabsTrigger
+                key={page.id}
+                value={page.id}
+                className="flex items-center group"
+              >
+                <span>{page.name}</span>
+                <span
+                  className="ml-2 p-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeletePage(page.id);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </span>
               </TabsTrigger>
             ))}
           </TabsList>
@@ -136,7 +157,7 @@ export function MainContent({
                 <Input
                   value={newPageName}
                   onChange={(e) => setNewPageName(e.target.value)}
-                  placeholder="Enter page name (the URL will be /page-name)"
+                  placeholder="Enter page name"
                 />
                 <Button onClick={addNewPage}>Add</Button>
               </div>

@@ -22,6 +22,7 @@ import {
   getBlogSettings,
   saveComponent,
   updateBlogSettings,
+  deleteBlogPage,
 } from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -416,6 +417,32 @@ export default function BlogBuilder() {
     }
   };
 
+  const deletePage = async (pageId: string) => {
+    try {
+      const result = await deleteBlogPage(slug, pageId);
+      if (result.success) {
+        setPages((prevPages) => prevPages.filter((page) => page.id !== pageId));
+        if (currentPageId === pageId) {
+          const newCurrentPage = pages.find((page) => page.id !== pageId);
+          setCurrentPageId(newCurrentPage?.id || null);
+        }
+        toast({
+          title: "Success",
+          description: "Page deleted successfully.",
+        });
+      } else {
+        throw new Error(result.error || "Failed to delete page");
+      }
+    } catch (error) {
+      console.error("Failed to delete page:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete page. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -438,6 +465,7 @@ export default function BlogBuilder() {
         pageState={pageState}
         setPages={setPages}
         addComponent={addComponent}
+        deletePage={deletePage}
       />
       <Sidebar
         navbarState={navbarState}

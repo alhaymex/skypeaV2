@@ -9,6 +9,20 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "(?<subdomain>[^.]+).yourdomain.com",
+          },
+        ],
+        destination: "/app/:subdomain/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
