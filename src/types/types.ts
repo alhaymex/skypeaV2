@@ -60,3 +60,16 @@ export interface FooterColumn {
     url: string;
   }>;
 }
+
+export type BlogPageWithComponents = {
+  id: string;
+  name: string;
+  slug: string;
+  order: number;
+  components: {
+    id: string;
+    type: string;
+    order: number;
+    data: unknown;
+  }[];
+};

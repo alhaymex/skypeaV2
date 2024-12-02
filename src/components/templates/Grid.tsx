@@ -28,7 +28,7 @@ interface GridProps {
 }
 
 export function Grid({ items, columns, template }: GridProps) {
-  const gridClassName = `grid gap-4 ${
+  const gridClassName = `grid gap-4 p-6 ${
     columns === 1
       ? "grid-cols-1"
       : columns === 2

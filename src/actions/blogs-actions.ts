@@ -8,8 +8,9 @@ import { z } from "zod";
 import getSession from "@/lib/getSession";
 import { slugify } from "@/lib/slugify";
 import { and, asc, desc, eq, gt, sql } from "drizzle-orm";
-import { ComponentData } from "@/types/types";
+import { BlogPageWithComponents, ComponentData } from "@/types/types";
 import { createSubdomain } from "@/lib/vercel";
+import { pages } from "next/dist/build/templates/app-page";
 
 export const getBlogs = async () => {
   const session = await getSession();
@@ -28,14 +29,14 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
     const userId = session.user.id;
     const slug = await slugify(data.name);
 
-    // Create the subdomain
-    let subdomain;
-    try {
-      subdomain = await createSubdomain(slug);
-    } catch (subdomainError) {
-      console.error("Error creating subdomain:", subdomainError);
-      return { success: false, message: "Failed to create subdomain" };
-    }
+    // // Create the subdomain
+    // let subdomain;
+    // try {
+    //   subdomain = await createSubdomain(slug);
+    // } catch (subdomainError) {
+    //   console.error("Error creating subdomain:", subdomainError);
+    //   return { success: false, message: "Failed to create subdomain" };
+    // }
 
     const blog = { ...data, slug, userId };
 
@@ -68,6 +69,73 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
 
     console.error("Error creating blog:", err);
     return { success: false, message: "Failed to create blog" };
+  }
+};
+
+export const getBlogForDisplay = async (slug: string) => {
+  try {
+    const rawBlogData = await db
+      .select({
+        blogId: blogs.id,
+        blogName: blogs.name,
+        blogSlug: blogs.slug,
+        pageId: blogPages.id,
+        pageName: blogPages.name,
+        pageSlug: blogPages.slug,
+        pageOrder: blogPages.order,
+        componentId: blogComponents.id,
+        componentType: blogComponents.type,
+        componentOrder: blogComponents.order,
+        componentData: blogComponents.data,
+      })
+      .from(blogs)
+      .leftJoin(blogPages, eq(blogs.id, blogPages.blogId))
+      .leftJoin(blogComponents, eq(blogPages.id, blogComponents.pageId))
+      .where(eq(blogs.slug, slug))
+      .orderBy(asc(blogPages.order), asc(blogComponents.order));
+
+    if (rawBlogData.length === 0) {
+      return { success: false, message: "Blog not found" };
+    }
+
+    const pagesMap = new Map<string, BlogPageWithComponents>();
+
+    rawBlogData.forEach((row) => {
+      if (row.pageId && !pagesMap.has(row.pageId)) {
+        pagesMap.set(row.pageId, {
+          id: row.pageId!,
+          name: row.pageName!,
+          slug: row.pageSlug!,
+          order: row.pageOrder!,
+          components: [],
+        });
+      }
+
+      if (row.componentId) {
+        const page = pagesMap.get(row.pageId!);
+        if (page) {
+          page.components.push({
+            id: row.componentId!,
+            type: row.componentType!,
+            order: row.componentOrder!,
+            data: row.componentData!,
+          });
+        }
+      }
+    });
+
+    return {
+      success: true,
+      data: {
+        id: rawBlogData[0].blogId!,
+        name: rawBlogData[0].blogName!,
+        slug: rawBlogData[0].blogSlug!,
+        pages: Array.from(pagesMap.values()),
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching blog:", error);
+    return { success: false, message: "Failed to fetch blog" };
   }
 };
 
