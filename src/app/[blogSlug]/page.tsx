@@ -33,7 +33,6 @@ function renderComponent(component: ComponentData) {
       return <Grid key={component.id} {...component.data} />;
     case "footer":
       return <Footer key={component.id} {...component.data} />;
-
     default:
       return (
         <div key={component.id}>
@@ -44,11 +43,13 @@ function renderComponent(component: ComponentData) {
   }
 }
 
-export default async function BlogPage({
-  params,
-}: {
-  params: { blogSlug: string };
-}) {
+interface BlogPageProps {
+  params: {
+    blogSlug: string;
+  };
+}
+
+export default async function BlogPage({ params }: BlogPageProps) {
   const { blogSlug } = params;
   console.log("Rendering blog page for slug:", blogSlug);
 
