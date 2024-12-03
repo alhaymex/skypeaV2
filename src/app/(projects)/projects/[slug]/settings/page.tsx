@@ -23,13 +23,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-// import { AlertCircle } from "lucide-react";
-// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ImagePlus } from "lucide-react";
+import UploadBtn from "@/components/upload-buttons/UploadBtn";
+import FaviconUploadButton from "@/components/upload-buttons/FaviconUploadButton";
 
 export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [marketingEmails, setMarketingEmails] = useState(false);
-  const [isPremiumUser, setIsPremiumUser] = useState(false); // This would typically come from your auth system
+  const [isPremiumUser, setIsPremiumUser] = useState(false);
+  const [favicon, setFavicon] = useState<File | null>(null);
+  const [openGraph, setOpenGraph] = useState<File | null>(null);
+
+  const handleFileUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setFile: (file: File | null) => void
+  ) => {
+    const file = event.target.files?.[0] || null;
+    setFile(file);
+  };
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -39,7 +50,6 @@ export default function SettingsPage() {
       <Tabs defaultValue="general" className="space-y-4">
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
         </TabsList>
         <TabsContent value="general" className="space-y-4">
@@ -47,7 +57,7 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>General Settings</CardTitle>
               <CardDescription>
-                Manage your blog's general settings and preferences.
+                {`Manage your blog's general settings and preferences.`}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -105,75 +115,40 @@ export default function SettingsPage() {
                   </p>
                 )}
               </div>
+              <div className="space-y-1">
+                <Label htmlFor="favicon-upload">Upload favicon icon</Label>
+                <div className="flex items-center space-x-2">
+                  <FaviconUploadButton />
+
+                  {favicon && (
+                    <span className="text-sm text-muted-foreground">
+                      {favicon.name}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Recommended size: 32x32px. Supported formats: ICO, PNG.
+                </p>
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="opengraph-upload">OpenGraph Image</Label>
+                <div className="flex items-center space-x-2">
+                  <UploadBtn />
+                  {openGraph && (
+                    <span className="text-sm text-muted-foreground">
+                      {openGraph.name}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Recommended size: 1200x630px. This image will be displayed
+                  when sharing your blog on social media.
+                </p>
+              </div>
             </CardContent>
             <CardFooter>
               <Button>Save Changes</Button>
             </CardFooter>
-          </Card>
-        </TabsContent>
-        <TabsContent value="account" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Information</CardTitle>
-              <CardDescription>
-                Update your account details and password.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="display-name">Display Name</Label>
-                <Input id="display-name" placeholder="John Doe" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="email">Email Address</Label>
-                <Input id="email" type="email" placeholder="john@example.com" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="current-password">Current Password</Label>
-                <Input id="current-password" type="password" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new-password">New Password</Label>
-                <Input id="new-password" type="password" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="confirm-password">Confirm New Password</Label>
-                <Input id="confirm-password" type="password" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Update Account</Button>
-            </CardFooter>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Type</CardTitle>
-              <CardDescription>
-                Manage your account subscription.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between space-x-2">
-                <div>
-                  <p className="font-medium">Current Plan</p>
-                  <p className="text-sm text-muted-foreground">
-                    {isPremiumUser ? "Premium" : "Free"}
-                  </p>
-                </div>
-                {isPremiumUser ? (
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsPremiumUser(false)}
-                  >
-                    Downgrade to Free
-                  </Button>
-                ) : (
-                  <Button onClick={() => setIsPremiumUser(true)}>
-                    Upgrade to Premium
-                  </Button>
-                )}
-              </div>
-            </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="notifications" className="space-y-4">
