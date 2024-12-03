@@ -88,6 +88,8 @@ export const blogs = pgTable("blog", {
   description: text("description"),
   slug: text("slug").notNull().unique(),
   icon: text("icon"),
+  favicon: text("favicon"),
+  openGraph: text("openGraph"),
   isLive: boolean("isLive").default(false),
   isPinned: boolean("isPinned").default(false),
   backgroundColor: text("backgroundColor").notNull().default("#ffffff"),

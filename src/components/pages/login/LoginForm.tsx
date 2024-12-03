@@ -53,13 +53,19 @@ export default function LoginPage() {
               </span>
             </div>
           </div>
-          <form>
+          <form
+            action={async (formData) => {
+              "use server";
+              await signIn("resend", formData);
+            }}
+          >
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                name="email"
+                placeholder="mail@example.com"
                 required
               />
             </div>
