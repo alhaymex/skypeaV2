@@ -1,22 +1,22 @@
 "use client";
 
-import { uploadFavicon } from "@/actions/uploads-actions";
+import { uploadOpenGraph } from "@/actions/uploads-actions";
 import { useToast } from "@/hooks/use-toast";
 import { UploadButton } from "@/utils/uploadthing";
 
-export default function FaviconUploadButton() {
+export default function OpenGraphUploadButton() {
   const { toast } = useToast();
 
   return (
     <UploadButton
       endpoint="imageUploader"
-      className="ut-label:text-lg ut-button:bg-slate-800 ut-button:ring-primary ut-readying:bg-slate-600"
+      className="ut-label:text-lg ut-button:bg-slate-800 ut-button:ring-primary"
       onClientUploadComplete={(res) => {
-        uploadFavicon(res[0].url, "skypea-1");
+        uploadOpenGraph(res[0].url, "skypea-1");
 
         toast({
           title: "Success",
-          description: "Favicon uploaded successfully!",
+          description: "OpenGraph image uploaded successfully!",
         });
       }}
       onUploadError={(error: Error) => {

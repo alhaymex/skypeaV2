@@ -23,9 +23,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ImagePlus } from "lucide-react";
-import UploadBtn from "@/components/upload-buttons/UploadBtn";
 import FaviconUploadButton from "@/components/upload-buttons/FaviconUploadButton";
+import OpenGraphUploadButton from "@/components/upload-buttons/OpenGraphUploadButton";
 
 export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -133,7 +132,7 @@ export default function SettingsPage() {
               <div className="space-y-1">
                 <Label htmlFor="opengraph-upload">OpenGraph Image</Label>
                 <div className="flex items-center space-x-2">
-                  <UploadBtn />
+                  <OpenGraphUploadButton />
                   {openGraph && (
                     <span className="text-sm text-muted-foreground">
                       {openGraph.name}
