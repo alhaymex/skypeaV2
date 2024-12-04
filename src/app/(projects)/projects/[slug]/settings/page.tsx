@@ -84,6 +84,7 @@ export default function SettingsPage() {
       <Tabs defaultValue="general" className="space-y-4">
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="branding">Branding</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
         </TabsList>
         <TabsContent value="general" className="space-y-4">
@@ -137,13 +138,23 @@ export default function SettingsPage() {
                     disabled
                   />
                 </div>
-
                 <p className="text-sm text-muted-foreground">
                   Upgrade to premium to use a custom domain.
                 </p>
               </div>
               <Button>Save Changes</Button>
-
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="branding" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Branding</CardTitle>
+              <CardDescription>
+                {`Manage your blog's visual identity.`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="space-y-1">
                 <Label htmlFor="favicon-upload">Upload favicon icon</Label>
                 <div className="flex items-center space-x-2">
@@ -153,9 +164,6 @@ export default function SettingsPage() {
                     blogName={blogSettings?.name as string}
                   />
                 </div>
-                {/* <p className="text-sm text-muted-foreground">
-                  Recommended size: 32x32px. Supported formats: ICO, PNG.
-                </p> */}
               </div>
               <div className="space-y-1">
                 <Label htmlFor="opengraph-upload">OpenGraph Image</Label>
@@ -167,10 +175,6 @@ export default function SettingsPage() {
                     blogDescription={blogSettings?.description as string}
                   />
                 </div>
-                {/* <p className="text-sm text-muted-foreground">
-                  Recommended size: 1200x630px. This image will be displayed
-                  when sharing your blog on social media.
-                </p> */}
               </div>
             </CardContent>
           </Card>

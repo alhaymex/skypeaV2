@@ -1,9 +1,19 @@
 "use client";
+
+import { useState } from "react";
+import Image from "next/image";
 import { uploadFavicon } from "@/actions/uploads-actions";
 import { useToast } from "@/hooks/use-toast";
 import { UploadButton } from "@/utils/uploadthing";
-import Image from "next/image";
-import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type Props = {
   blogSlug: string;
@@ -16,7 +26,9 @@ export default function FaviconUploadButton({
   blogFavicon,
   blogName,
 }: Props) {
-  const [image, setImage] = useState<string>(blogFavicon || "/fd");
+  const [image, setImage] = useState<string>(
+    blogFavicon || "/default-favicon.ico"
+  );
   const { toast } = useToast();
 
   const handleUploadComplete = async (res: { url: string }[]) => {
@@ -37,24 +49,42 @@ export default function FaviconUploadButton({
   };
 
   return (
-    <div className="flex items-center gap-6">
-      <UploadButton
-        endpoint="imageUploader"
-        className="ut-label:text-lg ut-button:bg-slate-800 ut-button:ring-primary ut-readying:bg-slate-600"
-        onClientUploadComplete={handleUploadComplete}
-        onUploadError={(error: Error) => {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
-        }}
-      />
-      {image && (
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex flex-col w-80">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Upload className="w-4 h-4 mr-2" />
+              Upload New Favicon
+            </Button>
+          </DialogTrigger>
+          <DialogContent title="Upload Favicon">
+            <DialogTitle>Upload favicon ico</DialogTitle>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground text-center">
+                Upload a new favicon for your blog. Recommended size: 32x32
+                pixels. Supported formats: ICO, PNG.
+              </p>
+              <UploadButton
+                endpoint="imageUploader"
+                className="ut-label:text-lg ut-button:bg-primary ut-button:text-primary-foreground ut-button:hover:bg-primary/90 ut-readying:bg-primary/70"
+                onClientUploadComplete={handleUploadComplete}
+                onUploadError={(error: Error) => {
+                  toast({
+                    title: "Error",
+                    description: error.message,
+                    variant: "destructive",
+                  });
+                }}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+      <Card className="overflow-hidden">
+        <CardContent className="p-0">
+          <div className="flex flex-col w-full">
             <div className="flex items-center gap-2 bg-[#dee1e6] rounded-t-lg p-2">
-              {/* Window control dots */}
               {["#ff5f57", "#febc2e", "#28c840"].map((color) => (
                 <div
                   key={color}
@@ -70,7 +100,7 @@ export default function FaviconUploadButton({
                   alt="Favicon Preview"
                   width={16}
                   height={16}
-                  className="mr-2 rounded-full"
+                  className="mr-2 rounded-sm"
                 />
                 <span className="text-sm text-gray-800 truncate">
                   {blogName || "Your Website"}
@@ -80,8 +110,8 @@ export default function FaviconUploadButton({
               <div className="flex-grow"></div>
             </div>
           </div>
-        </div>
-      )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
