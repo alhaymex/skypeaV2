@@ -29,6 +29,7 @@ import { getBlogSettings } from "@/actions/settings-actions";
 import { Loader } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import GeneralSettings from "@/components/pages/projects/settings/General";
+import { useParams } from "next/navigation";
 
 type BlogSettings = {
   name: string;
@@ -41,18 +42,20 @@ type BlogSettings = {
 export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [marketingEmails, setMarketingEmails] = useState(false);
-  const [isPremiumUser, setIsPremiumUser] = useState(false);
   const [blogSettings, setBlogSettings] = useState<BlogSettings | null>();
   const [loading, setLoading] = useState(true);
 
+  const params = useParams();
+  const slug = params.slug as string;
+
   useEffect(() => {
     const getSettings = async () => {
-      const settings = await getBlogSettings("skypea-1");
+      const settings = await getBlogSettings(slug);
 
       if (settings.blog && settings.blog.length > 0) {
         setBlogSettings(settings.blog[0]);
         setLoading(false);
-        console.log(settings.blog[0]);
+        // console.log(settings.blog[0]);
       } else {
         setBlogSettings(null);
       }
