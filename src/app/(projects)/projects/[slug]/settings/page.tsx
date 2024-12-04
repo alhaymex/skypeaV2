@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,21 +25,56 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import FaviconUploadButton from "@/components/upload-buttons/FaviconUploadButton";
 import OpenGraphUploadButton from "@/components/upload-buttons/OpenGraphUploadButton";
+import { getBlogSettings } from "@/actions/uploads-actions";
+import { Loader } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+type BlogSettings = {
+  name: string;
+  description: string | null;
+  slug: string;
+  favicon: string | null;
+  openGraph: string | null;
+};
 
 export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [marketingEmails, setMarketingEmails] = useState(false);
   const [isPremiumUser, setIsPremiumUser] = useState(false);
-  const [favicon, setFavicon] = useState<File | null>(null);
-  const [openGraph, setOpenGraph] = useState<File | null>(null);
+  const [blogSettings, setBlogSettings] = useState<BlogSettings | null>();
+  const [loading, setLoading] = useState(true);
 
-  const handleFileUpload = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    setFile: (file: File | null) => void
-  ) => {
-    const file = event.target.files?.[0] || null;
-    setFile(file);
-  };
+  useEffect(() => {
+    const getSettings = async () => {
+      const settings = await getBlogSettings("skypea-1");
+
+      if (settings.blog && settings.blog.length > 0) {
+        setBlogSettings(settings.blog[0]);
+        setLoading(false);
+        console.log(settings.blog[0]);
+      } else {
+        setBlogSettings(null);
+      }
+    };
+
+    getSettings();
+  }, []);
+
+  if (loading)
+    return (
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <div className="flex items-center justify-between space-y-2">
+          <Skeleton className="h-8 w-[200px]" />
+        </div>
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-[300px]" />
+          <div className="space-y-4">
+            <Skeleton className="h-[300px] w-full" />
+            <Skeleton className="h-[200px] w-full" />
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -62,7 +97,12 @@ export default function SettingsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-1">
                 <Label htmlFor="blog-name">Blog Name</Label>
-                <Input id="blog-name" placeholder="My Awesome Blog" />
+                <Input
+                  id="blog-name"
+                  placeholder="My Awesome Blog"
+                  value={blogSettings?.name && blogSettings.name}
+                  disabled
+                />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="blog-description">Blog Description</Label>
@@ -88,66 +128,51 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="custom-domain">Custom Domain</Label>
-                  {isPremiumUser && <Badge variant="secondary">Premium</Badge>}
+                  <Label htmlFor="custom-domain">Domain</Label>
                 </div>
                 <div className="flex space-x-2">
                   <Input
                     id="custom-domain"
-                    placeholder={isPremiumUser ? "yourdomain.com" : "subdomain"}
-                    disabled={!isPremiumUser}
+                    placeholder={blogSettings?.slug + ".skypea.net"}
+                    disabled
                   />
-                  {isPremiumUser ? (
-                    <Button>Verify</Button>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsPremiumUser(true)}
-                    >
-                      Upgrade
-                    </Button>
-                  )}
                 </div>
-                {!isPremiumUser && (
-                  <p className="text-sm text-muted-foreground">
-                    Upgrade to premium to use a custom domain.
-                  </p>
-                )}
+
+                <p className="text-sm text-muted-foreground">
+                  Upgrade to premium to use a custom domain.
+                </p>
               </div>
+              <Button>Save Changes</Button>
+
               <div className="space-y-1">
                 <Label htmlFor="favicon-upload">Upload favicon icon</Label>
                 <div className="flex items-center space-x-2">
-                  <FaviconUploadButton />
-
-                  {favicon && (
-                    <span className="text-sm text-muted-foreground">
-                      {favicon.name}
-                    </span>
-                  )}
+                  <FaviconUploadButton
+                    blogSlug={blogSettings?.slug as string}
+                    blogFavicon={blogSettings?.favicon as string}
+                    blogName={blogSettings?.name as string}
+                  />
                 </div>
-                <p className="text-sm text-muted-foreground">
+                {/* <p className="text-sm text-muted-foreground">
                   Recommended size: 32x32px. Supported formats: ICO, PNG.
-                </p>
+                </p> */}
               </div>
               <div className="space-y-1">
                 <Label htmlFor="opengraph-upload">OpenGraph Image</Label>
                 <div className="flex items-center space-x-2">
-                  <OpenGraphUploadButton />
-                  {openGraph && (
-                    <span className="text-sm text-muted-foreground">
-                      {openGraph.name}
-                    </span>
-                  )}
+                  <OpenGraphUploadButton
+                    blogSlug={blogSettings?.slug as string}
+                    blogOpenGraph={blogSettings?.openGraph as string}
+                    blogName={blogSettings?.name as string}
+                    blogDescription={blogSettings?.description as string}
+                  />
                 </div>
-                <p className="text-sm text-muted-foreground">
+                {/* <p className="text-sm text-muted-foreground">
                   Recommended size: 1200x630px. This image will be displayed
                   when sharing your blog on social media.
-                </p>
+                </p> */}
               </div>
             </CardContent>
-            <CardFooter>
-              <Button>Save Changes</Button>
-            </CardFooter>
           </Card>
         </TabsContent>
         <TabsContent value="notifications" className="space-y-4">
