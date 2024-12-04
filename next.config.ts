@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["media.giphy.com", "lh3.googleusercontent.com"],
+    domains: ["media.giphy.com", "lh3.googleusercontent.com", "utfs.io"],
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
