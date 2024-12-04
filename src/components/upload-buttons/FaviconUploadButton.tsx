@@ -63,7 +63,7 @@ export default function FaviconUploadButton({
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground text-center">
                 Upload a new favicon for your blog. Recommended size: 32x32
-                pixels. Supported formats: ICO, PNG.
+                pixels. Supported formats: ICO
               </p>
               <UploadButton
                 endpoint="imageUploader"
