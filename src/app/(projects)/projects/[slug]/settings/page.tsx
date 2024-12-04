@@ -25,9 +25,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import FaviconUploadButton from "@/components/upload-buttons/FaviconUploadButton";
 import OpenGraphUploadButton from "@/components/upload-buttons/OpenGraphUploadButton";
-import { getBlogSettings } from "@/actions/uploads-actions";
+import { getBlogSettings } from "@/actions/settings-actions";
 import { Loader } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import GeneralSettings from "@/components/pages/projects/settings/General";
+import { useParams } from "next/navigation";
 
 type BlogSettings = {
   name: string;
@@ -40,18 +42,20 @@ type BlogSettings = {
 export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [marketingEmails, setMarketingEmails] = useState(false);
-  const [isPremiumUser, setIsPremiumUser] = useState(false);
   const [blogSettings, setBlogSettings] = useState<BlogSettings | null>();
   const [loading, setLoading] = useState(true);
 
+  const params = useParams();
+  const slug = params.slug as string;
+
   useEffect(() => {
     const getSettings = async () => {
-      const settings = await getBlogSettings("skypea-1");
+      const settings = await getBlogSettings(slug);
 
       if (settings.blog && settings.blog.length > 0) {
         setBlogSettings(settings.blog[0]);
         setLoading(false);
-        console.log(settings.blog[0]);
+        // console.log(settings.blog[0]);
       } else {
         setBlogSettings(null);
       }
@@ -79,71 +83,32 @@ export default function SettingsPage() {
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
+        <h2 className="text-3xl font-bold tracking-tight">Blog Settings</h2>
       </div>
       <Tabs defaultValue="general" className="space-y-4">
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="branding">Branding</TabsTrigger>
+          {/* <TabsTrigger value="notifications">Notifications</TabsTrigger> */}
         </TabsList>
         <TabsContent value="general" className="space-y-4">
+          <GeneralSettings
+            blogName={blogSettings?.name as string}
+            blogDescription={blogSettings?.description as string}
+            timeZone={"UTC"}
+            domain={blogSettings?.slug + ".skypea.net"}
+            blogSlug={blogSettings?.slug as string}
+          />
+        </TabsContent>
+        <TabsContent value="branding" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>General Settings</CardTitle>
+              <CardTitle>Branding</CardTitle>
               <CardDescription>
-                {`Manage your blog's general settings and preferences.`}
+                {`Manage your blog's visual identity.`}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-1">
-                <Label htmlFor="blog-name">Blog Name</Label>
-                <Input
-                  id="blog-name"
-                  placeholder="My Awesome Blog"
-                  value={blogSettings?.name && blogSettings.name}
-                  disabled
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="blog-description">Blog Description</Label>
-                <Textarea
-                  id="blog-description"
-                  placeholder="A blog about awesome things"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="time-zone">Time Zone</Label>
-                <Select defaultValue="utc">
-                  <SelectTrigger id="time-zone">
-                    <SelectValue placeholder="Select a timezone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="utc">UTC</SelectItem>
-                    <SelectItem value="est">Eastern Time (ET)</SelectItem>
-                    <SelectItem value="cst">Central Time (CT)</SelectItem>
-                    <SelectItem value="mst">Mountain Time (MT)</SelectItem>
-                    <SelectItem value="pst">Pacific Time (PT)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="custom-domain">Domain</Label>
-                </div>
-                <div className="flex space-x-2">
-                  <Input
-                    id="custom-domain"
-                    placeholder={blogSettings?.slug + ".skypea.net"}
-                    disabled
-                  />
-                </div>
-
-                <p className="text-sm text-muted-foreground">
-                  Upgrade to premium to use a custom domain.
-                </p>
-              </div>
-              <Button>Save Changes</Button>
-
               <div className="space-y-1">
                 <Label htmlFor="favicon-upload">Upload favicon icon</Label>
                 <div className="flex items-center space-x-2">
@@ -153,9 +118,6 @@ export default function SettingsPage() {
                     blogName={blogSettings?.name as string}
                   />
                 </div>
-                {/* <p className="text-sm text-muted-foreground">
-                  Recommended size: 32x32px. Supported formats: ICO, PNG.
-                </p> */}
               </div>
               <div className="space-y-1">
                 <Label htmlFor="opengraph-upload">OpenGraph Image</Label>
@@ -167,10 +129,6 @@ export default function SettingsPage() {
                     blogDescription={blogSettings?.description as string}
                   />
                 </div>
-                {/* <p className="text-sm text-muted-foreground">
-                  Recommended size: 1200x630px. This image will be displayed
-                  when sharing your blog on social media.
-                </p> */}
               </div>
             </CardContent>
           </Card>
