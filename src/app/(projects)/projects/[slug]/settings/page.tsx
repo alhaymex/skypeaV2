@@ -62,7 +62,7 @@ export default function SettingsPage() {
     };
 
     getSettings();
-  }, []);
+  }, [slug]);
 
   if (loading)
     return (
