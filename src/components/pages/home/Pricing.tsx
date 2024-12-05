@@ -18,45 +18,34 @@ const plans = [
   {
     name: "Free",
     price: { monthly: 0, annually: 0 },
-    description: "Perfect for getting started with blogging and newsletters",
+    description:
+      "Perfect for individuals starting with basic websites or blogs.",
     features: [
-      "Up to 5 blog posts per month",
-      "Up to 1,000 newsletter subscribers",
-      "Basic analytics",
-      "Standard themes",
+      "Up to 3 pages per site",
+      "Access to standard components",
+      "Basic templates",
       "Community support",
+      "1,000 monthly visits",
+      "Basic SEO tools",
     ],
     cta: "Get Started",
   },
   {
-    name: "Premium",
-    price: { monthly: 12, annually: 120 },
-    description: "Ideal for growing creators and small businesses",
-    features: [
-      "Unlimited blog posts",
-      "Up to 10,000 newsletter subscribers",
-      "Advanced analytics",
-      "Premium themes",
-      "Priority email support",
-      "Custom domain",
-    ],
-    cta: "Upgrade to Premium",
-  },
-  {
     name: "Pro",
-    price: { monthly: 29, annually: 290 },
-    description: "For professional creators and large organizations",
+    price: { monthly: 9.99, annually: 99.99 },
+    description:
+      "For creators and businesses ready to take their websites to the next level.",
     features: [
-      "Unlimited blog posts",
-      "Unlimited newsletter subscribers",
-      "Advanced analytics with AI insights",
-      "Custom themes",
-      "24/7 priority support",
-      "Custom domain",
-      "White-label option",
-      "API access",
+      "Unlimited pages per site",
+      "Access to all components (standard and premium)",
+      "Professional templates",
+      "Advanced analytics",
+      "Custom domain support",
+      "Unlimited monthly visits",
+      "Advanced SEO tools",
+      "Priority email support",
     ],
-    cta: "Go Pro",
+    cta: "Upgrade to Pro",
   },
 ];
 
@@ -65,8 +54,8 @@ export default function PricingSection() {
 
   return (
     <section id="pricing" className="py-20 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+        <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">
             Choose the Perfect Plan for Your Needs
           </h2>
@@ -75,11 +64,8 @@ export default function PricingSection() {
             that's right for you`}
           </p>
         </div>
-        <Tabs
-          defaultValue="monthly"
-          className="mt-8 flex flex-col items-center"
-        >
-          <TabsList>
+        <Tabs defaultValue="monthly" className="flex flex-col items-center">
+          <TabsList className="mb-8">
             <TabsTrigger
               value="monthly"
               onClick={() => setBillingPeriod("monthly")}
@@ -108,7 +94,7 @@ export default function PricingSection() {
 
 function PricingCards({ billingPeriod }: { billingPeriod: string }) {
   return (
-    <div className="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-8 md:grid-cols-2">
       {plans.map((plan, index) => (
         <motion.div
           key={plan.name}
@@ -118,23 +104,23 @@ function PricingCards({ billingPeriod }: { billingPeriod: string }) {
         >
           <Card className="flex flex-col h-full">
             <CardHeader>
-              <CardTitle>{plan.name}</CardTitle>
+              <CardTitle className="text-2xl">{plan.name}</CardTitle>
               <CardDescription>{plan.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow">
-              <div className="text-3xl font-bold mb-6">
+              <div className="text-4xl font-bold mb-6">
                 $
                 {billingPeriod === "annually"
                   ? plan.price.annually
                   : plan.price.monthly}
                 <span className="text-sm font-normal text-muted-foreground">
-                  /month
+                  /{billingPeriod === "annually" ? "year" : "month"}
                 </span>
               </div>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-center">
-                    <Check className="h-5 w-5 text-primary mr-2" />
+                    <Check className="h-5 w-5 text-primary mr-2 flex-shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -143,7 +129,7 @@ function PricingCards({ billingPeriod }: { billingPeriod: string }) {
             <CardFooter>
               <Button
                 className="w-full"
-                variant={plan.name === "Premium" ? "default" : "outline"}
+                variant={plan.name === "Pro" ? "default" : "outline"}
               >
                 {plan.cta}
               </Button>
