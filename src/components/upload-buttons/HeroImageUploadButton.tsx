@@ -11,21 +11,21 @@ import { UploadButton } from "@/utils/uploadthing";
 import { useToast } from "@/hooks/use-toast";
 
 type Props = {
-  setNavbarState: (prev: any) => void;
+  setHeroState: (prev: any) => void;
 };
 
-const NavbarLogoUploadButton = ({ setNavbarState }: Props) => {
+const HeroImageUploadButton = ({ setHeroState }: Props) => {
   const { toast } = useToast();
 
   const handleUplaodComplete = async (res: { url: string }[]) => {
     try {
-      setNavbarState((prev: any) => ({
+      setHeroState((prev: any) => ({
         ...prev,
-        logoUrl: res[0].url,
+        backgroundImage: res[0].url,
       }));
       toast({
         title: "Success",
-        description: "Logo uploaded successfully!",
+        description: "Hero image uploaded successfully!",
       });
     } catch (error) {
       toast({
@@ -45,10 +45,10 @@ const NavbarLogoUploadButton = ({ setNavbarState }: Props) => {
           </Button>
         </DialogTrigger>
         <DialogContent title="Upload Favicon">
-          <DialogTitle>Upload Logo</DialogTitle>
+          <DialogTitle>Upload Image</DialogTitle>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground text-center">
-              Upload a logo for your blog.
+              Upload an image for your hero section.
             </p>
             <UploadButton
               endpoint="imageUploader"
@@ -70,4 +70,4 @@ const NavbarLogoUploadButton = ({ setNavbarState }: Props) => {
   );
 };
 
-export default NavbarLogoUploadButton;
+export default HeroImageUploadButton;
