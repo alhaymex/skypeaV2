@@ -87,6 +87,8 @@ export const getBlogForDisplay = async (slug: string) => {
         componentType: blogComponents.type,
         componentOrder: blogComponents.order,
         componentData: blogComponents.data,
+        backgroundColor: blogs.backgroundColor,
+        fontFamily: blogs.fontFamily,
       })
       .from(blogs)
       .leftJoin(blogPages, eq(blogs.id, blogPages.blogId))
@@ -130,6 +132,8 @@ export const getBlogForDisplay = async (slug: string) => {
         id: rawBlogData[0].blogId!,
         name: rawBlogData[0].blogName!,
         slug: rawBlogData[0].blogSlug!,
+        backgroundColor: rawBlogData[0].backgroundColor!,
+        fontFamily: rawBlogData[0].fontFamily!,
         pages: Array.from(pagesMap.values()),
       },
     };

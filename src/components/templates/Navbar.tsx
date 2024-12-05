@@ -118,17 +118,19 @@ export function Navbar({
                 "absolute left-4 top-1/2 transform -translate-y-1/2"
             )}
           >
-            {logoUrl ? (
-              <Image
-                src={logoUrl}
-                alt="Logo"
-                width={32}
-                height={32}
-                className="h-8 w-auto"
-              />
-            ) : (
-              <span className="text-xl font-bold">{title}</span>
-            )}
+            <Link href="/">
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt="Logo"
+                  width={32}
+                  height={32}
+                  className="h-8 w-auto"
+                />
+              ) : (
+                <span className="text-xl font-bold">{title}</span>
+              )}
+            </Link>
           </div>
           <div
             className={cn(

@@ -18,6 +18,8 @@ interface BlogData {
   id: string;
   name: string;
   slug: string;
+  backgroundColor: string;
+  fontFamily: string;
   pages: Page[];
 }
 
@@ -62,7 +64,13 @@ export default async function BlogPage({
   const blog = blogResult.data as BlogData;
 
   return (
-    <div className="min-h-screen">
+    <div
+      className={`min-h-screen`}
+      style={{
+        backgroundColor: blog.backgroundColor,
+        fontFamily: blog.fontFamily,
+      }}
+    >
       {blog.pages.map((page) => (
         <section key={page.id} id={page.slug}>
           {page.components.map((component) => renderComponent(component))}
