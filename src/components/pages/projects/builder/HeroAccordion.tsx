@@ -6,6 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import HeroImageUploadButton from "@/components/upload-buttons/HeroImageUploadButton";
 import { ImageIcon } from "lucide-react";
 
 interface HeroAccordionProps {
@@ -63,18 +64,7 @@ export function HeroAccordion({
                   }))
                 }
               />
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() =>
-                  setHeroState((prev: any) => ({
-                    ...prev,
-                    backgroundImage: "/placeholder.svg?height=1080&width=1920",
-                  }))
-                }
-              >
-                <ImageIcon className="h-4 w-4" />
-              </Button>
+              <HeroImageUploadButton setHeroState={setHeroState} />
             </div>
           </div>
           <div>
