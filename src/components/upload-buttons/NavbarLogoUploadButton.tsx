@@ -9,7 +9,6 @@ import { Button } from "../ui/button";
 import { ImageIcon } from "lucide-react";
 import { UploadButton } from "@/utils/uploadthing";
 import { useToast } from "@/hooks/use-toast";
-import { uploadNavbarLogo } from "@/actions/uploads-actions";
 
 type Props = {
   setNavbarState: (prev: any) => void;
@@ -17,19 +16,12 @@ type Props = {
 
 const NavbarLogoUploadButton = ({ setNavbarState }: Props) => {
   const { toast } = useToast();
-  //  onClick={() =>
-  //   setNavbarState((prev: any) => ({
-  //     ...prev,
-  //     logoUrl: "/placeholder.svg?height=32&width=32",
-  //   }))
-  // }
 
   const handleUplaodComplete = async (res: { url: string }[]) => {
     try {
-      const result = await uploadNavbarLogo(res[0].url);
       setNavbarState((prev: any) => ({
         ...prev,
-        logoUrl: result.url,
+        logoUrl: res[0].url,
       }));
       toast({
         title: "Success",

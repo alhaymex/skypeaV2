@@ -41,15 +41,3 @@ export const uploadOpenGraph = async (url: string, blogSlug: string) => {
     return { success: false, error: "Failed to upload OpenGraph image!" };
   }
 };
-
-export const uploadNavbarLogo = async (url: string) => {
-  const session = await getSession();
-  const user = session?.user;
-
-  try {
-    return { success: true, message: "Logo uploaded successfully!", url };
-  } catch (error) {
-    console.log(error);
-    return { success: false, error: "Failed to upload navbar logo!" };
-  }
-};
