@@ -18,6 +18,10 @@ import {
 import { Plus, Trash2, ImageIcon } from "lucide-react";
 import { NavLink } from "@/types/types";
 import { navbarLayouts } from "@/lib/constants";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { UploadButton } from "@/utils/uploadthing";
+import NavbarLogoUploadButton from "@/components/upload-buttons/NavbarLogoUploadButton";
 
 interface NavbarAccordionProps {
   navbarState: any;
@@ -241,18 +245,7 @@ export function NavbarAccordion({
                     }))
                   }
                 />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() =>
-                    setNavbarState((prev: any) => ({
-                      ...prev,
-                      logoUrl: "/placeholder.svg?height=32&width=32",
-                    }))
-                  }
-                >
-                  <ImageIcon className="h-4 w-4" />
-                </Button>
+                <NavbarLogoUploadButton setNavbarState={setNavbarState} />
               </div>
             </div>
           )}
