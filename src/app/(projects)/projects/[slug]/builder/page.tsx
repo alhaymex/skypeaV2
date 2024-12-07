@@ -211,7 +211,7 @@ export default function BlogBuilder() {
     }
   };
 
-  const addComponent = async (componentType: string) => {
+  const addComponent = async (componentType: string, isDynamic = false) => {
     if (!currentPageId) {
       toast({
         title: "Error",
@@ -250,11 +250,50 @@ export default function BlogBuilder() {
         };
         break;
       case "grid":
-        newComponent = {
-          type: "grid",
-          id: `grid-${Date.now()}`,
-          data: gridState,
-        };
+        if (isDynamic) {
+          const defaultItems = [
+            {
+              id: "default-1",
+              title: "Default Blog Post 1",
+              description: "This is a placeholder for the first blog post.",
+              imageUrl: "/placeholder.svg?height=200&width=200",
+              author: "John Doe",
+              date: new Date().toISOString().split("T")[0],
+            },
+            {
+              id: "default-2",
+              title: "Default Blog Post 2",
+              description: "This is a placeholder for the second blog post.",
+              imageUrl: "/placeholder.svg?height=200&width=200",
+              author: "Jane Smith",
+              date: new Date().toISOString().split("T")[0],
+            },
+            {
+              id: "default-3",
+              title: "Default Blog Post 3",
+              description: "This is a placeholder for the third blog post.",
+              imageUrl: "/placeholder.svg?height=200&width=200",
+              author: "Alex Johnson",
+              date: new Date().toISOString().split("T")[0],
+            },
+          ];
+          newComponent = {
+            type: "grid",
+            id: `grid-${Date.now()}`,
+            data: {
+              ...gridState,
+              items: defaultItems,
+              template: "blog",
+              columns: 3,
+            },
+          };
+        } else {
+          newComponent = {
+            type: "grid",
+            id: `grid-${Date.now()}`,
+            data: gridState,
+          };
+        }
         break;
       case "form":
         newComponent = {

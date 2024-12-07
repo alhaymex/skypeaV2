@@ -28,7 +28,7 @@ interface GridProps {
 }
 
 export function Grid({ items, columns, template }: GridProps) {
-  const gridClassName = `grid gap-4 p-6 ${
+  const gridClassName = `grid gap-4 ${
     columns === 1
       ? "grid-cols-1"
       : columns === 2
@@ -121,19 +121,21 @@ export function Grid({ items, columns, template }: GridProps) {
   );
 
   return (
-    <div className={gridClassName}>
-      {items.map((item) => {
-        switch (template) {
-          case "blog":
-            return renderBlogCard(item);
-          case "testimonial":
-            return renderTestimonialCard(item);
-          case "feature":
-            return renderFeatureCard(item);
-          default:
-            return null;
-        }
-      })}
+    <div className="max-w-6xl mx-auto my-12">
+      <div className={gridClassName}>
+        {items.map((item) => {
+          switch (template) {
+            case "blog":
+              return renderBlogCard(item);
+            case "testimonial":
+              return renderTestimonialCard(item);
+            case "feature":
+              return renderFeatureCard(item);
+            default:
+              return null;
+          }
+        })}
+      </div>
     </div>
   );
 }

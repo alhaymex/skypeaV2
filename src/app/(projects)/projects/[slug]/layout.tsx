@@ -1,4 +1,4 @@
-import { getBlogBySlug } from "@/actions/blogs-actions";
+import { getBlogBySlug, getBlogs } from "@/actions/blogs-actions";
 import NotFound from "@/app/not-found";
 import DashboardNavbar from "@/components/pages/dashboard/DashboardNavbar";
 import DashboardSidebar from "@/components/pages/dashboard/DashboardSidebar";
