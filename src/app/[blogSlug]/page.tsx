@@ -18,9 +18,8 @@ interface BlogData {
   id: string;
   name: string;
   slug: string;
-  backgroundColor: string;
-  fontFamily: string;
   pages: Page[];
+  backgroundColor: string;
 }
 
 function renderComponent(component: ComponentData) {
@@ -35,7 +34,6 @@ function renderComponent(component: ComponentData) {
       return <Grid key={component.id} {...component.data} />;
     case "footer":
       return <Footer key={component.id} {...component.data} />;
-
     default:
       return (
         <div key={component.id}>
@@ -46,12 +44,14 @@ function renderComponent(component: ComponentData) {
   }
 }
 
-export default async function BlogPage({
-  params,
-}: {
-  params: Promise<{ blogSlug: string }>;
-}) {
-  const blogSlug = (await params).blogSlug;
+interface BlogPageProps {
+  params: {
+    blogSlug: string;
+  };
+}
+
+export default async function BlogPage({ params }: BlogPageProps) {
+  const { blogSlug } = params;
   console.log("Rendering blog page for slug:", blogSlug);
 
   const blogResult = await getBlogForDisplay(blogSlug);
@@ -63,14 +63,16 @@ export default async function BlogPage({
 
   const blog = blogResult.data as BlogData;
 
+  // Apply background color to the entire body
+  const bodyStyle = `
+  body {
+    background-color: ${blog.backgroundColor};
+  }
+`;
+
   return (
-    <div
-      className={`min-h-screen`}
-      style={{
-        backgroundColor: blog.backgroundColor,
-        fontFamily: blog.fontFamily,
-      }}
-    >
+    <div className="min-h-screen">
+      <style dangerouslySetInnerHTML={{ __html: bodyStyle }} />
       {blog.pages.map((page) => (
         <section key={page.id} id={page.slug}>
           {page.components.map((component) => renderComponent(component))}
