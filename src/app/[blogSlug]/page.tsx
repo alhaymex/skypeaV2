@@ -44,14 +44,12 @@ function renderComponent(component: ComponentData) {
   }
 }
 
-interface BlogPageProps {
-  params: {
-    blogSlug: string;
-  };
-}
-
-export default async function BlogPage({ params }: BlogPageProps) {
-  const { blogSlug } = params;
+export default async function BlogPage({
+  params,
+}: {
+  params: Promise<{ blogSlug: string }>;
+}) {
+  const { blogSlug } = await params;
   console.log("Rendering blog page for slug:", blogSlug);
 
   const blogResult = await getBlogForDisplay(blogSlug);
