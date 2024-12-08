@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ type Props = {
 
 const NavbarLogoUploadButton = ({ setNavbarState }: Props) => {
   const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleUplaodComplete = async (res: { url: string }[]) => {
     try {
@@ -27,6 +28,7 @@ const NavbarLogoUploadButton = ({ setNavbarState }: Props) => {
         title: "Success",
         description: "Logo uploaded successfully!",
       });
+      setIsOpen(false); // Close the dialog
     } catch (error) {
       toast({
         title: "Error",
@@ -38,10 +40,11 @@ const NavbarLogoUploadButton = ({ setNavbarState }: Props) => {
 
   return (
     <div>
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="icon">
-            <ImageIcon className="h-4 w-4" />
+          <Button variant="outline" className="w-full justify-start">
+            <ImageIcon className="h-4 w-4 mr-2" />
+            Upload Logo
           </Button>
         </DialogTrigger>
         <DialogContent title="Upload Favicon">

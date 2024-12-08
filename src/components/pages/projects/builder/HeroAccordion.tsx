@@ -54,7 +54,7 @@ export function HeroAccordion({
           <div>
             <Label htmlFor="hero-background">Background Image URL</Label>
             <div className="flex space-x-2">
-              <Input
+              {/* <Input
                 id="hero-background"
                 value={heroState.backgroundImage}
                 onChange={(e) =>
@@ -63,7 +63,7 @@ export function HeroAccordion({
                     backgroundImage: e.target.value,
                   }))
                 }
-              />
+              /> */}
               <HeroImageUploadButton setHeroState={setHeroState} />
             </div>
           </div>

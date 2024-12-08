@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 interface GridItem {
   id: string;
@@ -102,7 +103,11 @@ export function Grid({ items, columns, template }: GridProps) {
     <Card key={item.id}>
       <CardHeader>
         <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center mb-4">
-          <img src={item.imageUrl} alt="" className="w-6 h-6" />
+          <img
+            src={item.imageUrl}
+            alt={item.title + "'s image"}
+            className="w-6 h-6"
+          />
         </div>
         <CardTitle>{item.title}</CardTitle>
       </CardHeader>

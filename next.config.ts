@@ -2,7 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["media.giphy.com", "lh3.googleusercontent.com", "utfs.io"],
+    domains: [
+      "media.giphy.com",
+      "lh3.googleusercontent.com",
+      "utfs.io",
+      "alhaymex.com",
+    ],
+
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "image.alhaymex.com",
+        pathname: "/**",
+      },
+    ],
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if

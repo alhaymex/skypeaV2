@@ -46,7 +46,7 @@ export default function BlogBuilder() {
   const [navbarState, setNavbarState] = useState({
     titleType: "text" as "text" | "image",
     title: "My Blog",
-    logoUrl: "/placeholder.svg?height=32&width=32",
+    logoUrl: "https://image.alhaymex.com/placeholder?height=32&width=32",
     links: [
       { id: "1", text: "Home", href: "/", target: "_self", variant: "default" },
       {
@@ -65,7 +65,8 @@ export default function BlogBuilder() {
   const [heroState, setHeroState] = useState({
     title: "Welcome to My Blog",
     subtitle: "Discover amazing content and insights",
-    backgroundImage: "/placeholder.svg?height=1080&width=1920",
+    backgroundImage:
+      "https://image.alhaymex.com/placeholder?height=1080&width=1920&shape=grid",
     ctaText: "Get Started",
     ctaLink: "#",
   });
@@ -76,7 +77,7 @@ export default function BlogBuilder() {
         id: "1",
         title: "Item 1",
         description: "Description for Item 1",
-        imageUrl: "/placeholder.svg?height=200&width=200",
+        imageUrl: "https://image.alhaymex.com/placeholder?height=200&width=200",
         author: "John Doe",
         date: "2023-05-01",
         tags: ["Tag 1", "Tag 2"],
@@ -87,7 +88,7 @@ export default function BlogBuilder() {
         id: "2",
         title: "Item 2",
         description: "Description for Item 2",
-        imageUrl: "/placeholder.svg?height=200&width=200",
+        imageUrl: "https://image.alhaymex.com/placeholder?height=200&width=200",
         author: "Jane Smith",
         date: "2023-05-02",
         tags: ["Tag 2", "Tag 3"],
@@ -127,24 +128,8 @@ export default function BlogBuilder() {
       {
         title: "About Us",
         links: [
-          { text: "Our Story", url: "#" },
-          { text: "Team", url: "#" },
-          { text: "Careers", url: "#" },
-        ],
-      },
-      {
-        title: "Services",
-        links: [
-          { text: "Web Design", url: "#" },
-          { text: "Development", url: "#" },
-          { text: "Marketing", url: "#" },
-        ],
-      },
-      {
-        title: "Contact",
-        links: [
-          { text: "Contact Us", url: "#" },
-          { text: "Support", url: "#" },
+          { text: "Home", url: "#" },
+          { text: "About", url: "#" },
         ],
       },
     ] as FooterColumn[],
@@ -256,7 +241,8 @@ export default function BlogBuilder() {
               id: "default-1",
               title: "Default Blog Post 1",
               description: "This is a placeholder for the first blog post.",
-              imageUrl: "/placeholder.svg?height=200&width=200",
+              imageUrl:
+                "https://image.alhaymex.com/placeholder?shape=grid&height=200&width=200",
               author: "John Doe",
               date: new Date().toISOString().split("T")[0],
             },
@@ -264,7 +250,8 @@ export default function BlogBuilder() {
               id: "default-2",
               title: "Default Blog Post 2",
               description: "This is a placeholder for the second blog post.",
-              imageUrl: "/placeholder.svg?height=200&width=200",
+              imageUrl:
+                "https://image.alhaymex.com/placeholder?shape=grid&height=200&width=200",
               author: "Jane Smith",
               date: new Date().toISOString().split("T")[0],
             },
@@ -272,7 +259,8 @@ export default function BlogBuilder() {
               id: "default-3",
               title: "Default Blog Post 3",
               description: "This is a placeholder for the third blog post.",
-              imageUrl: "/placeholder.svg?height=200&width=200",
+              imageUrl:
+                "https://image.alhaymex.com/placeholder?shape=grid&height=200&width=200",
               author: "Alex Johnson",
               date: new Date().toISOString().split("T")[0],
             },
