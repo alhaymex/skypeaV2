@@ -4,9 +4,9 @@ import { notFound, redirect } from "next/navigation";
 export default async function BlogIndexPage({
   params,
 }: {
-  params: { blogSlug: string };
+  params: Promise<{ blogSlug: string }>;
 }) {
-  const { blogSlug } = params;
+  const { blogSlug } = await params;
   console.log("Rendering blog index for slug:", blogSlug);
 
   const blogResult = await getBlogForDisplay(blogSlug);
