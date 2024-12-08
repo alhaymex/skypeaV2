@@ -32,9 +32,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Plus, ImageIcon, HelpCircle } from "lucide-react";
+import { Plus, HelpCircle } from "lucide-react";
 import { GridItem } from "@/types/types";
 import { gridTemplates } from "@/lib/constants";
+import GridUploadButton from "@/components/upload-buttons/GridUploadButton";
 
 interface GridAccordionProps {
   gridState: any;
@@ -54,7 +55,7 @@ export function GridAccordion({
       id: Date.now().toString(),
       title: `Item ${gridState.items.length + 1}`,
       description: `Description for Item ${gridState.items.length + 1}`,
-      imageUrl: "/placeholder.svg?height=200&width=200",
+      imageUrl: "https://image.alhaymex.com/placeholder?height=200&width=200",
       author: "Author Name",
       date: new Date().toISOString().split("T")[0],
       tags: ["Tag 1", "Tag 2"],
@@ -86,7 +87,7 @@ export function GridAccordion({
         id: "default-1",
         title: "Default Blog Post 1",
         description: "This is a placeholder for the first blog post.",
-        imageUrl: "/placeholder.svg?height=200&width=200",
+        imageUrl: "https://image.alhaymex.com/initials?initials=JD",
         author: "John Doe",
         date: new Date().toISOString().split("T")[0],
       },
@@ -94,7 +95,7 @@ export function GridAccordion({
         id: "default-2",
         title: "Default Blog Post 2",
         description: "This is a placeholder for the second blog post.",
-        imageUrl: "/placeholder.svg?height=200&width=200",
+        imageUrl: "https://image.alhaymex.com/initials?initials=JS",
         author: "Jane Smith",
         date: new Date().toISOString().split("T")[0],
       },
@@ -102,7 +103,7 @@ export function GridAccordion({
         id: "default-3",
         title: "Default Blog Post 3",
         description: "This is a placeholder for the third blog post.",
-        imageUrl: "/placeholder.svg?height=200&width=200",
+        imageUrl: "https://image.alhaymex.com/initials?initials=AJ",
         author: "Alex Johnson",
         date: new Date().toISOString().split("T")[0],
       },
@@ -226,7 +227,7 @@ export function GridAccordion({
                           }
                         />
                         <div className="flex space-x-2">
-                          <Input
+                          {/* <Input
                             placeholder="Image URL"
                             value={item.imageUrl}
                             onChange={(e) =>
@@ -236,20 +237,11 @@ export function GridAccordion({
                                 e.target.value
                               )
                             }
+                          /> */}
+                          <GridUploadButton
+                            setGridState={setGridState}
+                            itemId={item.id}
                           />
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() =>
-                              updateGridItem(
-                                item.id,
-                                "imageUrl",
-                                "/placeholder.svg?height=200&width=200"
-                              )
-                            }
-                          >
-                            <ImageIcon className="h-4 w-4" />
-                          </Button>
                         </div>
                         {gridState.template === "blog" && (
                           <>
