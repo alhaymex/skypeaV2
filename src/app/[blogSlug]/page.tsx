@@ -24,5 +24,9 @@ export default async function BlogIndexPage({
     notFound();
   }
 
-  redirect(`/${blogSlug}/${homePage.slug}`);
+  if (process.env.NODE_ENV === "development") {
+    redirect(`/${blogSlug}/${homePage.slug}`);
+  } else {
+    redirect(`/${homePage.slug}`);
+  }
 }
