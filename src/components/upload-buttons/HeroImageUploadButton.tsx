@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ type Props = {
 
 const HeroImageUploadButton = ({ setHeroState }: Props) => {
   const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleUplaodComplete = async (res: { url: string }[]) => {
     try {
@@ -27,6 +28,7 @@ const HeroImageUploadButton = ({ setHeroState }: Props) => {
         title: "Success",
         description: "Hero image uploaded successfully!",
       });
+      setIsOpen(false); // Close the dialog
     } catch (error) {
       toast({
         title: "Error",
@@ -38,13 +40,14 @@ const HeroImageUploadButton = ({ setHeroState }: Props) => {
 
   return (
     <div>
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="icon">
-            <ImageIcon className="h-4 w-4" />
+          <Button variant="outline" className="w-full justify-start">
+            <ImageIcon className="h-4 w-4 mr-2" />
+            Upload Hero Image
           </Button>
         </DialogTrigger>
-        <DialogContent title="Upload Favicon">
+        <DialogContent title="Upload Hero Image">
           <DialogTitle>Upload Image</DialogTitle>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground text-center">

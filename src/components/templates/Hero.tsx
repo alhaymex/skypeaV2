@@ -21,9 +21,11 @@ export function Hero({
       <Image
         src={backgroundImage}
         alt="Hero background"
-        fill
+        width={1920}
+        height={1080}
         style={{ objectFit: "cover" }}
         className="absolute inset-0 z-0"
+        unoptimized
       />
       <div className="absolute inset-0 bg-black/50 z-10" />
       <div className="relative z-20 max-w-3xl px-4">
