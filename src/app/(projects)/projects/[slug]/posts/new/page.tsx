@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -27,6 +27,8 @@ import { Editor } from "@/components/pages/projects/posts/Editor";
 import { blogFormSchema } from "../../../../../../../schema";
 
 export default function NewPostPage() {
+  const params = useParams();
+  const slug = params.slug as string;
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export default function NewPostPage() {
       publishOption: "draft",
       scheduledTime: "",
       isDistributed: false,
-      blogSlug: "syferpool",
+      blogSlug: slug,
     },
   });
 
@@ -51,7 +53,7 @@ export default function NewPostPage() {
     Object.entries(values).forEach(([key, value]) => {
       formData.append(key, value.toString());
     });
-    // formData.append("blogSlug", "syferpool"); // Replace
+    formData.append("blogSlug", slug);
 
     try {
       const result = await createPost(formData);

@@ -1,81 +1,28 @@
-import { getBlogForDisplay } from "@/actions/blogs-actions";
-import { notFound } from "next/navigation";
-import { ComponentData } from "@/types/types";
-import { Grid } from "@/components/templates/Grid";
-import { Footer } from "@/components/templates/Footer";
-import { Hero } from "@/components/templates/Hero";
-import { Navbar } from "@/components/templates/Navbar";
-import { Form } from "@/components/templates/Form";
+import { getBlogForDisplay } from "@/actions/display-actions";
+import { notFound, redirect } from "next/navigation";
 
-interface Page {
-  id: string;
-  name: string;
-  slug: string;
-  components: ComponentData[];
-}
-
-interface BlogData {
-  id: string;
-  name: string;
-  slug: string;
-  pages: Page[];
-  backgroundColor: string;
-}
-
-function renderComponent(component: ComponentData) {
-  switch (component.type) {
-    case "navbar":
-      return <Navbar key={component.id} {...component.data} />;
-    case "hero":
-      return <Hero key={component.id} {...component.data} />;
-    case "form":
-      return <Form key={component.id} {...component.data} />;
-    case "grid":
-      return <Grid key={component.id} {...component.data} />;
-    case "footer":
-      return <Footer key={component.id} {...component.data} />;
-    default:
-      return (
-        <div key={component.id}>
-          <h3>{component.type} Component</h3>
-          <pre>{JSON.stringify(component.data, null, 2)}</pre>
-        </div>
-      );
-  }
-}
-
-export default async function BlogPage({
+export default async function BlogIndexPage({
   params,
 }: {
-  params: Promise<{ blogSlug: string }>;
+  params: { blogSlug: string };
 }) {
-  const { blogSlug } = await params;
-  console.log("Rendering blog page for slug:", blogSlug);
+  const { blogSlug } = params;
+  console.log("Rendering blog index for slug:", blogSlug);
 
   const blogResult = await getBlogForDisplay(blogSlug);
 
   if (!blogResult.success) {
-    console.log("Blog not found for slug:", blogSlug);
+    console.error("Blog not found for slug:", blogSlug);
     notFound();
   }
 
-  const blog = blogResult.data as BlogData;
+  const blog = blogResult.data;
+  const homePage = blog!.pages.find((page) => page.slug === "home");
 
-  // Apply background color to the entire body
-  const bodyStyle = `
-  body {
-    background-color: ${blog.backgroundColor};
+  if (!homePage) {
+    console.error("Home page not found for blog:", blogSlug);
+    notFound();
   }
-`;
 
-  return (
-    <div className="min-h-screen">
-      <style dangerouslySetInnerHTML={{ __html: bodyStyle }} />
-      {blog.pages.map((page) => (
-        <section key={page.id} id={page.slug}>
-          {page.components.map((component) => renderComponent(component))}
-        </section>
-      ))}
-    </div>
-  );
+  redirect(`/${blogSlug}/${homePage.slug}`);
 }
