@@ -48,7 +48,13 @@ export default function BlogBuilder() {
     title: "My Blog",
     logoUrl: "https://image.alhaymex.com/placeholder?height=32&width=32",
     links: [
-      { id: "1", text: "Home", href: "/", target: "_self", variant: "default" },
+      {
+        id: "1",
+        text: "Home",
+        href: "/home",
+        target: "_self",
+        variant: "default",
+      },
       {
         id: "2",
         text: "About",
