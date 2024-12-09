@@ -17,6 +17,11 @@ interface FormProps {
   description: string;
   fields: FormField[];
   submitButtonText: string;
+  isNewsletter: boolean;
+  textColor: string;
+  buttonTextColor: string;
+  buttonBackgroundColor: string;
+  buttonBorderRadius: string;
 }
 
 export function Form({
@@ -24,45 +29,70 @@ export function Form({
   description,
   fields,
   submitButtonText,
+  isNewsletter,
+  textColor,
+  buttonTextColor,
+  buttonBackgroundColor,
+  buttonBorderRadius,
 }: FormProps) {
   return (
-    <div className="w-full max-w-md mx-auto py-12">
+    <div className="w-full max-w-md mx-auto py-12" style={{ color: textColor }}>
       <div className="space-y-4">
         <div className="space-y-2 text-center">
           <h2 className="text-3xl font-bold">{title}</h2>
           <p className="text-gray-500 dark:text-gray-400">{description}</p>
         </div>
         <form className="space-y-4">
-          {fields.map((field) => (
-            <div key={field.id} className="space-y-2">
-              <Label htmlFor={field.id}>{field.label}</Label>
-              {field.type === "textarea" ? (
-                <Textarea
-                  id={field.id}
-                  placeholder={field.placeholder}
-                  required={field.required}
-                />
-              ) : field.type === "checkbox" ? (
-                <div className="flex items-center space-x-2">
-                  <Checkbox id={field.id} />
-                  <label
-                    htmlFor={field.id}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {field.label}
-                  </label>
-                </div>
-              ) : (
-                <Input
-                  id={field.id}
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  required={field.required}
-                />
-              )}
+          {isNewsletter ? (
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                required
+              />
             </div>
-          ))}
-          <Button type="submit" className="w-full">
+          ) : (
+            fields.map((field) => (
+              <div key={field.id} className="space-y-2">
+                <Label htmlFor={field.id}>{field.label}</Label>
+                {field.type === "textarea" ? (
+                  <Textarea
+                    id={field.id}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                  />
+                ) : field.type === "checkbox" ? (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox id={field.id} />
+                    <label
+                      htmlFor={field.id}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {field.label}
+                    </label>
+                  </div>
+                ) : (
+                  <Input
+                    id={field.id}
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                  />
+                )}
+              </div>
+            ))
+          )}
+          <Button
+            type="submit"
+            className="w-full"
+            style={{
+              color: buttonTextColor,
+              backgroundColor: buttonBackgroundColor,
+              borderRadius: `${parseInt(buttonBorderRadius) * 4}px`,
+            }}
+          >
             {submitButtonText}
           </Button>
         </form>

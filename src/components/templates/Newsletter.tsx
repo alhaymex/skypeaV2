@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 export function Newsletter() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle newsletter subscription logic here
     console.log("Newsletter subscription submitted");
   };
 

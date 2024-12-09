@@ -107,16 +107,16 @@ export default function BlogBuilder() {
   });
 
   const [formState, setFormState] = useState({
-    title: "Subscribe to our newsletter",
+    title: "Contact Us",
     description:
-      "Subscribe to our newsletter to stay up to date with the latest news and updates from our team.",
+      "Fill out the form below to contact us. We'll get back to you as soon as possible.",
     fields: [
       {
         id: "1",
         label: "Name",
         type: "text" as const,
         placeholder: "Enter your name",
-        required: true,
+        required: false,
       },
       {
         id: "2",
@@ -126,7 +126,9 @@ export default function BlogBuilder() {
         required: true,
       },
     ] as FormField[],
-    submitButtonText: "Subscribe",
+    submitButtonText: "Submit",
+    textColor: "#000000",
+    isNewsletter: false,
   });
 
   const [footerState, setFooterState] = useState({
