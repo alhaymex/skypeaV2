@@ -14,6 +14,7 @@ import { Hero } from "@/components/templates/Hero";
 import { Grid } from "@/components/templates/Grid";
 import { Form } from "@/components/templates/Form";
 import { Footer } from "@/components/templates/Footer";
+import { Carousel } from "@/components/templates/Carousel";
 import { MainContent } from "@/components/pages/projects/builder/MainContent";
 import { Sidebar } from "@/components/pages/projects/builder/BuilderSidebar";
 import {
@@ -151,6 +152,25 @@ export default function BlogBuilder() {
   const [pageState, setPageState] = useState({
     backgroundColor: "#ffffff",
     fontFamily: "sans-serif",
+  });
+
+  const [carouselState, setCarouselState] = useState({
+    images: [
+      {
+        id: "1",
+        src: "https://image.alhaymex.com/placeholder?height=200&width=200",
+        alt: "Image 1",
+      },
+      {
+        id: "2",
+        src: "https://image.alhaymex.com/placeholder?height=200&width=200",
+        alt: "Image 2",
+      },
+    ],
+    autoplay: false,
+    interval: 5,
+    showArrows: true,
+    showDots: true,
   });
 
   useEffect(() => {
@@ -305,6 +325,13 @@ export default function BlogBuilder() {
           data: footerState,
         };
         break;
+      case "carousel":
+        newComponent = {
+          type: "carousel",
+          id: `carousel-${Date.now()}`,
+          data: carouselState,
+        };
+        break;
       default:
         return;
     }
@@ -447,6 +474,8 @@ export default function BlogBuilder() {
         return <Form key={component.id} {...component.data} />;
       case "footer":
         return <Footer key={component.id} {...component.data} />;
+      case "carousel":
+        return <Carousel key={component.id} carouselState={component.data} />;
       default:
         return null;
     }
@@ -515,6 +544,8 @@ export default function BlogBuilder() {
         setFooterState={setFooterState}
         pageState={pageState}
         setPageState={updatePageSettings}
+        carouselState={carouselState}
+        setCarouselState={setCarouselState}
         addComponent={addComponent}
         pages={pages}
         currentPageId={currentPageId}
