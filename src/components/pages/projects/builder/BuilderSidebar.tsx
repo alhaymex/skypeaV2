@@ -11,6 +11,7 @@ import { PageCustomizationAccordion } from "./PageCustomizer";
 import { FooterAccordion } from "./FooterAccordion";
 import { Button } from "@/components/ui/button";
 import { X, Menu } from "lucide-react";
+import { CarouselAccordion } from "./CarouselAccordion";
 
 interface SidebarProps {
   navbarState: any;
@@ -25,6 +26,8 @@ interface SidebarProps {
   setPageState: (value: any) => void;
   footerState: any;
   setFooterState: (value: any) => void;
+  carouselState: any;
+  setCarouselState: (value: any) => void;
   addComponent: (componentType: string) => Promise<void>;
   pages: { id: string; name: string; components: any[] }[];
   currentPageId: string | null;
@@ -43,6 +46,8 @@ export function Sidebar({
   setPageState,
   footerState,
   setFooterState,
+  carouselState,
+  setCarouselState,
   addComponent,
   pages,
   currentPageId,
@@ -115,6 +120,11 @@ export function Sidebar({
                 <FooterAccordion
                   footerState={footerState}
                   setFooterState={setFooterState}
+                  addComponent={addComponent}
+                />
+                <CarouselAccordion
+                  carouselState={carouselState}
+                  setCarouselState={setCarouselState}
                   addComponent={addComponent}
                 />
               </>

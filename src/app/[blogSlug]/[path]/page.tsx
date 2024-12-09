@@ -6,6 +6,7 @@ import { Hero } from "@/components/templates/Hero";
 import { Navbar } from "@/components/templates/Navbar";
 import { Form } from "@/components/templates/Form";
 import { getBlogForDisplay } from "@/actions/display-actions";
+import { Carousel } from "@/components/templates/Carousel";
 
 interface Page {
   id: string;
@@ -36,6 +37,8 @@ function renderComponent(component: ComponentData) {
       return <Grid key={component.id} {...component.data} />;
     case "footer":
       return <Footer key={component.id} {...component.data} />;
+    case "carousel":
+      return <Carousel key={component.id} carouselState={component.data} />;
     default:
       return (
         <div key={component.id}>

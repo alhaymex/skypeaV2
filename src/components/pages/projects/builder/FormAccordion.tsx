@@ -14,15 +14,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { Plus, Trash2 } from "lucide-react";
+import { FormField } from "@/types/types";
+import { Slider } from "@/components/ui/slider";
 
-interface FormField {
-  id: string;
-  label: string;
-  type: "text" | "email" | "textarea" | "checkbox";
-  placeholder?: string;
-  required?: boolean;
-}
+const colorOptions = [
+  { label: "White", value: "#ffffff" },
+  { label: "Light Gray", value: "#f3f4f6" },
+  { label: "Dark Gray", value: "#374151" },
+  { label: "Black", value: "#000000" },
+  { label: "Primary", value: "#3b82f6" },
+  { label: "Secondary", value: "#10b981" },
+];
 
 interface FormAccordionProps {
   formState: {
@@ -30,6 +34,11 @@ interface FormAccordionProps {
     description: string;
     fields: FormField[];
     submitButtonText: string;
+    textColor: string;
+    isNewsletter: boolean;
+    buttonTextColor: string;
+    buttonBackgroundColor: string;
+    buttonBorderRadius: string;
   };
   setFormState: (value: any) => void;
   addComponent: (componentType: string) => void;
@@ -70,11 +79,57 @@ export function FormAccordion({
     }));
   };
 
+  const handleNewsletterToggle = (checked: boolean) => {
+    setFormState((prev: any) => ({
+      ...prev,
+      isNewsletter: checked,
+      title: checked ? "Subscribe to Our Newsletter" : prev.title,
+      description: checked
+        ? "Stay updated with our latest news and offers!"
+        : prev.description,
+      textColor: checked ? "#000000" : prev.textColor,
+    }));
+  };
+
   return (
     <AccordionItem value="form">
       <AccordionTrigger>Form</AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="newsletter-mode"
+              checked={formState.isNewsletter}
+              onCheckedChange={handleNewsletterToggle}
+            />
+            <Label htmlFor="newsletter-mode">Newsletter Mode</Label>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="text-color">Text Color</Label>
+            <Select
+              value={formState.textColor}
+              onValueChange={(value) =>
+                setFormState((prev: any) => ({ ...prev, textColor: value }))
+              }
+            >
+              <SelectTrigger id="text-color">
+                <SelectValue placeholder="Select text color" />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map((color) => (
+                  <SelectItem key={color.value} value={color.value}>
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: color.value }}
+                      />
+                      <span>{color.label}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div>
             <Label htmlFor="form-title">Form Title</Label>
             <Input
@@ -182,6 +237,89 @@ export function FormAccordion({
                 }))
               }
             />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="button-text-color">Button Text Color</Label>
+            <Select
+              value={formState.buttonTextColor}
+              onValueChange={(value) =>
+                setFormState((prev: any) => ({
+                  ...prev,
+                  buttonTextColor: value,
+                }))
+              }
+            >
+              <SelectTrigger id="button-text-color">
+                <SelectValue placeholder="Select button text color" />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map((color) => (
+                  <SelectItem key={color.value} value={color.value}>
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: color.value }}
+                      />
+                      <span>{color.label}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="button-background-color">
+              Button Background Color
+            </Label>
+            <Select
+              value={formState.buttonBackgroundColor}
+              onValueChange={(value) =>
+                setFormState((prev: any) => ({
+                  ...prev,
+                  buttonBackgroundColor: value,
+                }))
+              }
+            >
+              <SelectTrigger id="button-background-color">
+                <SelectValue placeholder="Select button background color" />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map((color) => (
+                  <SelectItem key={color.value} value={color.value}>
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: color.value }}
+                      />
+                      <span>{color.label}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="button-border-radius">Button Border Radius</Label>
+            <Slider
+              id="button-border-radius"
+              min={0}
+              max={4}
+              step={1}
+              value={[parseInt(formState.buttonBorderRadius)]}
+              onValueChange={(value) =>
+                setFormState((prev: any) => ({
+                  ...prev,
+                  buttonBorderRadius: value[0].toString(),
+                }))
+              }
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0px</span>
+              <span>4px</span>
+              <span>8px</span>
+              <span>16px</span>
+              <span>24px</span>
+            </div>
           </div>
           <Button onClick={() => addComponent("form")} className="w-full">
             Add Form

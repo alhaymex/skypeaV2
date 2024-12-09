@@ -14,6 +14,7 @@ import { Hero } from "@/components/templates/Hero";
 import { Grid } from "@/components/templates/Grid";
 import { Form } from "@/components/templates/Form";
 import { Footer } from "@/components/templates/Footer";
+import { Carousel } from "@/components/templates/Carousel";
 import { MainContent } from "@/components/pages/projects/builder/MainContent";
 import { Sidebar } from "@/components/pages/projects/builder/BuilderSidebar";
 import {
@@ -48,7 +49,13 @@ export default function BlogBuilder() {
     title: "My Blog",
     logoUrl: "https://image.alhaymex.com/placeholder?height=32&width=32",
     links: [
-      { id: "1", text: "Home", href: "/", target: "_self", variant: "default" },
+      {
+        id: "1",
+        text: "Home",
+        href: "/home",
+        target: "_self",
+        variant: "default",
+      },
       {
         id: "2",
         text: "About",
@@ -101,16 +108,16 @@ export default function BlogBuilder() {
   });
 
   const [formState, setFormState] = useState({
-    title: "Subscribe to our newsletter",
+    title: "Contact Us",
     description:
-      "Subscribe to our newsletter to stay up to date with the latest news and updates from our team.",
+      "Fill out the form below to contact us. We'll get back to you as soon as possible.",
     fields: [
       {
         id: "1",
         label: "Name",
         type: "text" as const,
         placeholder: "Enter your name",
-        required: true,
+        required: false,
       },
       {
         id: "2",
@@ -120,7 +127,9 @@ export default function BlogBuilder() {
         required: true,
       },
     ] as FormField[],
-    submitButtonText: "Subscribe",
+    submitButtonText: "Submit",
+    textColor: "#000000",
+    isNewsletter: false,
   });
 
   const [footerState, setFooterState] = useState({
@@ -143,6 +152,25 @@ export default function BlogBuilder() {
   const [pageState, setPageState] = useState({
     backgroundColor: "#ffffff",
     fontFamily: "sans-serif",
+  });
+
+  const [carouselState, setCarouselState] = useState({
+    images: [
+      {
+        id: "1",
+        src: "https://image.alhaymex.com/placeholder?height=200&width=200",
+        alt: "Image 1",
+      },
+      {
+        id: "2",
+        src: "https://image.alhaymex.com/placeholder?height=200&width=200",
+        alt: "Image 2",
+      },
+    ],
+    autoplay: false,
+    interval: 5,
+    showArrows: true,
+    showDots: true,
   });
 
   useEffect(() => {
@@ -297,6 +325,13 @@ export default function BlogBuilder() {
           data: footerState,
         };
         break;
+      case "carousel":
+        newComponent = {
+          type: "carousel",
+          id: `carousel-${Date.now()}`,
+          data: carouselState,
+        };
+        break;
       default:
         return;
     }
@@ -439,6 +474,8 @@ export default function BlogBuilder() {
         return <Form key={component.id} {...component.data} />;
       case "footer":
         return <Footer key={component.id} {...component.data} />;
+      case "carousel":
+        return <Carousel key={component.id} carouselState={component.data} />;
       default:
         return null;
     }
@@ -507,6 +544,8 @@ export default function BlogBuilder() {
         setFooterState={setFooterState}
         pageState={pageState}
         setPageState={updatePageSettings}
+        carouselState={carouselState}
+        setCarouselState={setCarouselState}
         addComponent={addComponent}
         pages={pages}
         currentPageId={currentPageId}
