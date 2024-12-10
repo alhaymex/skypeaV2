@@ -14,6 +14,9 @@ import { Slider } from "@/components/ui/slider";
 import { Plus, Trash2 } from "lucide-react";
 import CarouselImageUploadButton from "@/components/upload-buttons/CarouselImageUploadButton";
 
+const DEFAULT_IMAGE_URL =
+  "https://image.alhaymex.com/placeholder?width=800&height=400&shape=grid";
+
 interface CarouselAccordionProps {
   carouselState: {
     images: { id: string; src: string; alt: string }[];
@@ -34,7 +37,7 @@ export function CarouselAccordion({
   const handleAddImage = () => {
     const newImage = {
       id: Date.now().toString(),
-      src: "",
+      src: DEFAULT_IMAGE_URL,
       alt: `Image ${carouselState.images.length + 1}`,
     };
     setCarouselState({
