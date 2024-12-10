@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import HeroImageUploadButton from "@/components/upload-buttons/HeroImageUploadButton";
 import { ImageIcon } from "lucide-react";
+import Image from "next/image";
 
 interface HeroAccordionProps {
   heroState: any;
@@ -52,19 +53,23 @@ export function HeroAccordion({
             />
           </div>
           <div>
-            <Label htmlFor="hero-background">Background Image URL</Label>
-            <div className="flex space-x-2">
-              {/* <Input
-                id="hero-background"
-                value={heroState.backgroundImage}
-                onChange={(e) =>
-                  setHeroState((prev: any) => ({
-                    ...prev,
-                    backgroundImage: e.target.value,
-                  }))
-                }
-              /> */}
-              <HeroImageUploadButton setHeroState={setHeroState} />
+            <Label>Background Image</Label>
+            <div className="space-y-2">
+              <HeroImageUploadButton
+                setHeroState={setHeroState}
+                currentImageUrl={heroState.backgroundImage}
+              />
+              {heroState.backgroundImage && (
+                <div className="relative w-full h-40">
+                  <Image
+                    src={heroState.backgroundImage}
+                    alt="Hero background"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-md"
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div>
