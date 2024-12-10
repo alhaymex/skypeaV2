@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   AccordionItem,
   AccordionTrigger,
@@ -36,6 +36,7 @@ import { Plus, HelpCircle } from "lucide-react";
 import { GridItem } from "@/types/types";
 import { gridTemplates } from "@/lib/constants";
 import GridUploadButton from "@/components/upload-buttons/GridUploadButton";
+import Image from "next/image";
 
 interface GridAccordionProps {
   gridState: any;
@@ -226,22 +227,23 @@ export function GridAccordion({
                             )
                           }
                         />
-                        <div className="flex space-x-2">
-                          {/* <Input
-                            placeholder="Image URL"
-                            value={item.imageUrl}
-                            onChange={(e) =>
-                              updateGridItem(
-                                item.id,
-                                "imageUrl",
-                                e.target.value
-                              )
-                            }
-                          /> */}
+                        <div className="space-y-2">
                           <GridUploadButton
                             setGridState={setGridState}
                             itemId={item.id}
+                            currentImageUrl={item.imageUrl}
                           />
+                          {item.imageUrl && (
+                            <div className="relative w-full h-40">
+                              <Image
+                                src={item.imageUrl}
+                                alt={item.title || `Grid item ${item.id}`}
+                                layout="fill"
+                                objectFit="cover"
+                                className="rounded-md"
+                              />
+                            </div>
+                          )}
                         </div>
                         {gridState.template === "blog" && (
                           <>

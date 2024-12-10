@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   AccordionItem,
   AccordionTrigger,
@@ -11,14 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Plus, Trash2, Upload } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Plus, Trash2 } from "lucide-react";
+import CarouselImageUploadButton from "@/components/upload-buttons/CarouselImageUploadButton";
+
+const DEFAULT_IMAGE_URL =
+  "https://image.alhaymex.com/placeholder?width=800&height=400&shape=grid";
 
 interface CarouselAccordionProps {
   carouselState: {
@@ -28,7 +25,7 @@ interface CarouselAccordionProps {
     showArrows: boolean;
     showDots: boolean;
   };
-  setCarouselState: (value: any) => void;
+  setCarouselState: React.Dispatch<React.SetStateAction<any>>;
   addComponent: (componentType: string) => void;
 }
 
@@ -37,14 +34,10 @@ export function CarouselAccordion({
   setCarouselState,
   addComponent,
 }: CarouselAccordionProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentImageId, setCurrentImageId] = useState<string | null>(null);
-  const [tempImageUrl, setTempImageUrl] = useState("");
-
   const handleAddImage = () => {
     const newImage = {
       id: Date.now().toString(),
-      src: "https://image.alhaymex.com/placeholder?height=200&width=200",
+      src: DEFAULT_IMAGE_URL,
       alt: `Image ${carouselState.images.length + 1}`,
     };
     setCarouselState({
@@ -83,61 +76,49 @@ export function CarouselAccordion({
     });
   };
 
-  const handleOpenDialog = (id: string) => {
-    setCurrentImageId(id);
-    const image = carouselState.images.find((img) => img.id === id);
-    if (image) {
-      setTempImageUrl(image.src);
-    }
-    setIsDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setCurrentImageId(null);
-    setTempImageUrl("");
-  };
-
-  const handleImageUpload = () => {
-    if (currentImageId) {
-      handleImageChange(currentImageId, "src", tempImageUrl);
-      handleCloseDialog();
-    }
-  };
-
   return (
     <AccordionItem value="carousel">
       <AccordionTrigger>Carousel</AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4">
-          <div className="space-y-2">
+          <div className="space-y-4">
             <Label>Images</Label>
             {carouselState.images.map((image) => (
-              <div key={image.id} className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  onClick={() => handleOpenDialog(image.id)}
-                >
-                  <Upload className="mr-2 h-4 w-4" /> Upload Image
-                </Button>
-                <Input
-                  value={image.alt}
-                  onChange={(e) =>
-                    handleImageChange(image.id, "alt", e.target.value)
-                  }
-                  placeholder="Alt text"
+              <div key={image.id} className="flex items-start space-x-4">
+                <CarouselImageUploadButton
+                  key={`upload-${image.id}`}
+                  carouselState={carouselState}
+                  setCarouselState={setCarouselState}
+                  imageId={image.id}
                 />
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => handleRemoveImage(image.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <div className="flex-1 space-y-2">
+                  <Input
+                    key={`input-${image.id}`}
+                    value={image.alt}
+                    onChange={(e) =>
+                      handleImageChange(image.id, "alt", e.target.value)
+                    }
+                    placeholder="Alt text"
+                  />
+                  <Button
+                    key={`button-${image.id}`}
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleRemoveImage(image.id)}
+                    className="w-full"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" /> Remove Image
+                  </Button>
+                </div>
               </div>
             ))}
-            <Button variant="outline" size="sm" onClick={handleAddImage}>
-              <Plus className="mr-2 h-4 w-4" /> Add Image
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddImage}
+              className="w-full"
+            >
+              <Plus className="h-4 w-4 mr-2" /> Add Image
             </Button>
           </div>
 
@@ -197,22 +178,6 @@ export function CarouselAccordion({
             Add Carousel
           </Button>
         </div>
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Upload Image</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                value={tempImageUrl}
-                onChange={(e) => setTempImageUrl(e.target.value)}
-                placeholder="Enter image URL"
-              />
-              <Button onClick={handleImageUpload}>Confirm Upload</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       </AccordionContent>
     </AccordionItem>
   );

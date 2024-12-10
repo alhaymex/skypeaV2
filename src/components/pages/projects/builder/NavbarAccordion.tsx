@@ -1,3 +1,4 @@
+import React from "react";
 import {
   AccordionItem,
   AccordionTrigger,
@@ -15,10 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, ImageIcon } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { NavLink } from "@/types/types";
 import { navbarLayouts } from "@/lib/constants";
 import NavbarLogoUploadButton from "@/components/upload-buttons/NavbarLogoUploadButton";
+import Image from "next/image";
 
 interface NavbarAccordionProps {
   navbarState: any;
@@ -230,9 +232,23 @@ export function NavbarAccordion({
             </div>
           ) : (
             <div>
-              <Label htmlFor="navbar-logo">Navbar Logo URL</Label>
-              <div className="flex space-x-2">
-                <NavbarLogoUploadButton setNavbarState={setNavbarState} />
+              <Label>Navbar Logo</Label>
+              <div className="space-y-2">
+                <NavbarLogoUploadButton
+                  setNavbarState={setNavbarState}
+                  currentLogoUrl={navbarState.logoUrl}
+                />
+                {navbarState.logoUrl && (
+                  <div className="relative w-full h-20">
+                    <Image
+                      src={navbarState.logoUrl}
+                      alt="Navbar logo"
+                      layout="fill"
+                      objectFit="contain"
+                      className="rounded-md"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           )}

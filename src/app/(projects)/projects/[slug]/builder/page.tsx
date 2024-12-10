@@ -155,18 +155,7 @@ export default function BlogBuilder() {
   });
 
   const [carouselState, setCarouselState] = useState({
-    images: [
-      {
-        id: "1",
-        src: "https://image.alhaymex.com/placeholder?height=200&width=200",
-        alt: "Image 1",
-      },
-      {
-        id: "2",
-        src: "https://image.alhaymex.com/placeholder?height=200&width=200",
-        alt: "Image 2",
-      },
-    ],
+    images: [],
     autoplay: false,
     interval: 5,
     showArrows: true,
