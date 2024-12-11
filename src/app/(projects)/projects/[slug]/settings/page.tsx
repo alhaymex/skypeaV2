@@ -26,12 +26,11 @@ import { Badge } from "@/components/ui/badge";
 import FaviconUploadButton from "@/components/upload-buttons/FaviconUploadButton";
 import OpenGraphUploadButton from "@/components/upload-buttons/OpenGraphUploadButton";
 import { getBlogSettings } from "@/actions/settings-actions";
-import { Loader } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import GeneralSettings from "@/components/pages/projects/settings/General";
 import { useParams } from "next/navigation";
 
-type BlogSettings = {
+export type BlogSettings = {
   name: string;
   description: string | null;
   slug: string;
@@ -93,6 +92,7 @@ export default function SettingsPage() {
         </TabsList>
         <TabsContent value="general" className="space-y-4">
           <GeneralSettings
+            setBlogSettings={setBlogSettings}
             blogName={blogSettings?.name as string}
             blogDescription={blogSettings?.description as string}
             timeZone={"UTC"}

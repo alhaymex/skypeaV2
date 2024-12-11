@@ -38,8 +38,41 @@ export const getBlogSettings = async (blogSlug: string) => {
 };
 
 export const updateBlogGeneralSettings = async (
+  blogSlug: string,
   description: string,
   timeZone: string
 ) => {
-  console.log(description, timeZone);
+  const session = await getSession();
+  if (!session || !session.user?.id) {
+    return { success: false, error: "Unauthorized!" };
+  }
+
+  const userId = session.user.id;
+
+  try {
+    const [blog] = await db
+      .select()
+      .from(blogs)
+      .where(and(eq(blogs.userId, userId), eq(blogs.slug, blogSlug)));
+
+    if (!blog) {
+      return {
+        success: false,
+        error: "You do not have permission to update this blog.",
+      };
+    }
+
+    const [updatedBlog] = await db
+      .update(blogs)
+      .set({
+        description,
+      })
+      .where(eq(blogs.slug, blogSlug))
+      .returning();
+
+    return { success: true, data: updatedBlog };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Failed to update blog settings!" };
+  }
 };

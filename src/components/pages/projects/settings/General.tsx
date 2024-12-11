@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -31,6 +31,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { updateBlogGeneralSettings } from "@/actions/settings-actions";
+import { Loader } from "lucide-react";
+import { BlogSettings } from "@/app/(projects)/projects/[slug]/settings/page";
 
 const formSchema = z.object({
   blogName: z.string().min(2, {
@@ -45,12 +47,18 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+type Settings = {
+  description?: string;
+  timezone?: string;
+};
+
 type Props = {
   blogName: string;
   blogDescription: string;
   timeZone: string;
   domain: string;
   blogSlug: string;
+  setBlogSettings: (settings: BlogSettings) => void;
 };
 
 const GeneralSettings = ({
@@ -59,7 +67,10 @@ const GeneralSettings = ({
   timeZone,
   domain,
   blogSlug,
+  setBlogSettings,
 }: Props) => {
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -71,11 +82,22 @@ const GeneralSettings = ({
   });
 
   async function onSubmit(values: FormValues) {
-    console.log(values.timeZone, values.blogDescription);
+    setLoading(true);
     await updateBlogGeneralSettings(
+      blogSlug,
       values.blogDescription as string,
       values.timeZone
-    );
+    ).then((res) => {
+      console.log(res.data);
+      setBlogSettings({
+        name: res?.data?.name as string,
+        slug: res?.data?.slug as string,
+        favicon: res?.data?.favicon as string,
+        openGraph: res?.data?.openGraph as string,
+        description: res?.data?.description as string,
+      });
+      setLoading(false);
+    });
   }
 
   return (
@@ -162,7 +184,16 @@ const GeneralSettings = ({
                 </FormItem>
               )}
             />
-            <Button type="submit">Save Changes</Button>
+            <Button disabled={loading} type="submit">
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <Loader className="h-4 w-4 animate-spin" />
+                  Saving...
+                </span>
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
           </form>
         </Form>
       </CardContent>
