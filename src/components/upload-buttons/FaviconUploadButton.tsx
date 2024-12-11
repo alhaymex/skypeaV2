@@ -27,7 +27,7 @@ export default function FaviconUploadButton({
   blogName,
 }: Props) {
   const [image, setImage] = useState<string>(
-    blogFavicon || "/default-favicon.ico"
+    blogFavicon || "https://image.alhaymex.com/placeholder?width=64&height=64"
   );
   const { toast } = useToast();
 

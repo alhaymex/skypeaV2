@@ -29,9 +29,10 @@ export default function OpenGraphUploadButton({
   blogDescription,
 }: Props) {
   const [image, setImage] = useState<string>(
-    blogOpenGraph || "/opengraph-default.jpg"
+    blogOpenGraph || "https://image.alhaymex.com/placeholder?shape=grid"
   );
   const { toast } = useToast();
+  console.log(image);
 
   const handleUploadComplete = async (res: { url: string }[]) => {
     try {
@@ -91,6 +92,7 @@ export default function OpenGraphUploadButton({
               alt="OpenGraph Preview"
               fill
               className="object-cover"
+              unoptimized
             />
           </div>
           <div className="p-4 bg-card">
