@@ -198,17 +198,7 @@ export const posts = pgTable("posts", {
   slug: text("slug").notNull().unique(),
   description: text("description"),
   content: text("content").notNull(),
-  publishOption: text("publishOption", {
-    enum: ["draft", "published", "scheduled"],
-  })
-    .notNull()
-    .default("draft"),
-  scheduledTime: timestamp("scheduledTime", { mode: "date" }),
-  isDistributed: boolean("isDistributed").default(false),
-  status: text("status", { enum: ["draft", "published", "archived"] })
-    .notNull()
-    .default("draft"),
-  metadata: jsonb("metadata"),
+  isNewsletter: boolean("isNewsletter").default(false),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 });

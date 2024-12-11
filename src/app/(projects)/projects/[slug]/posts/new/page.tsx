@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader } from "lucide-react";
 import { createPost } from "@/actions/posts-actions";
@@ -37,13 +36,9 @@ export default function NewPostPage() {
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
       title: "",
-      coverImage: "",
       description: "",
       content: "<p>Start writing your blog post here...</p>",
-      publishOption: "draft",
-      scheduledTime: "",
-      isDistributed: false,
-      blogSlug: slug,
+      isNewsletter: false,
     },
   });
 
@@ -51,30 +46,36 @@ export default function NewPostPage() {
     setIsLoading(true);
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, value.toString());
+      if (key === "isNewsletter") {
+        formData.append(key, value ? "true" : "false");
+      } else {
+        formData.append(key, value.toString());
+      }
     });
     formData.append("blogSlug", slug);
 
     try {
       const result = await createPost(formData);
-      console.log(result);
-      if (result && "errors" in result && result.errors) {
-        Object.entries(result.errors).forEach(([key, value]) => {
-          if (Array.isArray(value) && value.length > 0) {
-            form.setError(key as keyof z.infer<typeof blogFormSchema>, {
-              type: "manual",
-              message: value[0],
-            });
-          }
-        });
-      } else if (result && "message" in result) {
-        setServerError(result.message || "An unexpected error occurred.");
+      if (!result.success) {
+        if (result.errors) {
+          Object.entries(result.errors).forEach(([key, value]) => {
+            if (Array.isArray(value) && value.length > 0) {
+              form.setError(key as keyof z.infer<typeof blogFormSchema>, {
+                type: "manual",
+                message: value[0],
+              });
+            }
+          });
+        } else if (result.message) {
+          setServerError(result.message);
+        }
       } else {
-        setIsLoading(false);
         router.push("./");
       }
     } catch (error) {
       setServerError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -95,20 +96,6 @@ export default function NewPostPage() {
                     <FormLabel>Title</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter blog post title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="coverImage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Cover Image</FormLabel>
-                    <FormControl>
-                      <Input type="file" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -148,66 +135,7 @@ export default function NewPostPage() {
 
               <FormField
                 control={form.control}
-                name="publishOption"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Publish Options</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="draft" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Save as Draft
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="published" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Publish Immediately
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="scheduled" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Schedule for Later
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {form.watch("publishOption") === "scheduled" && (
-                <FormField
-                  control={form.control}
-                  name="scheduledTime"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Scheduled Time</FormLabel>
-                      <FormControl>
-                        <Input type="datetime-local" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <FormField
-                control={form.control}
-                name="isDistributed"
+                name="isNewsletter"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                     <FormControl>
