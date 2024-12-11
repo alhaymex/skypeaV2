@@ -114,6 +114,7 @@ export function GridAccordion({
       template: "blog",
       columns: 3,
       items: defaultItems,
+      isDynamic: true,
     });
 
     addComponent("grid", true);

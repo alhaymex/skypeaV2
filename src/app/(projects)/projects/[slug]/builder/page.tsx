@@ -105,6 +105,7 @@ export default function BlogBuilder() {
     ] as GridItem[],
     columns: 3,
     template: "blog" as "blog" | "testimonial" | "feature",
+    isDynamic: false,
   });
 
   const [formState, setFormState] = useState({
@@ -290,6 +291,7 @@ export default function BlogBuilder() {
               items: defaultItems,
               template: "blog",
               columns: 3,
+              isDynamic: true,
             },
           };
         } else {

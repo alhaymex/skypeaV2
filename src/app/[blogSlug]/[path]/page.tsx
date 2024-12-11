@@ -34,6 +34,9 @@ function renderComponent(component: ComponentData) {
     case "form":
       return <Form key={component.id} {...component.data} />;
     case "grid":
+      if (component.data.isDynamic) {
+        return <div>Dynamic Grid is here!</div>;
+      }
       return <Grid key={component.id} {...component.data} />;
     case "footer":
       return <Footer key={component.id} {...component.data} />;
