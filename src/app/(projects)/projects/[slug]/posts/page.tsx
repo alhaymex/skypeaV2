@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,20 +19,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  PenSquare,
-  MoreHorizontal,
-  Trash2,
-  Eye,
-  Plus,
-  Filter,
-} from "lucide-react";
+import { PenSquare, MoreHorizontal, Trash2, Eye, Plus } from "lucide-react";
 import Link from "next/link";
-import { getBlogPosts } from "@/actions/posts-actions";
+import { deletePost, getBlogPosts } from "@/actions/posts-actions";
 import { useParams } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Define the type for your posts
 type Post = {
   id: string;
   title: string;
@@ -45,11 +38,13 @@ type Post = {
 };
 
 export default function PostsPage() {
+  const { toast } = useToast();
+
   const params = useParams();
   const blogSlug = params.slug as string;
 
   const [posts, setPosts] = useState<Post[]>([]);
-  const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,26 +73,29 @@ export default function PostsPage() {
     fetchPosts();
   }, [blogSlug]);
 
-  const togglePostSelection = (postId: string) => {
-    setSelectedPosts((prev) =>
-      prev.includes(postId)
-        ? prev.filter((id) => id !== postId)
-        : [...prev, postId]
+  const filteredPosts = useMemo(() => {
+    return posts.filter((post) =>
+      post.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
+  }, [posts, searchQuery]);
+
+  const handleDeletePost = async (postId: string, blogSlug: string) => {
+    const result = await deletePost(postId, blogSlug);
+
+    if (result.success) {
+      toast({
+        title: "Success",
+        description: result.message,
+      });
+      setPosts(posts.filter((post) => post.id !== result.postId));
+    } else {
+      toast({
+        title: "Error",
+        description: result.error,
+        variant: "destructive",
+      });
+    }
   };
-
-  const isAllSelected = selectedPosts.length === posts.length;
-  const toggleAllSelection = () => {
-    setSelectedPosts(isAllSelected ? [] : posts.map((post) => post.id));
-  };
-
-  if (isLoading) {
-    return <div>Loading posts...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
 
   return (
     <div className="p-8">
@@ -110,75 +108,106 @@ export default function PostsPage() {
         </Button>
       </div>
       <div className="mb-4 flex justify-between items-center">
-        <Input placeholder="Search posts..." className="max-w-sm" />
-        <Button variant="outline" className="ml-2">
-          <Filter />
-          Filter
-        </Button>
+        <Input
+          placeholder="Search posts..."
+          className="max-w-sm"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[50px]">
-              <Checkbox
-                checked={isAllSelected}
-                onCheckedChange={toggleAllSelection}
-                aria-label="Select all posts"
-              />
-            </TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {posts.map((post) => (
-            <TableRow key={post.id}>
-              <TableCell>
-                <Checkbox
-                  checked={selectedPosts.includes(post.id)}
-                  onCheckedChange={() => togglePostSelection(post.id)}
-                  aria-label={`Select post ${post.title}`}
-                />
-              </TableCell>
-              <TableCell className="font-medium">{post.title}</TableCell>
-              <TableCell>{post.isNewsletter ? "Newsletter" : "Post"}</TableCell>
-              <TableCell>
-                {new Date(post.createdAt).toLocaleDateString()}
-              </TableCell>
-              <TableCell className="text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>
-                      <Eye className="mr-2 h-4 w-4" /> View
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <PenSquare className="mr-2 h-4 w-4" /> Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <Trash2 className="mr-2 h-4 w-4" /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {posts.length === 0 && (
-        <div className="text-center text-gray-500 mt-4">
-          No posts found for this blog.
-        </div>
+      {isLoading ? (
+        <PostsTableSkeleton />
+      ) : error ? (
+        <div className="text-center text-red-500 mt-4">{error}</div>
+      ) : (
+        <>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredPosts.map((post) => (
+                <TableRow key={post.id}>
+                  <TableCell className="font-medium">{post.title}</TableCell>
+                  <TableCell>
+                    {post.isNewsletter ? "Newsletter" : "Post"}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" /> View
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <PenSquare className="mr-2 h-4 w-4" /> Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleDeletePost(post.id, blogSlug)}
+                          className="text-red-500 focus:text-red-600"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {filteredPosts.length === 0 && (
+            <div className="text-center text-gray-500 mt-4">
+              No posts found for this blog.
+            </div>
+          )}
+        </>
       )}
     </div>
   );
 }
+
+const PostsTableSkeleton = () => {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Title</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <TableRow key={index}>
+            <TableCell>
+              <Skeleton className="h-4 w-[250px]" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-[100px]" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-[100px]" />
+            </TableCell>
+            <TableCell className="text-right"></TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};

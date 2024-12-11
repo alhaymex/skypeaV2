@@ -117,3 +117,56 @@ export const createPost = async (formData: FormData) => {
     };
   }
 };
+
+export async function deletePost(postId: string, blogSlug: string) {
+  const session = await getSession();
+  if (!session || !session.user?.id) {
+    return { success: false, error: "Unauthorized!" };
+  }
+  const userId = session.user?.id;
+
+  try {
+    const [existingPost] = await db
+      .select({
+        id: posts.id,
+        blogSlug: posts.blogSlug,
+      })
+      .from(posts)
+      .where(and(eq(posts.id, postId), eq(posts.blogSlug, blogSlug)))
+      .execute();
+
+    const [blog] = await db
+      .select()
+      .from(blogs)
+      .where(and(eq(blogs.slug, blogSlug), eq(blogs.userId, userId)))
+      .execute();
+
+    if (!existingPost || !blog) {
+      return {
+        success: false,
+        error: "Post not found or you do not have permission to delete it.",
+      };
+    }
+
+    const [deletedPost] = await db
+      .delete(posts)
+      .where(eq(posts.id, postId))
+      .returning({
+        id: posts.id,
+        title: posts.title,
+      });
+
+    return {
+      success: true,
+      message: `Post "${deletedPost.title}" has been deleted.`,
+      postId: deletedPost.id,
+    };
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    return {
+      success: false,
+      error: "Failed to delete post.",
+      details: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
