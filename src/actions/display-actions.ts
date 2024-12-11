@@ -74,14 +74,14 @@ export const getBlogForDisplay = async (slug: string) => {
   }
 };
 
-export const getBlogPostsForDisplay = async (slug: string) => {
-  const blogs = await db
-    .select()
-    .from(posts)
-    .where(eq(posts.blogSlug, slug))
-    .orderBy(asc(posts.publishOption), asc(posts.scheduledTime));
+// export const getBlogPostsForDisplay = async (slug: string) => {
+//   const blogs = await db
+//     .select()
+//     .from(posts)
+//     .where(eq(posts.blogSlug, slug))
+//     .orderBy(asc(posts.publishOption), asc(posts.scheduledTime));
 
-  console.log(blogs);
+//   console.log(blogs);
 
-  return blogs;
-};
+//   return blogs;
+// };
