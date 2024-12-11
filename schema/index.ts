@@ -21,36 +21,18 @@ export const blogSchema = z.object({
 });
 
 export const BlogPostSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(100, "Title must be 100 characters or less"),
-  description: z
-    .string()
-    .max(500, "Description must be 500 characters or less")
-    .optional(),
-  content: z.string().min(1, "Content is required"),
-  publishOption: z.enum(["draft", "published", "scheduled"]),
-  scheduledTime: z.string().optional(),
-  isDistributed: z.boolean().default(false),
-  blogSlug: z.string().min(1, "Blog slug is required"),
+  title: z.string().min(1, { message: "Title is required" }),
+  description: z.string().min(1, { message: "Description is required" }),
+  content: z.string().min(1, { message: "Content is required" }),
+  blogSlug: z.string().min(1, { message: "Blog slug is required" }),
+  isNewsletter: z.boolean().optional(),
 });
 
 export const blogFormSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(100, "Title must be 100 characters or less"),
-  coverImage: z.string().optional(),
-  description: z
-    .string()
-    .max(500, "Description must be 500 characters or less")
-    .optional(),
-  content: z.string().min(1, "Content is required"),
-  publishOption: z.enum(["draft", "published", "scheduled"]),
-  scheduledTime: z.string().optional(),
-  isDistributed: z.boolean().default(false),
-  blogSlug: z.string().min(1, "Blog slug is required"),
+  title: z.string().min(1, { message: "Title is required" }),
+  description: z.string().min(1, { message: "Description is required" }),
+  content: z.string().min(1, { message: "Content is required" }),
+  isNewsletter: z.boolean().optional(),
 });
 
 export type BlogPostSchema = z.infer<typeof BlogPostSchema>;

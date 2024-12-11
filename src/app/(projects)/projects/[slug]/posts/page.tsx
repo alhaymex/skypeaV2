@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,45 +29,56 @@ import {
   Filter,
 } from "lucide-react";
 import Link from "next/link";
+import { getBlogPosts } from "@/actions/posts-actions";
+import { useParams } from "next/navigation";
 
-// Sample data for blog posts
-const posts = [
-  {
-    id: 1,
-    title: "Getting Started with React",
-    status: "Published",
-    date: "2023-05-15",
-  },
-  {
-    id: 2,
-    title: "Advanced TypeScript Techniques",
-    status: "Draft",
-    date: "2023-05-20",
-  },
-  {
-    id: 3,
-    title: "The Future of AI in Web Development",
-    status: "Published",
-    date: "2023-05-25",
-  },
-  {
-    id: 4,
-    title: "Optimizing Your Next.js Application",
-    status: "Scheduled",
-    date: "2023-06-01",
-  },
-  {
-    id: 5,
-    title: "Introduction to GraphQL",
-    status: "Draft",
-    date: "2023-06-05",
-  },
-];
+// Define the type for your posts
+type Post = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  content: string;
+  isNewsletter: boolean | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 export default function PostsPage() {
-  const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
+  const params = useParams();
+  const blogSlug = params.slug as string;
 
-  const togglePostSelection = (postId: number) => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      setIsLoading(true);
+      try {
+        const result = await getBlogPosts(blogSlug);
+
+        if (result.success && result.posts) {
+          setPosts(result.posts);
+          setError(null);
+        } else {
+          setError(result.error || "Failed to fetch posts");
+          setPosts([]);
+        }
+      } catch (err) {
+        setError("An unexpected error occurred");
+        setPosts([]);
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, [blogSlug]);
+
+  const togglePostSelection = (postId: string) => {
     setSelectedPosts((prev) =>
       prev.includes(postId)
         ? prev.filter((id) => id !== postId)
@@ -79,6 +90,14 @@ export default function PostsPage() {
   const toggleAllSelection = () => {
     setSelectedPosts(isAllSelected ? [] : posts.map((post) => post.id));
   };
+
+  if (isLoading) {
+    return <div>Loading posts...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   return (
     <div className="p-8">
@@ -108,7 +127,7 @@ export default function PostsPage() {
               />
             </TableHead>
             <TableHead>Title</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Type</TableHead>
             <TableHead>Date</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -124,8 +143,10 @@ export default function PostsPage() {
                 />
               </TableCell>
               <TableCell className="font-medium">{post.title}</TableCell>
-              <TableCell>{post.status}</TableCell>
-              <TableCell>{post.date}</TableCell>
+              <TableCell>{post.isNewsletter ? "Newsletter" : "Post"}</TableCell>
+              <TableCell>
+                {new Date(post.createdAt).toLocaleDateString()}
+              </TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -153,6 +174,11 @@ export default function PostsPage() {
           ))}
         </TableBody>
       </Table>
+      {posts.length === 0 && (
+        <div className="text-center text-gray-500 mt-4">
+          No posts found for this blog.
+        </div>
+      )}
     </div>
   );
 }
