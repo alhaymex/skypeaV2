@@ -7,6 +7,7 @@ import { Navbar } from "@/components/templates/Navbar";
 import { Form } from "@/components/templates/Form";
 import { getBlogForDisplay } from "@/actions/display-actions";
 import { Carousel } from "@/components/templates/Carousel";
+import DynamicBlogs from "@/components/templates/DynamicBlogs";
 
 interface Page {
   id: string;
@@ -35,7 +36,7 @@ function renderComponent(component: ComponentData) {
       return <Form key={component.id} {...component.data} />;
     case "grid":
       if (component.data.isDynamic) {
-        return <div>Dynamic Grid is here!</div>;
+        return <DynamicBlogs />;
       }
       return <Grid key={component.id} {...component.data} />;
     case "footer":
