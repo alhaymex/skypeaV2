@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { blogComponents, blogPages, blogs, posts } from "@/db/schema";
 import { BlogPageWithComponents } from "@/types/types";
-import { asc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 
 export const getBlogForDisplay = async (slug: string) => {
   try {
@@ -74,14 +74,14 @@ export const getBlogForDisplay = async (slug: string) => {
   }
 };
 
-// export const getBlogPostsForDisplay = async (slug: string) => {
-//   const blogs = await db
-//     .select()
-//     .from(posts)
-//     .where(eq(posts.blogSlug, slug))
-//     .orderBy(asc(posts.publishOption), asc(posts.scheduledTime));
+export const getBlogPostsForDisplay = async (slug: string) => {
+  const blogs = await db
+    .select()
+    .from(posts)
+    .where(eq(posts.blogSlug, slug))
+    .orderBy(desc(posts.createdAt));
 
-//   console.log(blogs);
+  console.log(blogs);
 
-//   return blogs;
-// };
+  return blogs;
+};
