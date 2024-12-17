@@ -51,21 +51,21 @@ export default async function DashboardSidebar({
       url: `/projects/${slug}/posts`,
       icon: FileText,
     },
-    {
-      title: "Subscribers",
-      url: `/projects/${slug}/subscribers`,
-      icon: Users,
-    },
-    {
-      title: "Newsletters",
-      url: `/projects/${slug}/newsletters`,
-      icon: Mail,
-    },
-    {
-      title: "Analytics",
-      url: `/projects/${slug}/analytics`,
-      icon: BarChart,
-    },
+    // {
+    //   title: "Subscribers",
+    //   url: `/projects/${slug}/subscribers`,
+    //   icon: Users,
+    // },
+    // {
+    //   title: "Newsletters",
+    //   url: `/projects/${slug}/newsletters`,
+    //   icon: Mail,
+    // },
+    // {
+    //   title: "Analytics",
+    //   url: `/projects/${slug}/analytics`,
+    //   icon: BarChart,
+    // },
     {
       title: "Settings",
       url: `/projects/${slug}/settings`,

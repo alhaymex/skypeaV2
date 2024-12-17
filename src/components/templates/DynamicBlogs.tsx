@@ -30,9 +30,9 @@ const truncateText = (text: string | null, maxLength: number) => {
   return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
 
-const DynamicBlogs = async () => {
+const DynamicBlogs = async ({ slug }: { slug: string }) => {
   try {
-    const posts = await getBlogPostsForDisplay("skypea-1");
+    const posts = await getBlogPostsForDisplay(slug);
 
     return (
       <section className="max-w-7xl mx-auto my-12 px-4">
