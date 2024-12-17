@@ -1,7 +1,9 @@
 import { db } from "@/db";
 import { blogComponents, blogPages, blogs, posts } from "@/db/schema";
 import { BlogPageWithComponents } from "@/types/types";
-import { asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
+import { notFound } from "next/navigation";
+import { cache } from "react";
 
 export const getBlogForDisplay = async (slug: string) => {
   try {
@@ -85,3 +87,17 @@ export const getBlogPostsForDisplay = async (slug: string) => {
 
   return blogs;
 };
+
+export const getBlogPost = cache(async (slug: string, blogSlug: string) => {
+  const post = await db
+    .select()
+    .from(posts)
+    .where(and(eq(posts.slug, slug), eq(posts.blogSlug, blogSlug)))
+    .limit(1);
+
+  if (post.length === 0) {
+    notFound();
+  }
+
+  return post[0];
+});

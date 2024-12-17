@@ -26,7 +26,7 @@ interface BlogData {
   pages: Page[];
 }
 
-function renderComponent(component: ComponentData) {
+function renderComponent(component: ComponentData, slug: string) {
   switch (component.type) {
     case "navbar":
       return <Navbar key={component.id} {...component.data} />;
@@ -36,7 +36,7 @@ function renderComponent(component: ComponentData) {
       return <Form key={component.id} {...component.data} />;
     case "grid":
       if (component.data.isDynamic) {
-        return <DynamicBlogs />;
+        return <DynamicBlogs slug={slug as string} />;
       }
       return <Grid key={component.id} {...component.data} />;
     case "footer":
@@ -90,7 +90,7 @@ export default async function BlogPage({
       <div className="min-h-screen">
         <main>
           {currentPage.components.map((component) =>
-            renderComponent(component)
+            renderComponent(component, blogSlug)
           )}
         </main>
       </div>
