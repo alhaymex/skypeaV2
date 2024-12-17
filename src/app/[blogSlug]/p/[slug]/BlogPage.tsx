@@ -70,20 +70,23 @@ const BlogPage = ({
           </Button>
         </div>
 
-        <div className="relative w-full aspect-video overflow-hidden rounded-lg shadow-md mb-8">
-          <Image
-            src={blogPost.image}
-            alt={`${blogPost.title}'s cover image`}
-            fill
-            className="object-cover object-center transition-transform duration-300 hover:scale-105"
-            unoptimized
-          />
-          {blogPost.description && (
+        {blogPost.image !=
+          "https://image.alhaymex.com/placeholder?shape=grid" && (
+          <div className="relative w-full aspect-video overflow-hidden rounded-lg shadow-md mb-8">
+            <Image
+              src={blogPost.image}
+              alt={`${blogPost.title}'s cover image`}
+              fill
+              className="object-cover object-center transition-transform duration-300 hover:scale-105"
+              unoptimized
+            />
+
             <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-4 text-white">
               <p className="line-clamp-2 text-sm">{blogPost.description}</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
         <div
           className="
             [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:leading-tight

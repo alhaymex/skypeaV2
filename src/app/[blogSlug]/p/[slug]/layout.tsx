@@ -7,23 +7,28 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { blogSlug, slug } = await params;
+
   const post = await getBlogPost(slug, blogSlug);
+
+  const fallbackImage = "https://image.alhaymex.com/placeholder?shape=grid";
+
+  const postImage = post.image || fallbackImage;
 
   const previousImages = (await parent).openGraph?.images || [];
 
   return {
     title: post.title,
-    description: post.description,
+    description: post.description || "A blog post on Skypea",
     openGraph: {
       title: post.title,
-      description: post.description as string,
+      description: post.description || "A blog post on Skypea",
       type: "article",
       publishedTime: post.createdAt.toISOString(),
       modifiedTime: post.updatedAt.toISOString(),
-      url: `https://${blogSlug}skypea.net/p/${slug}`,
+      url: `https://${blogSlug}.skypea.net/p/${slug}`,
       images: [
         {
-          url: post.image as string,
+          url: postImage,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -34,8 +39,11 @@ export async function generateMetadata(
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.description as string,
-      images: [post.image as string],
+      description: post.description || "A blog post on Skypea",
+      images: [postImage],
+    },
+    alternates: {
+      canonical: `https://${blogSlug}.skypea.net/p/${slug}`,
     },
   };
 }
