@@ -3,10 +3,10 @@ import { Metadata, ResolvingMetadata } from "next";
 import { getBlogPost } from "@/actions/display-actions";
 
 export async function generateMetadata(
-  { params }: { params: { blogSlug: string; slug: string } },
+  { params }: { params: Promise<{ blogSlug: string; slug: string }> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { blogSlug, slug } = params;
+  const { blogSlug, slug } = await params;
 
   const post = await getBlogPost(slug, blogSlug);
 
