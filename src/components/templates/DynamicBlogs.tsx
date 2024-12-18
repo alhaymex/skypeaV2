@@ -12,6 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getBlogPostsForDisplay } from "@/actions/display-actions";
+import { CalendarIcon, UserIcon } from "lucide-react";
 
 type Post = {
   id: string;
@@ -23,6 +24,7 @@ type Post = {
   title: string;
   content: string;
   isNewsletter: boolean | null;
+  image: string;
 };
 
 const truncateText = (text: string | null, maxLength: number) => {
@@ -38,7 +40,7 @@ const DynamicBlogs = async ({ slug }: { slug: string }) => {
       <section className="max-w-7xl mx-auto my-12 px-4">
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
-            <BlogCard key={post.id} post={post} />
+            <BlogCard key={post.id} post={post as Post} />
           ))}
         </div>
       </section>
@@ -50,51 +52,45 @@ const DynamicBlogs = async ({ slug }: { slug: string }) => {
 };
 
 const BlogCard = ({ post }: { post: Post }) => (
-  <Card className="flex flex-col h-full">
-    <CardHeader className="p-0">
-      <div className="relative w-full pt-[56.25%]">
+  <Card className="overflow-hidden transition-shadow hover:shadow-lg">
+    <Link href={`/p/${post.slug}`} className="block">
+      <div className="aspect-video relative">
         <Image
-          src="https://image.alhaymex.com/placeholder?shape=grid"
+          src={post.image}
           alt={post.title}
-          layout="fill"
-          objectFit="cover"
-          className="rounded-t-lg"
-          unoptimized
+          fill
+          className="object-cover"
         />
       </div>
-    </CardHeader>
-    <CardContent className="flex-grow">
-      <CardTitle className="mb-2">{truncateText(post.title, 50)}</CardTitle>
-      <CardDescription> {truncateText(post.description, 100)}</CardDescription>
-    </CardContent>
-    <CardFooter className="flex justify-between items-center">
+      <CardContent className="p-4">
+        <h3 className="text-xl font-semibold mb-2 line-clamp-2">
+          {truncateText(post.title, 50)}
+        </h3>
+        <p className="text-muted-foreground line-clamp-3">
+          {truncateText(post.description, 100)}
+        </p>
+      </CardContent>
+    </Link>
+    <CardFooter className="px-4 py-3 border-t flex justify-between items-center text-sm text-muted-foreground">
       <div className="flex items-center">
-        <Avatar className="h-8 w-8 mr-2">
-          <AvatarImage
-            src={`https://image.alhaymex.com/initials?initials=ay`}
-            alt="Author avatar"
-          />
-          <AvatarFallback>AY</AvatarFallback>
-        </Avatar>
-        <span className="text-sm text-muted-foreground">Alharith Yassin</span>
+        <UserIcon className="w-4 h-4 mr-2" />
+        <span>Alharith Yassin</span>
       </div>
-      <time
-        className="text-sm text-muted-foreground"
-        dateTime={post.createdAt.toISOString()}
-      >
-        {new Date(post.createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}
-      </time>
+      <div className="flex items-center">
+        <CalendarIcon className="w-4 h-4 mr-2" />
+        <time dateTime={post.createdAt.toISOString()}>
+          {post.createdAt.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </time>
+      </div>
     </CardFooter>
-    <CardFooter>
-      <Link href={`/blog/${post.slug}`} className=" w-full" passHref>
-        <Button variant="outline" className="w-full">
-          Read More
-        </Button>
-      </Link>
+    <CardFooter className="p-4 pt-0">
+      <Button asChild variant="outline" className="w-full">
+        <Link href={`/p/${post.slug}`}>Read More</Link>
+      </Button>
     </CardFooter>
   </Card>
 );
