@@ -197,11 +197,6 @@ export default function LandingPageNav() {
                     <Link href="/login">Log in</Link>
                   </Button>
                 </div>
-                <div>
-                  <Button className="w-full" asChild>
-                    <Link href="/signup">Sign up</Link>
-                  </Button>
-                </div>
               </nav>
             </SheetContent>
           </Sheet>
