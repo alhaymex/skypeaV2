@@ -26,6 +26,10 @@ export const BlogPostSchema = z.object({
   content: z.string().min(1, { message: "Content is required" }),
   blogSlug: z.string().min(1, { message: "Blog slug is required" }),
   isNewsletter: z.boolean().optional(),
+  image: z
+    .string()
+    .optional()
+    .default("https://image.alhaymex.com/placeholder?shape=grid"),
 });
 
 export const blogFormSchema = z.object({
@@ -33,6 +37,10 @@ export const blogFormSchema = z.object({
   description: z.string().min(1, { message: "Description is required" }),
   content: z.string().min(1, { message: "Content is required" }),
   isNewsletter: z.boolean().optional(),
+  image: z
+    .string()
+    .optional()
+    .default("https://image.alhaymex.com/placeholder?shape=grid"),
 });
 
 export type BlogPostSchema = z.infer<typeof BlogPostSchema>;

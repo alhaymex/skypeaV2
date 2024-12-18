@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +24,7 @@ import { AlertCircle, Loader } from "lucide-react";
 import { createPost } from "@/actions/posts-actions";
 import { Editor } from "@/components/pages/projects/posts/Editor";
 import { blogFormSchema } from "../../../../../../../schema";
+import BlogPostImageUploadButton from "@/components/upload-buttons/BlogPostImageUploadButton";
 
 export default function NewPostPage() {
   const params = useParams();
@@ -39,6 +40,7 @@ export default function NewPostPage() {
       description: "",
       content: "<p>Start writing your blog post here...</p>",
       isNewsletter: false,
+      image: "https://image.alhaymex.com/placeholder?shape=grid",
     },
   });
 
@@ -119,6 +121,8 @@ export default function NewPostPage() {
                 )}
               />
 
+              <BlogPostImageUploadButton form={form} />
+
               <FormField
                 control={form.control}
                 name="content"
@@ -133,27 +137,29 @@ export default function NewPostPage() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="isNewsletter"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Distribute as Newsletter</FormLabel>
-                      <FormDescription>
-                        Check this if you want to send this post as a newsletter
-                        to your subscribers.
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
+              <div className="hidden">
+                <FormField
+                  control={form.control}
+                  name="isNewsletter"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Distribute as Newsletter</FormLabel>
+                        <FormDescription>
+                          Check this if you want to send this post as a
+                          newsletter to your subscribers.
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               {serverError && (
                 <Alert variant="destructive">
