@@ -44,6 +44,7 @@ import {
 import { blogSchema } from "../../../../schema";
 import { createBlog } from "@/actions/blogs-actions";
 import { Sheet } from "@/components/ui/sheet";
+import { redirect, useRouter } from "next/navigation";
 
 const blogIcons = [
   { value: "pencil", label: "Pencil", icon: Pencil },
@@ -77,7 +78,7 @@ const blogCategories = [
 ];
 
 export default function NewBlogForm() {
-  // const router = useRouter();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [slug, setSlug] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -109,6 +110,7 @@ export default function NewBlogForm() {
       if (result.success) {
         setSheetOpen(false);
         form.reset();
+        router.push(`/projects/${result.slug}`);
       } else {
         console.error(result.message);
       }
