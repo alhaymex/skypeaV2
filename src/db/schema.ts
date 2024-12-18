@@ -27,6 +27,10 @@ export const users = pgTable("user", {
   image: text("image"),
   bio: text("bio"),
 
+  plan: text("plan").default("free").notNull(),
+  planStatus: text("plan_status").default("active").notNull(),
+  subscriptionEndsAt: timestamp("subscription_ends_at", { mode: "date" }),
+
   createdAt: timestamp("createdAt", { mode: "date" }),
   updatedAt: timestamp("updatedAt", { mode: "date" }),
 });
