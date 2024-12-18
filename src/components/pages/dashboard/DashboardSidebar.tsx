@@ -6,6 +6,7 @@ import {
   Settings,
   Mail,
   PenTool,
+  MessageCircleMore,
 } from "lucide-react";
 import {
   Sidebar,
@@ -51,6 +52,11 @@ export default async function DashboardSidebar({
       url: `/projects/${slug}/posts`,
       icon: FileText,
     },
+    // {
+    //   title: "Messages",
+    //   url: `/projects/${slug}/messages`,
+    //   icon: MessageCircleMore,
+    // },
     // {
     //   title: "Subscribers",
     //   url: `/projects/${slug}/subscribers`,
