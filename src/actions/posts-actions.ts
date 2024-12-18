@@ -63,6 +63,7 @@ export const createPost = async (formData: FormData) => {
     title: formData.get("title"),
     description: formData.get("description"),
     content: formData.get("content"),
+    image: formData.get("image"),
     blogSlug: formData.get("blogSlug"),
     isNewsletter: formData.get("isNewsletter") === "true",
   });
@@ -74,7 +75,7 @@ export const createPost = async (formData: FormData) => {
     };
   }
 
-  const { title, description, content, isNewsletter, blogSlug } =
+  const { title, description, content, image, isNewsletter, blogSlug } =
     validatedFields.data;
 
   try {
@@ -98,6 +99,7 @@ export const createPost = async (formData: FormData) => {
       slug,
       description,
       content,
+      image,
       isNewsletter: isNewsletter ?? false,
       blogSlug: existingBlog.slug,
     };

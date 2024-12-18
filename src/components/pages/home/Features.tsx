@@ -12,6 +12,7 @@ import {
   Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const features = [
   {
@@ -103,7 +104,7 @@ export default function Features() {
         </div>
         <div className="mt-16 text-center">
           <Button asChild size="lg">
-            <a href="/signup">Start Your Blog and Newsletter Today</a>
+            <Link href="/login">Start Your Blog and Newsletter Today</Link>
           </Button>
         </div>
       </div>

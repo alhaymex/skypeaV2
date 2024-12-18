@@ -3,8 +3,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 export default function Hero() {
+  const session = useSession();
+
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -37,7 +40,11 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <Button asChild size="lg" className="w-full sm:w-auto">
-                <Link href="/login">Start Your Blog</Link>
+                {session.data?.user ? (
+                  <Link href="/projects">Dashboard</Link>
+                ) : (
+                  <Link href="/login">Start Your Blog</Link>
+                )}
               </Button>
               <Button
                 asChild
