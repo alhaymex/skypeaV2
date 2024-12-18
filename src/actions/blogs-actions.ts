@@ -11,6 +11,7 @@ import { and, asc, desc, eq, gt, sql } from "drizzle-orm";
 import { BlogPageWithComponents, ComponentData } from "@/types/types";
 import { createSubdomain } from "@/lib/vercel";
 import { pages } from "next/dist/build/templates/app-page";
+import { redirect } from "next/navigation";
 
 export const getBlogs = async () => {
   const session = await getSession();
@@ -52,9 +53,7 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
       });
     }
 
-    revalidatePath("/projects");
-
-    return { success: true, message: "Blog created successfully" };
+    return { success: true, message: "Blog created successfully", slug: slug };
   } catch (err) {
     if (err instanceof z.ZodError) {
       return {
