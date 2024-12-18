@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Pen } from "lucide-react";
 
-export default function Footer() {
+const Footer = () => {
   return (
     <footer className="bg-muted/50 border-t">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -50,6 +50,30 @@ export default function Footer() {
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms-of-service"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/privacy-notice"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Privacy Notice
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/refund-policy"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Refund Policy
                 </Link>
               </li>
             </ul>
@@ -114,16 +138,22 @@ export default function Footer() {
                 &copy; {new Date().getFullYear()} Skypea. All rights reserved.
               </div>
               <Link
-                href="/privacy"
+                href="/privacy-notice"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
-                Privacy Policy
+                Privacy Notice
               </Link>
               <Link
-                href="/terms"
+                href="/terms-of-service"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 Terms of Service
+              </Link>
+              <Link
+                href="/refund-policy"
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Refund Policy
               </Link>
             </div>
           </div>
@@ -131,4 +161,6 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;
