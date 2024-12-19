@@ -43,6 +43,8 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
 
     const insertedBlogs = await db.insert(blogs).values(blog).returning();
 
+    await addBlogPage(slug, "Home", "home");
+
     if (insertedBlogs.length > 0) {
       await db.insert(blogAnalytics).values({
         blogSlug: insertedBlogs[0].slug,

@@ -131,15 +131,17 @@ export function MainContent({
                 className="flex items-center group"
               >
                 <span>{page.name}</span>
-                <span
-                  className="ml-2 p-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeletePage(page.id);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </span>
+                {page.name !== "Home" && (
+                  <span
+                    className="ml-2 p-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeletePage(page.id);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </span>
+                )}
               </TabsTrigger>
             ))}
           </TabsList>
