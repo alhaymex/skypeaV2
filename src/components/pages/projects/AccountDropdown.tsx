@@ -16,12 +16,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { Logout } from "@/actions/auth-actions";
 
 export function AccountDropdown() {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
 
-  if (!session) return null;
+  if (!session || !session.user) return null;
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -57,7 +58,7 @@ export function AccountDropdown() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/account/settings">
+            <Link href="/account">
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
@@ -71,7 +72,7 @@ export function AccountDropdown() {
             <span>Help</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => Logout()}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
