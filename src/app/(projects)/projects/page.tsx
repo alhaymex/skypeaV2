@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, MoreVertical, Pin, Layers } from "lucide-react";
+import {
+  Search,
+  MoreVertical,
+  Pin,
+  Layers,
+  Settings,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -158,54 +165,71 @@ function ProjectCard({
   togglePin: (id: string) => void;
 }) {
   return (
-    <div className="bg-card rounded-lg p-4 border border-border shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <BlogIcon icon={project.icon} className="h-6 w-6 text-primary" />
+    <div className="group relative">
+      <Link
+        href={`/projects/${project.slug}`}
+        className="block bg-card rounded-lg p-4 border border-border shadow-sm hover:shadow-md transition-all hover:border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2"
+      >
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <BlogIcon icon={project.icon} className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-medium group-hover:text-primary transition-colors">
+                {project.name}
+              </h3>
+              <Badge
+                variant={project.status === "live" ? "default" : "secondary"}
+                className="mt-1"
+              >
+                {project.status === "live" ? "Live" : "Building"}
+              </Badge>
+            </div>
           </div>
-          <div>
-            <h3 className="font-medium">{project.name}</h3>
-            <Badge
-              variant={project.status === "live" ? "default" : "secondary"}
-              className="mt-1"
-            >
-              {project.status === "live" ? "Live" : "Building"}
-            </Badge>
+          <div
+            className="absolute top-4 right-4"
+            onClick={(e) => e.preventDefault()}
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="opacity-100 transition-opacity"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                  <span className="sr-only">Project options</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[180px]">
+                <DropdownMenuItem onSelect={() => togglePin(project.id)}>
+                  <Pin className="mr-2 h-4 w-4" />
+                  <span>
+                    {project.pinned ? "Unpin Project" : "Pin Project"}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/projects/${project.slug}/settings`}
+                    className="flex items-center"
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Project Settings</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>Delete Project</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => e.preventDefault()}
-            >
-              <MoreVertical className="h-4 w-4" />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[160px]">
-            <DropdownMenuItem asChild>
-              <Link href={`/projects/${project.slug}`}>View Project</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={`/projects/${project.slug}/settings`}>
-                Project Settings
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => togglePin(project.id)}>
-              {project.pinned ? "Unpin Project" : "Pin Project"}
-            </DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              Delete Project
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="mt-4 text-sm text-muted-foreground">
-        Last updated {project.lastUpdated}
-      </div>
+        <div className="mt-4 text-sm text-muted-foreground">
+          Last updated {project.lastUpdated}
+        </div>
+      </Link>
     </div>
   );
 }
