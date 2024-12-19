@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ComponentData } from "@/types/types";
 import { Eye, EyeOff, Trash2, Plus } from "lucide-react";
@@ -57,10 +57,52 @@ export function MainContent({
 }: MainContentProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPageName, setNewPageName] = useState("");
+  const [isValidPageName, setIsValidPageName] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
   const { toast } = useToast();
 
+  const validatePageName = useCallback(
+    (name: string) => {
+      if (name.trim().length === 0) {
+        setIsValidPageName(false);
+        setValidationMessage("");
+        return;
+      }
+
+      if (name.trim().toLowerCase() === "home") {
+        setIsValidPageName(false);
+        setValidationMessage("A page cannot be called 'home'.");
+        return;
+      }
+
+      if (
+        pages.some(
+          (page) => page.name.toLowerCase() === name.trim().toLowerCase()
+        )
+      ) {
+        setIsValidPageName(false);
+        setValidationMessage("A page with this name already exists.");
+        return;
+      }
+
+      if (name.trim().length < 3) {
+        setIsValidPageName(false);
+        setValidationMessage("Page name must be at least 3 characters long.");
+        return;
+      }
+
+      setIsValidPageName(true);
+      setValidationMessage("");
+    },
+    [pages]
+  );
+
+  useEffect(() => {
+    validatePageName(newPageName);
+  }, [newPageName, validatePageName]);
+
   const addNewPage = async () => {
-    if (newPageName.trim()) {
+    if (isValidPageName) {
       const pageSlug = newPageName.trim().toLowerCase().replace(/\s+/g, "-");
       const result = await addBlogPage(slug, newPageName.trim(), pageSlug);
 
@@ -155,13 +197,20 @@ export function MainContent({
               <DialogHeader>
                 <DialogTitle>Add New Page</DialogTitle>
               </DialogHeader>
-              <div className="flex items-center space-x-2">
-                <Input
-                  value={newPageName}
-                  onChange={(e) => setNewPageName(e.target.value)}
-                  placeholder="Enter page name"
-                />
-                <Button onClick={addNewPage}>Add</Button>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={newPageName}
+                    onChange={(e) => setNewPageName(e.target.value)}
+                    placeholder="Enter page name"
+                  />
+                  <Button onClick={addNewPage} disabled={!isValidPageName}>
+                    Add
+                  </Button>
+                </div>
+                {validationMessage && (
+                  <p className="text-sm text-red-500">{validationMessage}</p>
+                )}
               </div>
             </DialogContent>
           </Dialog>
