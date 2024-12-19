@@ -454,3 +454,35 @@ export const getBlogAnalytics = async (slug: string) => {
     throw new Error("Failed to fetch blog analytics");
   }
 };
+
+export const togglePin = async (id: string) => {
+  const session = await getSession();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const currentBlog = await db
+    .select({ isPinned: blogs.isPinned })
+    .from(blogs)
+    .where(and(eq(blogs.id, id), eq(blogs.userId, session.user.id)))
+    .limit(1);
+
+  if (!currentBlog.length) {
+    throw new Error("Blog not found");
+  }
+
+  const updatedBlog = await db
+    .update(blogs)
+    .set({
+      isPinned: !currentBlog[0].isPinned,
+      updatedAt: new Date(),
+    })
+    .where(eq(blogs.id, id))
+    .returning({
+      id: blogs.id,
+      isPinned: blogs.isPinned,
+    });
+
+  return updatedBlog[0];
+};

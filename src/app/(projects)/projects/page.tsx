@@ -21,7 +21,7 @@ import {
 import Link from "next/link";
 import ProjectsNavbar from "@/components/pages/projects/ProjectsNavbar";
 import NewProjectButton from "@/components/pages/projects/NewProjectButton";
-import { getBlogs } from "@/actions/blogs-actions";
+import { getBlogs, togglePin } from "@/actions/blogs-actions";
 import { BlogIcon } from "@/components/pages/projects/BlogIcon";
 import SkeletonProjectList from "@/components/pages/projects/BlogsListSkeleton";
 
@@ -39,6 +39,7 @@ export default function ProjectsDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPinning, setIsPinning] = useState<string | null>(null);
 
   const pinnedProjects = projectList.filter((p) => p.pinned);
   const otherProjects = projectList.filter((p) => !p.pinned);
@@ -72,8 +73,36 @@ export default function ProjectsDashboard() {
     fetchBlogs();
   }, []);
 
-  const togglePin = async (id: string) => {
-    console.log("Toggle pin for project:", id);
+  const pinProject = async (id: string) => {
+    setProjectList((prevList) =>
+      prevList.map((project) =>
+        project.id === id ? { ...project, pinned: !project.pinned } : project
+      )
+    );
+
+    try {
+      setIsPinning(id);
+      const res = await togglePin(id);
+
+      if (res.isPinned !== undefined) {
+        setProjectList((prevList) =>
+          prevList.map((project) =>
+            project.id === id
+              ? { ...project, pinned: res.isPinned ?? project.pinned }
+              : project
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling pin:", error);
+      setProjectList((prevList) =>
+        prevList.map((project) =>
+          project.id === id ? { ...project, pinned: !project.pinned } : project
+        )
+      );
+    } finally {
+      setIsPinning(null);
+    }
   };
 
   const formatDate = (date: string) => {
@@ -123,7 +152,8 @@ export default function ProjectsDashboard() {
                         <ProjectCard
                           key={project.id}
                           project={project}
-                          togglePin={togglePin}
+                          togglePin={pinProject}
+                          isPinning={isPinning}
                         />
                       ))}
                     </div>
@@ -143,7 +173,8 @@ export default function ProjectsDashboard() {
                       <ProjectCard
                         key={project.id}
                         project={project}
-                        togglePin={togglePin}
+                        togglePin={pinProject}
+                        isPinning={isPinning}
                       />
                     ))}
                   </div>
@@ -157,13 +188,13 @@ export default function ProjectsDashboard() {
   );
 }
 
-function ProjectCard({
-  project,
-  togglePin,
-}: {
+interface ProjectCardProps {
   project: Project;
-  togglePin: (id: string) => void;
-}) {
+  togglePin: (id: string) => Promise<void>;
+  isPinning: string | null;
+}
+
+function ProjectCard({ project, togglePin, isPinning }: ProjectCardProps) {
   return (
     <div className="group relative">
       <Link
@@ -196,15 +227,22 @@ function ProjectCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="opacity-100 transition-opacity"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <MoreVertical className="h-4 w-4" />
                   <span className="sr-only">Project options</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[180px]">
-                <DropdownMenuItem onSelect={() => togglePin(project.id)}>
-                  <Pin className="mr-2 h-4 w-4" />
+                <DropdownMenuItem
+                  onSelect={() => togglePin(project.id)}
+                  className="cursor-pointer"
+                >
+                  <Pin
+                    className={`mr-2 h-4 w-4 ${
+                      isPinning === project.id ? "animate-spin" : ""
+                    }`}
+                  />
                   <span>
                     {project.pinned ? "Unpin Project" : "Pin Project"}
                   </span>
@@ -218,7 +256,7 @@ function ProjectCard({
                     <span>Project Settings</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem className="text-destructive cursor-pointer">
                   <Trash2 className="mr-2 h-4 w-4" />
                   <span>Delete Project</span>
                 </DropdownMenuItem>
