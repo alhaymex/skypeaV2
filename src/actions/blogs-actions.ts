@@ -43,6 +43,8 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
 
     const insertedBlogs = await db.insert(blogs).values(blog).returning();
 
+    await addBlogPage(slug, "Home", "home");
+
     if (insertedBlogs.length > 0) {
       await db.insert(blogAnalytics).values({
         blogSlug: insertedBlogs[0].slug,
@@ -453,4 +455,36 @@ export const getBlogAnalytics = async (slug: string) => {
     console.error("Error fetching blog analytics:", error);
     throw new Error("Failed to fetch blog analytics");
   }
+};
+
+export const togglePin = async (id: string) => {
+  const session = await getSession();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const currentBlog = await db
+    .select({ isPinned: blogs.isPinned })
+    .from(blogs)
+    .where(and(eq(blogs.id, id), eq(blogs.userId, session.user.id)))
+    .limit(1);
+
+  if (!currentBlog.length) {
+    throw new Error("Blog not found");
+  }
+
+  const updatedBlog = await db
+    .update(blogs)
+    .set({
+      isPinned: !currentBlog[0].isPinned,
+      updatedAt: new Date(),
+    })
+    .where(eq(blogs.id, id))
+    .returning({
+      id: blogs.id,
+      isPinned: blogs.isPinned,
+    });
+
+  return updatedBlog[0];
 };
