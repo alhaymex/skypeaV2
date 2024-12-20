@@ -66,13 +66,17 @@ const DynamicBlogs = async ({ slug }: { slug: string }) => {
 };
 
 const BlogCard = ({ post }: { post: Post }) => (
-  <Card className="overflow-hidden transition-shadow hover:shadow-lg">
+  <Card
+    key={post.id}
+    className="overflow-hidden transition-shadow hover:shadow-lg"
+  >
     <Link href={`/p/${post.slug}`} className="block">
       <div className="aspect-video relative">
         <Image
           src={post.image}
           alt={post.title}
           fill
+          unoptimized
           className="object-cover"
         />
       </div>

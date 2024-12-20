@@ -8,7 +8,6 @@ export default async function Page({
 }) {
   const { slug, blogSlug } = await params;
   const blogPost = await getBlogPost(slug, blogSlug);
-  console.log("first", blogPost);
 
   return (
     <BlogPage params={{ slug, blogSlug }} blogPost={blogPost as BlogPost} />

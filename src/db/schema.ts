@@ -210,5 +210,17 @@ export const posts = pgTable("posts", {
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 });
 
+export const postViews = pgTable("post_views", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  postId: text("postId")
+    .notNull()
+    .references(() => posts.id, { onDelete: "cascade" }),
+  viewCount: integer("viewCount").default(0),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+});
+
 export type BlogAnalytics = typeof blogAnalytics.$inferSelect;
 export type NewBlogAnalytics = typeof blogAnalytics.$inferInsert;

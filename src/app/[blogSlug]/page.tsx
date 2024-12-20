@@ -7,7 +7,6 @@ export default async function BlogIndexPage({
   params: Promise<{ blogSlug: string }>;
 }) {
   const { blogSlug } = await params;
-  console.log("Rendering blog index for slug:", blogSlug);
 
   const blogResult = await getBlogForDisplay(blogSlug);
 
