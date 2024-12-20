@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getBlogPostsForDisplay } from "@/actions/display-actions";
 import { CalendarIcon, UserIcon } from "lucide-react";
+import AuthorAvatars from "./AuthorAvatars";
 
 type Post = {
   id: string;
@@ -31,6 +32,19 @@ const truncateText = (text: string | null, maxLength: number) => {
   if (!text) return "";
   return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
+
+const DUMMY_AUTHORS = [
+  {
+    id: "1",
+    name: "Alharith Yassin",
+    avatar: "https://image.alhaymex.com/initials?initials=AY",
+  },
+  {
+    id: "2",
+    name: "John Doe",
+    avatar: "https://image.alhaymex.com/initials?initials=JD",
+  },
+];
 
 const DynamicBlogs = async ({ slug }: { slug: string }) => {
   try {
@@ -72,9 +86,14 @@ const BlogCard = ({ post }: { post: Post }) => (
       </CardContent>
     </Link>
     <CardFooter className="px-4 py-3 border-t flex justify-between items-center text-sm text-muted-foreground">
-      <div className="flex items-center">
-        <UserIcon className="w-4 h-4 mr-2" />
-        <span>Alharith Yassin</span>
+      <div className="flex items-center space-x-2">
+        <AuthorAvatars authors={DUMMY_AUTHORS} />
+        <span>
+          {truncateText(
+            DUMMY_AUTHORS.map((author) => author.name).join(", "),
+            15
+          )}
+        </span>
       </div>
       <div className="flex items-center">
         <CalendarIcon className="w-4 h-4 mr-2" />

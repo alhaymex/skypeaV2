@@ -11,9 +11,6 @@ export default async function Page({
   console.log("first", blogPost);
 
   return (
-    <BlogPage
-      params={Promise.resolve(params)}
-      blogPost={blogPost as BlogPost}
-    />
+    <BlogPage params={{ slug, blogSlug }} blogPost={blogPost as BlogPost} />
   );
 }
