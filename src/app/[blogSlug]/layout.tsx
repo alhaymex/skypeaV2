@@ -6,13 +6,16 @@ export const generateMetadata = async ({
 }: {
   params: { blogSlug: string };
 }) => {
+  const ogTitle = "toonion";
+  const title = ogTitle[0].toUpperCase() + ogTitle.slice(1);
+
   const blogSlug = params.blogSlug;
   const blog = await getBlog(blogSlug);
   const postImage = getValidImageUrl(blog.data?.openGraph);
   const faviconUrl = getValidImageUrl(blog.data?.favicon); // Get favicon URL
 
   return {
-    title: blog.data?.name,
+    title: title,
     description: blog.data?.description,
     icons: {
       icon: faviconUrl, // Add favicon
