@@ -25,11 +25,11 @@ const BlogPage = ({
   params,
   blogPost,
 }: {
-  params: Promise<{ slug: string; blogSlug: string }>;
+  params: { slug: string; blogSlug: string };
   blogPost: BlogPost;
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const { slug, blogSlug } = React.use(params);
+  const { slug, blogSlug } = params;
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
