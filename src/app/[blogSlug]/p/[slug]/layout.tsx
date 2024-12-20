@@ -1,7 +1,7 @@
 import React from "react";
 import { Metadata, ResolvingMetadata } from "next";
 import { getBlogPost } from "@/actions/display-actions";
-import { getValidImageUrl } from "@/utils/view-blog";
+import { getValidImageUrl } from "@/utils/utils";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ blogSlug: string; slug: string }> },

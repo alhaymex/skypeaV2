@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Image from "next/image";
 import { uploadFavicon } from "@/actions/uploads-actions";
@@ -14,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { isIcoFile } from "@/utils/utils";
 
 type Props = {
   blogSlug: string;
@@ -33,6 +33,17 @@ export default function FaviconUploadButton({
 
   const handleUploadComplete = async (res: { url: string }[]) => {
     try {
+      const isIco = await isIcoFile(res[0].url);
+
+      if (!isIco) {
+        toast({
+          title: "Invalid File Format",
+          description: "Please upload a valid ICO file format for the favicon",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const result = await uploadFavicon(res[0].url, blogSlug);
       setImage(result.url as string);
       toast({
@@ -63,7 +74,7 @@ export default function FaviconUploadButton({
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground text-center">
                 Upload a new favicon for your blog. Recommended size: 32x32
-                pixels. Supported formats: ICO
+                pixels. Supported formats: ICO only
               </p>
               <UploadButton
                 endpoint="imageUploader"

@@ -1,5 +1,5 @@
 import { getBlog } from "@/actions/blogs-actions";
-import { getValidImageUrl } from "@/utils/view-blog";
+import { getValidImageUrl } from "@/utils/utils";
 
 export const generateMetadata = async ({
   params,
