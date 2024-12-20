@@ -22,13 +22,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { updateBlogGeneralSettings } from "@/actions/settings-actions";
 import { Loader } from "lucide-react";
@@ -39,9 +39,6 @@ const formSchema = z.object({
     message: "Blog name must be at least 2 characters.",
   }),
   blogDescription: z.string().optional(),
-  timeZone: z.string({
-    required_error: "Please select a timezone.",
-  }),
   domain: z.string().optional(),
 });
 
@@ -49,13 +46,11 @@ type FormValues = z.infer<typeof formSchema>;
 
 type Settings = {
   description?: string;
-  timezone?: string;
 };
 
 type Props = {
   blogName: string;
   blogDescription: string;
-  timeZone: string;
   domain: string;
   blogSlug: string;
   setBlogSettings: (settings: BlogSettings) => void;
@@ -64,7 +59,6 @@ type Props = {
 const GeneralSettings = ({
   blogName,
   blogDescription,
-  timeZone,
   domain,
   blogSlug,
   setBlogSettings,
@@ -76,7 +70,6 @@ const GeneralSettings = ({
     defaultValues: {
       blogName,
       blogDescription,
-      timeZone,
       domain,
     },
   });
@@ -85,8 +78,7 @@ const GeneralSettings = ({
     setLoading(true);
     await updateBlogGeneralSettings(
       blogSlug,
-      values.blogDescription as string,
-      values.timeZone
+      values.blogDescription as string
     ).then((res) => {
       console.log(res.data);
       setBlogSettings({
@@ -140,7 +132,7 @@ const GeneralSettings = ({
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="timeZone"
               render={({ field }) => (
@@ -163,7 +155,7 @@ const GeneralSettings = ({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <FormField
               control={form.control}
               name="domain"

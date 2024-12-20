@@ -39,8 +39,7 @@ export const getBlogSettings = async (blogSlug: string) => {
 
 export const updateBlogGeneralSettings = async (
   blogSlug: string,
-  description: string,
-  timeZone: string
+  description: string
 ) => {
   const session = await getSession();
   if (!session || !session.user?.id) {
