@@ -5,6 +5,8 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import Image from "next/image";
+import "highlight.js/styles/github-dark.css";
+import { ShareButton } from "@/components/blog-preview/ShareButton";
 
 export type BlogPost = {
   id: string;
@@ -26,7 +28,7 @@ const BlogPage = ({
   params: Promise<{ slug: string; blogSlug: string }>;
   blogPost: BlogPost;
 }) => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const { slug, blogSlug } = React.use(params);
 
   const toggleDarkMode = () => {
@@ -53,21 +55,27 @@ const BlogPage = ({
               {format(new Date(blogPost.createdAt), "MMMM d, yyyy")}
             </p>
           </div>
-          <Button
-            onClick={toggleDarkMode}
-            variant="secondary"
-            size="icon"
-            className="shrink-0"
-            aria-label={
-              isDarkMode ? "Switch to light mode" : "Switch to dark mode"
-            }
-          >
-            {isDarkMode ? (
-              <Sun className="h-[1.2rem] w-[1.2rem]" />
-            ) : (
-              <Moon className="h-[1.2rem] w-[1.2rem]" />
-            )}
-          </Button>
+          <div className="flex gap-2">
+            <ShareButton
+              title={blogPost.title}
+              url={`${window.location.origin}/${blogSlug}/${slug}`}
+            />
+            <Button
+              onClick={toggleDarkMode}
+              variant="secondary"
+              size="icon"
+              className="shrink-0"
+              aria-label={
+                isDarkMode ? "Switch to light mode" : "Switch to dark mode"
+              }
+            >
+              {isDarkMode ? (
+                <Sun className="h-[1.2rem] w-[1.2rem]" />
+              ) : (
+                <Moon className="h-[1.2rem] w-[1.2rem]" />
+              )}
+            </Button>
+          </div>
         </div>
 
         {blogPost.image !=
@@ -86,7 +94,6 @@ const BlogPage = ({
             </div>
           </div>
         )}
-
         <div
           className="
             [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:leading-tight
