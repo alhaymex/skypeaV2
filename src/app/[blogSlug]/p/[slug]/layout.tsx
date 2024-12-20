@@ -1,15 +1,7 @@
 import React from "react";
 import { Metadata, ResolvingMetadata } from "next";
 import { getBlogPost } from "@/actions/display-actions";
-
-function getValidImageUrl(imageUrl: string | null | undefined): string {
-  const fallbackImage =
-    "https://image.alhaymex.com/placeholder?width=1200&height=630";
-  if (!imageUrl || !imageUrl.startsWith("http")) {
-    return fallbackImage;
-  }
-  return imageUrl;
-}
+import { getValidImageUrl } from "@/utils/view-blog";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ blogSlug: string; slug: string }> },
