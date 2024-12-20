@@ -8,12 +8,17 @@ export const generateMetadata = async ({
 }) => {
   const blogSlug = params.blogSlug;
   const blog = await getBlog(blogSlug);
-
   const postImage = getValidImageUrl(blog.data?.openGraph);
+  const faviconUrl = getValidImageUrl(blog.data?.favicon); // Get favicon URL
 
   return {
     title: blog.data?.name,
     description: blog.data?.description,
+    icons: {
+      icon: faviconUrl, // Add favicon
+      shortcut: faviconUrl, // For legacy browsers
+      apple: faviconUrl, // For iOS devices
+    },
     openGraph: {
       title: blog.data?.name,
       description: blog.data?.description,
