@@ -6,7 +6,7 @@ import { blogAnalytics, blogComponents, blogPages, blogs } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import getSession from "@/lib/getSession";
-import { slugify } from "@/lib/slugify";
+import { slugifyBlogTitle } from "@/lib/slugify";
 import { and, asc, desc, eq, gt, sql } from "drizzle-orm";
 import { BlogPageWithComponents, ComponentData } from "@/types/types";
 import { createSubdomain } from "@/lib/vercel";
@@ -28,7 +28,7 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
       return { success: false, message: "User not authenticated" };
 
     const userId = session.user.id;
-    const slug = await slugify(data.name);
+    const slug = await slugifyBlogTitle(data.name);
 
     // // Create the subdomain
     // let subdomain;

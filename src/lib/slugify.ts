@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import { db } from "@/db";
 import { blogs, posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -14,7 +15,7 @@ function createSlug(text: string) {
     .replace(/-+$/, "");
 }
 
-export async function slugify(name: string) {
+export async function slugifyBlogTitle(name: string) {
   const slug = createSlug(name);
   let counter = 0;
   let uniqueSlug = slug;
@@ -37,7 +38,14 @@ export async function slugify(name: string) {
 }
 
 export async function slugifyPost(name: string) {
-  const slug = createSlug(name);
+  const slug = slugify(name, {
+    lower: true,
+    strict: true,
+    locale: "ar",
+    trim: true,
+    replacement: "-",
+  });
+
   let counter = 0;
   let uniqueSlug = slug;
 

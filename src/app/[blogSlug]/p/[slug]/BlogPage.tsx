@@ -86,7 +86,6 @@ const BlogPage = ({
               alt={`${blogPost.title}'s cover image`}
               fill
               className="object-cover object-center transition-transform duration-300 hover:scale-105"
-              unoptimized
             />
 
             <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-4 text-white">
