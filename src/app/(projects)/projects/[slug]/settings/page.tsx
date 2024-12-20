@@ -95,7 +95,6 @@ export default function SettingsPage() {
             setBlogSettings={setBlogSettings}
             blogName={blogSettings?.name as string}
             blogDescription={blogSettings?.description as string}
-            timeZone={"UTC"}
             domain={blogSettings?.slug + ".skypea.net"}
             blogSlug={blogSettings?.slug as string}
           />
