@@ -84,12 +84,14 @@ export const getBlogForDisplay = async (slug: string) => {
 };
 
 export const getBlogPostsForDisplay = async (slug: string) => {
+  // First, fetch all posts
   const blogs = await db
     .select()
     .from(posts)
     .where(eq(posts.blogSlug, slug))
     .orderBy(desc(posts.createdAt));
 
+  // Get all unique writer IDs
   const writerIds = blogs.reduce((ids, blog) => {
     if (
       blog.writers &&
@@ -101,34 +103,17 @@ export const getBlogPostsForDisplay = async (slug: string) => {
     return ids;
   }, [] as string[]);
 
-  if (writerIds.length === 0) {
-    console.log("No writer IDs found in posts");
-    return blogs.map((blog) => ({
-      ...blog,
-      writers: [],
-    }));
-  }
+  // Fetch writers if there are any IDs
+  const writersData =
+    writerIds.length > 0
+      ? await db.select().from(writers).where(inArray(writers.id, writerIds))
+      : [];
 
-  const writersData = await db
-    .select()
-    .from(writers)
-    .where(inArray(writers.id, writerIds));
-
-  const writersMap = writersData.reduce((map, writer) => {
-    map[writer.id] = writer;
-    return map;
-  }, {} as Record<string, typeof writers.$inferSelect>);
-
-  const blogsWithWriters = blogs.map((blog) => ({
-    ...blog,
-    writers: Array.isArray(blog.writers)
-      ? blog.writers.map((writerId) => writersMap[writerId]).filter(Boolean)
-      : [],
-  }));
-
-  console.log("Final blogs with writers:", blogsWithWriters);
-
-  return blogsWithWriters;
+  // Return both posts and writers separately
+  return {
+    posts: blogs,
+    writers: writersData,
+  };
 };
 
 export const getBlogPost = cache(async (slug: string, blogSlug: string) => {
