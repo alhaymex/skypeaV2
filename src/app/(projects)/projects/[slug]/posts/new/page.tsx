@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -21,10 +21,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader } from "lucide-react";
-import { createPost } from "@/actions/posts-actions";
+import { createPost, getWriters } from "@/actions/posts-actions";
 import { Editor } from "@/components/pages/projects/posts/Editor";
 import { blogFormSchema } from "../../../../../../../schema";
 import BlogPostImageUploadButton from "@/components/upload-buttons/BlogPostImageUploadButton";
+import { MultiSelect } from "@/components/common/MultiSelect";
+import { Writer } from "@/types/writer";
 
 export default function NewPostPage() {
   const params = useParams();
@@ -44,6 +46,18 @@ export default function NewPostPage() {
       writers: [],
     },
   });
+
+  const [writers, setWriters] = useState<Writer[]>([]);
+
+  useEffect(() => {
+    const fetchWriters = async () => {
+      const result = await getWriters({ blogSlug: slug });
+      if (result.data) {
+        setWriters(result.data);
+      }
+    };
+    fetchWriters();
+  }, [slug]);
 
   async function onSubmit(values: z.infer<typeof blogFormSchema>) {
     setIsLoading(true);
@@ -115,6 +129,28 @@ export default function NewPostPage() {
                       <Textarea
                         placeholder="Enter a brief description of your post"
                         {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="writers"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Writers</FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        options={writers.map((writer) => ({
+                          label: writer.fullName,
+                          value: writer.id,
+                        }))}
+                        selected={field.value || []}
+                        onChange={field.onChange}
+                        placeholder="Select writers..."
                       />
                     </FormControl>
                     <FormMessage />

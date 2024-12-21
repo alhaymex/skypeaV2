@@ -74,7 +74,7 @@ export const createPost = async (formData: FormData) => {
     image: formData.get("image"),
     blogSlug: formData.get("blogSlug"),
     isNewsletter: formData.get("isNewsletter") === "true",
-    // writers: formData.get("writers"),
+    writers: formData.get("writers"),
   });
 
   if (!validatedFields.success) {
