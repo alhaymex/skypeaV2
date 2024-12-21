@@ -206,6 +206,7 @@ export const posts = pgTable("posts", {
   description: text("description"),
   content: text("content").notNull(),
   isNewsletter: boolean("isNewsletter").default(false),
+  writers: text("writers").array(),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 });
@@ -233,6 +234,19 @@ export const postViews = pgTable("post_views", {
   viewCount: integer("viewCount").default(0),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const postWriters = pgTable("post_writers", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  postId: text("postId")
+    .notNull()
+    .references(() => posts.id, { onDelete: "cascade" }),
+  writerId: text("writerId")
+    .notNull()
+    .references(() => writers.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
 
 export type BlogAnalytics = typeof blogAnalytics.$inferSelect;

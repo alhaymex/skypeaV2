@@ -30,6 +30,7 @@ export const BlogPostSchema = z.object({
     .string()
     .optional()
     .default("https://image.alhaymex.com/placeholder?shape=grid"),
+  writers: z.array(z.string()).optional(),
 });
 
 export const blogFormSchema = z.object({
@@ -41,7 +42,11 @@ export const blogFormSchema = z.object({
     .string()
     .optional()
     .default("https://image.alhaymex.com/placeholder?shape=grid"),
-  writers: z.array(z.string()).optional(),
+  writers: z
+    .string()
+    .transform((str) => (str ? str.split(",") : ["1234"]))
+    .or(z.array(z.string()))
+    .default(["1234"]),
 });
 
 export const AddWriterSchema = z.object({

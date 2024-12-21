@@ -1,19 +1,18 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getBlogPostsForDisplay } from "@/actions/display-actions";
-import { CalendarIcon, UserIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import AuthorAvatars from "./AuthorAvatars";
+import type { Author } from "./AuthorAvatars";
+
+type Writer = {
+  id: string;
+  name: string;
+  avatar: string | null;
+};
 
 type Post = {
   id: string;
@@ -26,25 +25,13 @@ type Post = {
   content: string;
   isNewsletter: boolean | null;
   image: string;
+  writers: Writer[];
 };
 
 const truncateText = (text: string | null, maxLength: number) => {
   if (!text) return "";
   return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
-
-const DUMMY_AUTHORS = [
-  {
-    id: "1",
-    name: "Alharith Yassin",
-    avatar: "https://image.alhaymex.com/initials?initials=AY",
-  },
-  {
-    id: "2",
-    name: "John Doe",
-    avatar: "https://image.alhaymex.com/initials?initials=JD",
-  },
-];
 
 const DynamicBlogs = async ({ slug }: { slug: string }) => {
   try {
@@ -65,57 +52,75 @@ const DynamicBlogs = async ({ slug }: { slug: string }) => {
   }
 };
 
-const BlogCard = ({ post }: { post: Post }) => (
-  <Card
-    key={post.id}
-    className="overflow-hidden transition-shadow hover:shadow-lg"
-  >
-    <Link href={`/p/${post.slug}`} className="block">
-      <div className="aspect-video relative">
-        <Image
-          src={post.image}
-          alt={post.title}
-          fill
-          unoptimized
-          className="object-cover"
-        />
-      </div>
-      <CardContent className="p-4">
-        <h3 className="text-xl font-semibold mb-2 line-clamp-2">
-          {truncateText(post.title, 50)}
-        </h3>
-        <p className="text-muted-foreground line-clamp-3">
-          {truncateText(post.description, 100)}
-        </p>
-      </CardContent>
-    </Link>
-    <CardFooter className="px-4 py-3 border-t flex justify-between items-center text-sm text-muted-foreground">
-      <div className="flex items-center space-x-2">
-        <AuthorAvatars authors={DUMMY_AUTHORS} />
-        <span>
-          {truncateText(
-            DUMMY_AUTHORS.map((author) => author.name).join(", "),
-            15
+const BlogCard = ({ post }: { post: Post }) => {
+  const authors: Author[] = post.writers.map((writer) => ({
+    id: writer.id,
+    name: writer.name,
+    avatar:
+      writer.avatar ??
+      `https://image.alhaymex.com/initials?initials=${encodeURIComponent(
+        writer.name.charAt(0)
+      )}`,
+  }));
+
+  return (
+    <Card
+      key={post.id}
+      className="overflow-hidden transition-shadow hover:shadow-lg"
+    >
+      <Link href={`/p/${post.slug}`} className="block">
+        <div className="aspect-video relative">
+          <Image
+            src={post.image}
+            alt={post.title}
+            fill
+            unoptimized
+            className="object-cover"
+          />
+        </div>
+        <CardContent className="p-4">
+          <h3 className="text-xl font-semibold mb-2 line-clamp-2">
+            {truncateText(post.title, 50)}
+          </h3>
+          <p className="text-muted-foreground line-clamp-3">
+            {truncateText(post.description, 100)}
+          </p>
+        </CardContent>
+      </Link>
+      <CardFooter className="px-4 py-3 border-t flex justify-between items-center text-sm text-muted-foreground">
+        <div className="flex items-center space-x-2">
+          {authors.length > 0 ? (
+            <>
+              <AuthorAvatars authors={authors} />
+              <span>
+                {truncateText(
+                  authors.map((author) => author.name).join(", "),
+                  15
+                )}
+              </span>
+            </>
+          ) : (
+            <span>No authors</span>
           )}
-        </span>
-      </div>
-      <div className="flex items-center">
-        <CalendarIcon className="w-4 h-4 mr-2" />
-        <time dateTime={post.createdAt.toISOString()}>
-          {post.createdAt.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
-        </time>
-      </div>
-    </CardFooter>
-    <CardFooter className="p-4 pt-0">
-      <Button asChild variant="outline" className="w-full">
-        <Link href={`/p/${post.slug}`}>Read More</Link>
-      </Button>
-    </CardFooter>
-  </Card>
-);
+        </div>
+        <div className="flex items-center">
+          <CalendarIcon className="w-4 h-4 mr-2" />
+          <time dateTime={new Date(post.createdAt).toISOString()}>
+            {new Date(post.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </time>
+        </div>
+      </CardFooter>
+      <CardFooter className="p-4 pt-0">
+        <Button asChild variant="outline" className="w-full">
+          <Link href={`/p/${post.slug}`}>Read More</Link>
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+};
 
 export default DynamicBlogs;
