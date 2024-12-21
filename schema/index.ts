@@ -41,6 +41,7 @@ export const blogFormSchema = z.object({
     .string()
     .optional()
     .default("https://image.alhaymex.com/placeholder?shape=grid"),
+  writers: z.array(z.string()).optional(),
 });
 
 export const AddWriterSchema = z.object({

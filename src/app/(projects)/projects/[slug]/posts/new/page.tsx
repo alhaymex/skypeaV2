@@ -41,6 +41,7 @@ export default function NewPostPage() {
       content: "<p>Start writing your blog post here...</p>",
       isNewsletter: false,
       image: "https://image.alhaymex.com/placeholder?shape=grid",
+      writers: [],
     },
   });
 
