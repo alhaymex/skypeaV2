@@ -25,7 +25,7 @@ type Post = {
   content: string;
   isNewsletter: boolean | null;
   image: string;
-  writers: Writer[];
+  writers: string[]; // Array of writer IDs
 };
 
 const truncateText = (text: string | null, maxLength: number) => {
@@ -35,13 +35,19 @@ const truncateText = (text: string | null, maxLength: number) => {
 
 const DynamicBlogs = async ({ slug }: { slug: string }) => {
   try {
-    const posts = await getBlogPostsForDisplay(slug);
+    const { posts, writers } = await getBlogPostsForDisplay(slug);
+
+    // Create a map of writers for easy lookup
+    const writersMap = writers.reduce((map, writer) => {
+      map[writer.id] = writer;
+      return map;
+    }, {} as Record<string, Writer>);
 
     return (
       <section className="max-w-7xl mx-auto my-12 px-4">
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
-            <BlogCard key={post.id} post={post as Post} />
+            <BlogCard key={post.id} post={post as Post} writers={writers} />
           ))}
         </div>
       </section>
@@ -52,8 +58,9 @@ const DynamicBlogs = async ({ slug }: { slug: string }) => {
   }
 };
 
-const BlogCard = ({ post }: { post: Post }) => {
-  const authors: Author[] = post.writers.map((writer) => ({
+const BlogCard = ({ post, writers }: { post: Post; writers: Writer[] }) => {
+  // Transform writers to match the Author type
+  const authors: Author[] = writers.map((writer) => ({
     id: writer.id,
     name: writer.name,
     avatar:
