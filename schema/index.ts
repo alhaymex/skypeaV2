@@ -43,5 +43,17 @@ export const blogFormSchema = z.object({
     .default("https://image.alhaymex.com/placeholder?shape=grid"),
 });
 
+export const AddWriterSchema = z.object({
+  blogSlug: z.string().min(1, "Blog slug is required"),
+  name: z.string().min(1, "Name is required"),
+  avatar: z.string().optional(),
+});
+
+export const GetWritersSchema = z.object({
+  blogSlug: z.string().min(1, "Blog slug is required"),
+});
+
+export type GetWritersInput = z.infer<typeof GetWritersSchema>;
+export type AddWriterInput = z.infer<typeof AddWriterSchema>;
 export type BlogPostSchema = z.infer<typeof BlogPostSchema>;
 export type blogSchema = z.infer<typeof blogSchema>;
