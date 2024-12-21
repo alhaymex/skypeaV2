@@ -31,12 +31,6 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
     const userId = session.user.id;
     const slug = await slugifyBlogTitle(data.name);
 
-    await addWriter({
-      name: session.user.name as string,
-      blogSlug: slug,
-      avatar: session.user.image as string,
-    });
-
     // // Create the subdomain
     // let subdomain;
     // try {
@@ -51,6 +45,12 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
     const insertedBlogs = await db.insert(blogs).values(blog).returning();
 
     await addBlogPage(slug, "Home", "home");
+
+    await addWriter({
+      name: session.user.name as string,
+      blogSlug: slug,
+      avatar: session.user.image as string,
+    });
 
     if (insertedBlogs.length > 0) {
       await db.insert(blogAnalytics).values({
