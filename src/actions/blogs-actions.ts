@@ -12,6 +12,7 @@ import { BlogPageWithComponents, ComponentData } from "@/types/types";
 import { createSubdomain } from "@/lib/vercel";
 import { pages } from "next/dist/build/templates/app-page";
 import { redirect } from "next/navigation";
+import { addWriter } from "./posts-actions";
 
 export const getBlogs = async () => {
   const session = await getSession();
@@ -29,6 +30,12 @@ export const createBlog = async (data: z.infer<typeof blogSchema>) => {
 
     const userId = session.user.id;
     const slug = await slugifyBlogTitle(data.name);
+
+    await addWriter({
+      name: session.user.name as string,
+      blogSlug: slug,
+      avatar: session.user.image as string,
+    });
 
     // // Create the subdomain
     // let subdomain;
