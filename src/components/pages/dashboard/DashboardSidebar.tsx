@@ -52,6 +52,11 @@ export default async function DashboardSidebar({
       url: `/projects/${slug}/posts`,
       icon: FileText,
     },
+    {
+      title: "Writers",
+      url: `/projects/${slug}/writers`,
+      icon: Users,
+    },
     // {
     //   title: "Messages",
     //   url: `/projects/${slug}/messages`,

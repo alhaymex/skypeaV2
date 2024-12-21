@@ -1,11 +1,19 @@
 "use server";
 
 import { slugifyPost } from "@/lib/slugify";
-import { BlogPostSchema } from "../../schema";
-import { blogs, posts } from "@/db/schema";
+import {
+  AddWriterInput,
+  AddWriterSchema,
+  BlogPostSchema,
+  GetWritersInput,
+  GetWritersSchema,
+} from "../../schema";
+import { blogs, posts, writers } from "@/db/schema";
 import { db } from "@/db";
 import { and, desc, eq } from "drizzle-orm";
 import getSession from "@/lib/getSession";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 export const getBlogPosts = async (blogSlug: string) => {
   const session = await getSession();
@@ -169,6 +177,98 @@ export async function deletePost(postId: string, blogSlug: string) {
       success: false,
       error: "Failed to delete post.",
       details: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+export async function addWriter(input: AddWriterInput) {
+  try {
+    // Validate input
+    const validatedInput = AddWriterSchema.parse(input);
+
+    // Check if writer already exists for this blog
+    const [existingWriter] = await db
+      .select({
+        name: writers.name,
+      })
+      .from(writers)
+      .where(eq(writers.blogSlug, validatedInput.blogSlug))
+      .limit(1);
+
+    if (existingWriter?.name === validatedInput.name) {
+      return {
+        error: "A writer with this name already exists for this blog",
+      };
+    }
+
+    const [newWriter] = await db
+      .insert(writers)
+      .values({
+        blogSlug: validatedInput.blogSlug,
+        name: validatedInput.name,
+        avatar: validatedInput.avatar,
+      })
+      .returning();
+
+    revalidatePath(`/projects/${validatedInput.blogSlug}/writers`);
+
+    return {
+      data: newWriter,
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        error: error.errors[0].message,
+      };
+    }
+
+    return {
+      error: "Something went wrong. Please try again.",
+    };
+  }
+}
+
+export async function getWriters(input: GetWritersInput) {
+  try {
+    // Validate input
+    const validatedInput = GetWritersSchema.parse(input);
+
+    // Fetch writers for the blog
+    const blogWriters = await db
+      .select({
+        id: writers.id,
+        name: writers.name,
+        avatar: writers.avatar,
+        blogSlug: writers.blogSlug,
+        createdAt: writers.createdAt,
+        updatedAt: writers.updatedAt,
+      })
+      .from(writers)
+      .where(eq(writers.blogSlug, validatedInput.blogSlug))
+      .orderBy(writers.createdAt);
+
+    // Transform the data to match the Writer interface
+    const transformedWriters = blogWriters.map((writer) => ({
+      id: writer.id,
+      fullName: writer.name,
+      avatar: writer.avatar || "",
+      blogSlug: writer.blogSlug,
+      createdAt: writer.createdAt,
+      updatedAt: writer.updatedAt,
+    }));
+
+    return {
+      data: transformedWriters,
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        error: error.errors[0].message,
+      };
+    }
+
+    return {
+      error: "Failed to fetch writers. Please try again.",
     };
   }
 }

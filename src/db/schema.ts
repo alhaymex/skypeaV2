@@ -210,6 +210,19 @@ export const posts = pgTable("posts", {
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 });
 
+export const writers = pgTable("writers", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  blogSlug: text("blogSlug")
+    .notNull()
+    .references(() => blogs.slug, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  avatar: text("avatar"),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+});
+
 export const postViews = pgTable("post_views", {
   id: text("id")
     .primaryKey()
