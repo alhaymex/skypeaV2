@@ -67,6 +67,21 @@ export const getBlogPosts = async (blogSlug: string) => {
 };
 
 export const createPost = async (formData: FormData) => {
+  const session = await getSession();
+  if (!session || !session.user?.id) {
+    return { success: false, error: "Unauthorized!" };
+  }
+  const userId = session.user?.id;
+
+  const writersData = formData.get("writers");
+  const writers = writersData
+    ? Array.isArray(writersData)
+      ? writersData
+      : typeof writersData === "string"
+      ? writersData.split(",")
+      : [userId]
+    : [userId];
+
   const validatedFields = BlogPostSchema.safeParse({
     title: formData.get("title"),
     description: formData.get("description"),
@@ -74,7 +89,7 @@ export const createPost = async (formData: FormData) => {
     image: formData.get("image"),
     blogSlug: formData.get("blogSlug"),
     isNewsletter: formData.get("isNewsletter") === "true",
-    writers: formData.get("writers"),
+    writers: writers,
   });
 
   if (!validatedFields.success) {
@@ -84,8 +99,15 @@ export const createPost = async (formData: FormData) => {
     };
   }
 
-  const { title, description, content, image, isNewsletter, blogSlug } =
-    validatedFields.data;
+  const {
+    title,
+    description,
+    content,
+    image,
+    isNewsletter,
+    blogSlug,
+    writers: writersList,
+  } = validatedFields.data;
 
   try {
     const [existingBlog] = await db
@@ -111,6 +133,7 @@ export const createPost = async (formData: FormData) => {
       image,
       isNewsletter: isNewsletter ?? false,
       blogSlug: existingBlog.slug,
+      writers: writersList,
     };
 
     const [newPost] = await db.insert(posts).values(postData).returning();

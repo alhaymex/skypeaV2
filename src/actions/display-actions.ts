@@ -1,7 +1,14 @@
 import { db } from "@/db";
-import { blogComponents, blogPages, blogs, posts } from "@/db/schema";
+import {
+  blogComponents,
+  blogPages,
+  blogs,
+  posts,
+  writers,
+  postWriters,
+} from "@/db/schema";
 import { BlogPageWithComponents } from "@/types/types";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
@@ -83,9 +90,45 @@ export const getBlogPostsForDisplay = async (slug: string) => {
     .where(eq(posts.blogSlug, slug))
     .orderBy(desc(posts.createdAt));
 
-  console.log(blogs);
+  const writerIds = blogs.reduce((ids, blog) => {
+    if (
+      blog.writers &&
+      Array.isArray(blog.writers) &&
+      blog.writers.length > 0
+    ) {
+      return [...new Set([...ids, ...blog.writers])];
+    }
+    return ids;
+  }, [] as string[]);
 
-  return blogs;
+  if (writerIds.length === 0) {
+    console.log("No writer IDs found in posts");
+    return blogs.map((blog) => ({
+      ...blog,
+      writers: [],
+    }));
+  }
+
+  const writersData = await db
+    .select()
+    .from(writers)
+    .where(inArray(writers.id, writerIds));
+
+  const writersMap = writersData.reduce((map, writer) => {
+    map[writer.id] = writer;
+    return map;
+  }, {} as Record<string, typeof writers.$inferSelect>);
+
+  const blogsWithWriters = blogs.map((blog) => ({
+    ...blog,
+    writers: Array.isArray(blog.writers)
+      ? blog.writers.map((writerId) => writersMap[writerId]).filter(Boolean)
+      : [],
+  }));
+
+  console.log("Final blogs with writers:", blogsWithWriters);
+
+  return blogsWithWriters;
 };
 
 export const getBlogPost = cache(async (slug: string, blogSlug: string) => {
