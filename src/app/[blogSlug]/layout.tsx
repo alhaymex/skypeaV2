@@ -4,15 +4,15 @@ import { getValidImageUrl } from "@/utils/utils";
 export const generateMetadata = async ({
   params,
 }: {
-  params: { blogSlug: string };
+  params: Promise<{ blogSlug: string }>;
 }) => {
   const ogTitle = "toonion";
   const title = ogTitle[0].toUpperCase() + ogTitle.slice(1);
 
-  const blogSlug = params.blogSlug;
+  const { blogSlug } = await params;
   const blog = await getBlog(blogSlug);
   const postImage = getValidImageUrl(blog.data?.openGraph);
-  const faviconUrl = getValidImageUrl(blog.data?.favicon); // Get favicon URL
+  const faviconUrl = getValidImageUrl(blog.data?.favicon);
 
   return {
     title: title,
