@@ -200,7 +200,8 @@ export const posts = pgTable("posts", {
     .references(() => blogs.slug, { onDelete: "cascade" }),
   title: text("title").notNull(),
   image: text("image").$default(
-    () => "https://image.alhaymex.com/placeholder?shape=grid&width=1200&height=630"
+    () =>
+      "https://image.alhaymex.com/placeholder?shape=grid&width=1200&height=630"
   ),
   slug: text("slug").notNull().unique(),
   description: text("description"),
