@@ -16,7 +16,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Trash2 } from "lucide-react";
-import { FormField } from "@/types/types";
+import { FormField, FormState } from "@/types/components";
 import { Slider } from "@/components/ui/slider";
 
 const colorOptions = [
@@ -29,17 +29,7 @@ const colorOptions = [
 ];
 
 interface FormAccordionProps {
-  formState: {
-    title: string;
-    description: string;
-    fields: FormField[];
-    submitButtonText: string;
-    textColor: string;
-    isNewsletter: boolean;
-    buttonTextColor: string;
-    buttonBackgroundColor: string;
-    buttonBorderRadius: string;
-  };
+  formState: FormState;
   setFormState: (value: any) => void;
   addComponent: (componentType: string) => void;
 }
@@ -57,14 +47,14 @@ export function FormAccordion({
       placeholder: "",
       required: false,
     };
-    setFormState((prev: any) => ({
+    setFormState((prev: FormState) => ({
       ...prev,
       fields: [...prev.fields, newField],
     }));
   };
 
   const updateFormField = (id: string, field: string, value: any) => {
-    setFormState((prev: any) => ({
+    setFormState((prev: FormState) => ({
       ...prev,
       fields: prev.fields.map((f: FormField) =>
         f.id === id ? { ...f, [field]: value } : f
@@ -73,14 +63,14 @@ export function FormAccordion({
   };
 
   const removeFormField = (id: string) => {
-    setFormState((prev: any) => ({
+    setFormState((prev: FormState) => ({
       ...prev,
       fields: prev.fields.filter((f: FormField) => f.id !== id),
     }));
   };
 
   const handleNewsletterToggle = (checked: boolean) => {
-    setFormState((prev: any) => ({
+    setFormState((prev: FormState) => ({
       ...prev,
       isNewsletter: checked,
       title: checked ? "Subscribe to Our Newsletter" : prev.title,
@@ -109,7 +99,10 @@ export function FormAccordion({
             <Select
               value={formState.textColor}
               onValueChange={(value) =>
-                setFormState((prev: any) => ({ ...prev, textColor: value }))
+                setFormState((prev: FormState) => ({
+                  ...prev,
+                  textColor: value,
+                }))
               }
             >
               <SelectTrigger id="text-color">
@@ -136,7 +129,7 @@ export function FormAccordion({
               id="form-title"
               value={formState.title}
               onChange={(e) =>
-                setFormState((prev: any) => ({
+                setFormState((prev: FormState) => ({
                   ...prev,
                   title: e.target.value,
                 }))
@@ -149,7 +142,7 @@ export function FormAccordion({
               id="form-description"
               value={formState.description}
               onChange={(e) =>
-                setFormState((prev: any) => ({
+                setFormState((prev: FormState) => ({
                   ...prev,
                   description: e.target.value,
                 }))
@@ -186,7 +179,7 @@ export function FormAccordion({
                 {field.type !== "checkbox" && (
                   <Input
                     placeholder="Placeholder"
-                    value={field.placeholder}
+                    value={field.placeholder ?? ""}
                     onChange={(e) =>
                       updateFormField(field.id, "placeholder", e.target.value)
                     }
@@ -231,7 +224,7 @@ export function FormAccordion({
               id="submit-button-text"
               value={formState.submitButtonText}
               onChange={(e) =>
-                setFormState((prev: any) => ({
+                setFormState((prev: FormState) => ({
                   ...prev,
                   submitButtonText: e.target.value,
                 }))
@@ -243,7 +236,7 @@ export function FormAccordion({
             <Select
               value={formState.buttonTextColor}
               onValueChange={(value) =>
-                setFormState((prev: any) => ({
+                setFormState((prev: FormState) => ({
                   ...prev,
                   buttonTextColor: value,
                 }))
@@ -274,7 +267,7 @@ export function FormAccordion({
             <Select
               value={formState.buttonBackgroundColor}
               onValueChange={(value) =>
-                setFormState((prev: any) => ({
+                setFormState((prev: FormState) => ({
                   ...prev,
                   buttonBackgroundColor: value,
                 }))
@@ -303,11 +296,11 @@ export function FormAccordion({
             <Slider
               id="button-border-radius"
               min={0}
-              max={4}
+              max={24}
               step={1}
-              value={[parseInt(formState.buttonBorderRadius)]}
+              value={[parseInt(formState.buttonBorderRadius ?? "0")]}
               onValueChange={(value) =>
-                setFormState((prev: any) => ({
+                setFormState((prev: FormState) => ({
                   ...prev,
                   buttonBorderRadius: value[0].toString(),
                 }))
