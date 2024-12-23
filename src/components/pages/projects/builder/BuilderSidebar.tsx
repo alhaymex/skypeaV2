@@ -12,21 +12,30 @@ import { FooterAccordion } from "./FooterAccordion";
 import { Button } from "@/components/ui/button";
 import { X, Menu } from "lucide-react";
 import { CarouselAccordion } from "./CarouselAccordion";
+import {
+  CarouselState,
+  FooterState,
+  FormState,
+  GridState,
+  HeroState,
+  NavbarState,
+  PageState,
+} from "@/types/components";
 
 interface SidebarProps {
-  navbarState: any;
+  navbarState: NavbarState;
   setNavbarState: (value: any) => void;
-  heroState: any;
+  heroState: HeroState;
   setHeroState: (value: any) => void;
-  gridState: any;
+  gridState: GridState;
   setGridState: (value: any) => void;
-  formState: any;
+  formState: FormState;
   setFormState: (value: any) => void;
-  pageState: any;
+  pageState: PageState;
   setPageState: (value: any) => void;
-  footerState: any;
+  footerState: FooterState;
   setFooterState: (value: any) => void;
-  carouselState: any;
+  carouselState: CarouselState;
   setCarouselState: (value: any) => void;
   addComponent: (componentType: string) => Promise<void>;
   pages: { id: string; name: string; components: any[] }[];

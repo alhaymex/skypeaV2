@@ -27,6 +27,15 @@ import {
 } from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import {
+  CarouselState,
+  FooterState,
+  FormState,
+  GridState,
+  HeroState,
+  NavbarState,
+  PageState,
+} from "@/types/components";
 
 interface Page {
   id: string;
@@ -44,7 +53,7 @@ export default function BlogBuilder() {
 
   const { toast } = useToast();
 
-  const [navbarState, setNavbarState] = useState({
+  const [navbarState, setNavbarState] = useState<NavbarState>({
     titleType: "text" as "text" | "image",
     title: "My Blog",
     logoUrl: "https://image.alhaymex.com/placeholder?height=32&width=32",
@@ -63,22 +72,22 @@ export default function BlogBuilder() {
         target: "_self",
         variant: "default",
       },
-    ] as NavLink[],
+    ],
     layout: "default" as "default" | "centered" | "split",
     backgroundColor: "#ffffff",
     textColor: "#000000",
   });
 
-  const [heroState, setHeroState] = useState({
+  const [heroState, setHeroState] = useState<HeroState>({
     title: "Welcome to My Blog",
     subtitle: "Discover amazing content and insights",
     backgroundImage:
       "https://image.alhaymex.com/placeholder?height=1080&width=1920&shape=grid",
     ctaText: "Get Started",
-    ctaLink: "#",
+    ctaLink: "#home",
   });
 
-  const [gridState, setGridState] = useState({
+  const [gridState, setGridState] = useState<GridState>({
     items: [
       {
         id: "1",
@@ -102,13 +111,13 @@ export default function BlogBuilder() {
         rating: 5,
         role: "Product Manager",
       },
-    ] as GridItem[],
+    ],
     columns: 3,
     template: "blog" as "blog" | "testimonial" | "feature",
     isDynamic: false,
   });
 
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<FormState>({
     title: "Contact Us",
     description:
       "Fill out the form below to contact us. We'll get back to you as soon as possible.",
@@ -127,13 +136,16 @@ export default function BlogBuilder() {
         placeholder: "Enter your email",
         required: true,
       },
-    ] as FormField[],
+    ],
     submitButtonText: "Submit",
     textColor: "#000000",
     isNewsletter: false,
+    buttonTextColor: "#000000",
+    buttonBackgroundColor: "#ffffff",
+    buttonBorderRadius: "4",
   });
 
-  const [footerState, setFooterState] = useState({
+  const [footerState, setFooterState] = useState<FooterState>({
     columns: [
       {
         title: "About Us",
@@ -150,12 +162,12 @@ export default function BlogBuilder() {
     companyName: "Your Company Name",
   });
 
-  const [pageState, setPageState] = useState({
+  const [pageState, setPageState] = useState<PageState>({
     backgroundColor: "#ffffff",
     fontFamily: "sans-serif",
   });
 
-  const [carouselState, setCarouselState] = useState({
+  const [carouselState, setCarouselState] = useState<CarouselState>({
     images: [],
     autoplay: false,
     interval: 5,
@@ -194,18 +206,18 @@ export default function BlogBuilder() {
     fontFamily: string;
   }) => {
     try {
+      setPageState(newSettings);
       await updateBlogSettings(
         slug,
         newSettings.backgroundColor,
         newSettings.fontFamily
       );
-      setPageState(newSettings);
-      toast({
-        title: "Success",
-        description: "Blog settings updated successfully.",
-      });
+      // toast({
+      //   title: "Success",
+      //   description: "Blog settings updated successfully.",
+      // });
     } catch (error) {
-      console.error("Failed to update blog settings:", error);
+      setPageState(pageState);
       toast({
         title: "Error",
         description: "Failed to update blog settings. Please try again.",
@@ -357,10 +369,10 @@ export default function BlogBuilder() {
         )
       );
 
-      toast({
-        title: "Component added",
-        description: `${componentType} component has been added successfully.`,
-      });
+      // toast({
+      //   title: "Component added",
+      //   description: `${componentType} component has been added successfully.`,
+      // });
     } catch (error) {
       console.error("Failed to save component:", error);
       setPages((prevPages) =>
@@ -432,10 +444,10 @@ export default function BlogBuilder() {
         console.log("Removing unsaved component");
       }
 
-      toast({
-        title: "Component removed",
-        description: "The component has been removed successfully.",
-      });
+      // toast({
+      //   title: "Component removed",
+      //   description: "The component has been removed successfully.",
+      // });
     } catch (error) {
       console.error("Failed to delete component:", error);
       setPages((prevPages) =>

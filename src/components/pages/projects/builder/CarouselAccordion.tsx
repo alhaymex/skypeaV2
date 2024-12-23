@@ -13,18 +13,13 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Plus, Trash2 } from "lucide-react";
 import CarouselImageUploadButton from "@/components/upload-buttons/CarouselImageUploadButton";
+import { CarouselState } from "@/types/components";
 
 const DEFAULT_IMAGE_URL =
   "https://image.alhaymex.com/placeholder?width=800&height=400&shape=grid";
 
 interface CarouselAccordionProps {
-  carouselState: {
-    images: { id: string; src: string; alt: string }[];
-    autoplay: boolean;
-    interval: number;
-    showArrows: boolean;
-    showDots: boolean;
-  };
+  carouselState: CarouselState;
   setCarouselState: React.Dispatch<React.SetStateAction<any>>;
   addComponent: (componentType: string) => void;
 }
