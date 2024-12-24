@@ -21,60 +21,29 @@ import {
 import { Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getMessages } from "@/actions/form-actions";
+import { InferModel } from "drizzle-orm";
+import { messages } from "@/db/schema";
+import { useParams } from "next/navigation";
 
-type Message = {
-  id: string;
-  name: string;
-  email: string;
-  message: string;
-  createdAt: Date;
+type FormDataValue = {
+  value: string | boolean;
+  label: string;
 };
 
-const DUMMY_DATA: Message[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    message:
-      "Hello, I'm interested in your services. Can you provide more information?",
-    createdAt: new Date("2023-06-15T10:30:00"),
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    message:
-      "I have a question about your pricing. Is there a discount for annual subscriptions?",
-    createdAt: new Date("2023-06-14T15:45:00"),
-  },
-  {
-    id: "3",
-    name: "Bob Johnson",
-    email: "bob.johnson@example.com",
-    message:
-      "Your product looks great! I'd like to schedule a demo if possible.",
-    createdAt: new Date("2023-06-13T09:15:00"),
-  },
-  {
-    id: "4",
-    name: "Alice Williams",
-    email: "alice.williams@example.com",
-    message:
-      "I'm having trouble with my account. Can someone from support contact me?",
-    createdAt: new Date("2023-06-12T14:20:00"),
-  },
-  {
-    id: "5",
-    name: "Charlie Brown",
-    email: "charlie.brown@example.com",
-    message:
-      "Just wanted to say that I love your product! Keep up the great work!",
-    createdAt: new Date("2023-06-11T11:00:00"),
-  },
-];
+type DbMessage = InferModel<typeof messages>;
+type Message = {
+  id: string;
+  blogSlug: string;
+  formData: Record<string, { value: string | boolean; label: string }>;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export default function MessagesPage() {
   const { toast } = useToast();
+  const { slug } = useParams();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -82,23 +51,62 @@ export default function MessagesPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simulate API call delay
-    setTimeout(() => {
-      setMessages(DUMMY_DATA);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+    const fetchMessages = async () => {
+      try {
+        const result = await getMessages(slug as string);
+        if (!result.success || !result.data) {
+          throw new Error(result.error || "Failed to fetch messages");
+        }
 
-  const filteredMessages = messages.filter(
-    (message) =>
-      message.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      message.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+        const formattedMessages = result.data.map((msg) => ({
+          ...msg,
+          createdAt: msg.createdAt?.toISOString() ?? "",
+          updatedAt: msg.updatedAt?.toISOString() ?? "",
+        }));
+
+        setMessages(formattedMessages);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch messages"
+        );
+        toast({
+          title: "Error",
+          description: "Failed to load messages",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [slug, toast]);
+
+  const filteredMessages = messages.filter((message) => {
+    const searchLower = searchQuery.toLowerCase();
+    return Object.values(message.formData).some((field) => {
+      if (typeof field.value === "string") {
+        return field.value.toLowerCase().includes(searchLower);
+      }
+      return false;
+    });
+  });
+
+  // Function to format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Messages</h1>
+        <h1 className="text-3xl font-bold">Messages for {slug}</h1>
       </div>
       <div className="mb-4 flex justify-between items-center">
         <Input
@@ -117,8 +125,8 @@ export default function MessagesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead>Form Fields</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -126,11 +134,33 @@ export default function MessagesPage() {
             <TableBody>
               {filteredMessages.map((message) => (
                 <TableRow key={message.id}>
-                  <TableCell className="font-medium">{message.name}</TableCell>
-                  <TableCell>{message.email}</TableCell>
-                  <TableCell>
-                    {new Date(message.createdAt).toLocaleDateString()}
+                  <TableCell className="font-medium">
+                    {/* Display first few form fields as preview */}
+                    {Object.entries(message.formData)
+                      .slice(0, 2)
+                      .map(([_, field]) => (
+                        <div key={field.label} className="truncate">
+                          {field.label}: {field.value.toString()}
+                        </div>
+                      ))}
+                    {Object.keys(message.formData).length > 2 && (
+                      <span className="text-sm text-gray-500">
+                        +{Object.keys(message.formData).length - 2} more fields
+                      </span>
+                    )}
                   </TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        message.status === "unread"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {message.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>{formatDate(message.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <Dialog>
                       <DialogTrigger asChild>
@@ -139,28 +169,44 @@ export default function MessagesPage() {
                           <Eye className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent className="max-w-md">
                         <DialogHeader>
                           <DialogTitle>Message Details</DialogTitle>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
-                          <div>
-                            <h3 className="font-semibold">Name</h3>
-                            <p>{message.name}</p>
-                          </div>
-                          <div>
-                            <h3 className="font-semibold">Email</h3>
-                            <p>{message.email}</p>
-                          </div>
-                          <div>
-                            <h3 className="font-semibold">Message</h3>
-                            <p>{message.message}</p>
-                          </div>
-                          <div>
-                            <h3 className="font-semibold">Date</h3>
-                            <p>
-                              {new Date(message.createdAt).toLocaleString()}
-                            </p>
+                          <div className="grid gap-2">
+                            {Object.entries(message.formData).map(
+                              ([key, field]) => (
+                                <div key={key} className="border-b pb-2">
+                                  <h3 className="font-semibold text-sm text-gray-500">
+                                    {field.label}
+                                  </h3>
+                                  <p className="mt-1">
+                                    {typeof field.value === "boolean"
+                                      ? field.value
+                                        ? "Yes"
+                                        : "No"
+                                      : field.value}
+                                  </p>
+                                </div>
+                              )
+                            )}
+                            <div className="border-b pb-2">
+                              <h3 className="font-semibold text-sm text-gray-500">
+                                Status
+                              </h3>
+                              <p className="mt-1 capitalize">
+                                {message.status}
+                              </p>
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-sm text-gray-500">
+                                Submitted
+                              </h3>
+                              <p className="mt-1">
+                                {formatDate(message.createdAt)}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </DialogContent>
@@ -186,8 +232,8 @@ const MessagesTableSkeleton = () => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
+          <TableHead>Form Fields</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Date</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
@@ -196,16 +242,17 @@ const MessagesTableSkeleton = () => {
         {Array.from({ length: 5 }).map((_, index) => (
           <TableRow key={index}>
             <TableCell>
-              <Skeleton className="h-4 w-[150px]" />
-            </TableCell>
-            <TableCell>
+              <Skeleton className="h-4 w-[250px] mb-2" />
               <Skeleton className="h-4 w-[200px]" />
             </TableCell>
             <TableCell>
               <Skeleton className="h-4 w-[100px]" />
             </TableCell>
+            <TableCell>
+              <Skeleton className="h-4 w-[100px]" />
+            </TableCell>
             <TableCell className="text-right">
-              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-8 w-8 rounded-full ml-auto" />
             </TableCell>
           </TableRow>
         ))}

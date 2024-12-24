@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { messages } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export const submitFormMessage = async (
@@ -28,11 +28,29 @@ export const submitFormMessage = async (
 
 export const getMessages = async (blogSlug: string) => {
   try {
-    const getMessages = await db
+    // Debug log the input
+    console.log("Getting messages for blogSlug:", blogSlug);
+
+    // Get all messages first to debug
+    const allMessages = await db.select().from(messages);
+    console.log(
+      "All messages in database:",
+      JSON.stringify(allMessages, null, 2)
+    );
+
+    // Get messages for specific blogSlug
+    const m = await db
       .select()
       .from(messages)
-      .where(eq(messages.blogSlug, blogSlug));
-    return { data: getMessages, success: true };
+      .where(eq(messages.blogSlug, blogSlug))
+      .orderBy(desc(messages.createdAt));
+
+    console.log("Found messages for blogSlug:", JSON.stringify(m, null, 2));
+
+    return {
+      data: m,
+      success: true,
+    };
   } catch (error) {
     console.error("Error getting messages:", error);
     return { success: false, error: "Failed to get messages" };
