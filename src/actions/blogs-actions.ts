@@ -105,11 +105,10 @@ export const getBlog = async (slug: string) => {
       .then((rows) => rows[0]);
 
     if (!blog) {
-      console.log("Blog not found for slug:", slug); // Add this line for debugging
+      console.log("Blog not found for slug:", slug);
       return { success: false, message: "Blog not found" };
     }
 
-    console.log("Found blog:", blog); // Add this line for debugging
     return { success: true, data: blog };
   } catch (error) {
     console.error("Error fetching blog:", error);

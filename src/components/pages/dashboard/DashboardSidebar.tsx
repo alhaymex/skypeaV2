@@ -57,11 +57,11 @@ export default async function DashboardSidebar({
       url: `/projects/${slug}/writers`,
       icon: Users,
     },
-    // {
-    //   title: "Messages",
-    //   url: `/projects/${slug}/messages`,
-    //   icon: MessageCircleMore,
-    // },
+    {
+      title: "Messages",
+      url: `/projects/${slug}/messages`,
+      icon: MessageCircleMore,
+    },
     // {
     //   title: "Subscribers",
     //   url: `/projects/${slug}/subscribers`,

@@ -133,24 +133,3 @@ export const getBlogPost = cache(async (slug: string, blogSlug: string) => {
 
   return post[0];
 });
-
-export const submitFormMessage = async (
-  blogSlug: string,
-  formData: Record<string, string | boolean>
-) => {
-  console.log(blogSlug, formData);
-  try {
-    const [newMessage] = await db
-      .insert(messages)
-      .values({
-        blogSlug,
-        formData,
-      })
-      .returning();
-    revalidatePath(`/${blogSlug}`);
-    return { success: true, messageId: newMessage.id };
-  } catch (error) {
-    console.error("Error submitting message:", error);
-    return { success: false, error: "Failed to submit message" };
-  }
-};

@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { submitFormMessage } from "@/actions/display-actions";
+import { submitFormMessage } from "@/actions/form-actions";
+import { useToast } from "@/hooks/use-toast";
 
 interface FormField {
   id: string;
@@ -41,25 +42,50 @@ export function DisplayForm({
   buttonBorderRadius,
   slug,
 }: FormProps) {
-  const [formData, setFormData] = useState<Record<string, string | boolean>>(
-    {}
-  );
+  const [formData, setFormData] = useState<
+    Record<string, { value: string | boolean; label: string }>
+  >({});
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
+    const field = fields.find((f) => f.id === id);
+    setFormData((prev) => ({
+      ...prev,
+      [id]: { value, label: field?.label || "" },
+    }));
   };
 
   const handleCheckboxChange = (id: string, checked: boolean) => {
-    setFormData((prev) => ({ ...prev, [id]: checked }));
+    const field = fields.find((f) => f.id === id);
+    setFormData((prev) => ({
+      ...prev,
+      [id]: { value: checked, label: field?.label || "" },
+    }));
+  };
+
+  const clearForm = () => {
+    setFormData({});
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await submitFormMessage(slug, formData);
-    console.log("Form Data:", formData);
+    setIsSubmitting(true);
+    try {
+      await submitFormMessage(slug, formData);
+      clearForm();
+      toast({
+        title: "Message submitted",
+        description: "Your message has been submitted successfully",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -79,7 +105,8 @@ export function DisplayForm({
                 placeholder="Enter your email"
                 required
                 onChange={handleInputChange}
-                value={(formData.email as string) || ""}
+                value={(formData.email?.value as string) || ""}
+                disabled={isSubmitting}
               />
             </div>
           ) : (
@@ -92,7 +119,8 @@ export function DisplayForm({
                     placeholder={field.placeholder}
                     required={field.required}
                     onChange={handleInputChange}
-                    value={(formData[field.id] as string) || ""}
+                    value={(formData[field.id]?.value as string) || ""}
+                    disabled={isSubmitting}
                   />
                 ) : field.type === "checkbox" ? (
                   <div className="flex items-center space-x-2">
@@ -101,7 +129,8 @@ export function DisplayForm({
                       onCheckedChange={(checked) =>
                         handleCheckboxChange(field.id, checked as boolean)
                       }
-                      checked={(formData[field.id] as boolean) || false}
+                      checked={(formData[field.id]?.value as boolean) || false}
+                      disabled={isSubmitting}
                     />
                     <label
                       htmlFor={field.id}
@@ -117,7 +146,8 @@ export function DisplayForm({
                     placeholder={field.placeholder}
                     required={field.required}
                     onChange={handleInputChange}
-                    value={(formData[field.id] as string) || ""}
+                    value={(formData[field.id]?.value as string) || ""}
+                    disabled={isSubmitting}
                   />
                 )}
               </div>
@@ -131,8 +161,35 @@ export function DisplayForm({
               backgroundColor: buttonBackgroundColor,
               borderRadius: `${parseInt(buttonBorderRadius) * 4}px`,
             }}
+            disabled={isSubmitting}
           >
-            {submitButtonText}
+            {isSubmitting ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Submitting...
+              </>
+            ) : (
+              submitButtonText
+            )}
           </Button>
         </form>
       </div>
