@@ -21,7 +21,7 @@ export const users = pgTable("user", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
-  fullname: text("name"),
+  fullname: text("fullname"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
@@ -250,5 +250,34 @@ export const postWriters = pgTable("post_writers", {
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
 
+// Messages table to store form submissions
+export const messages = pgTable("messages", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  blogSlug: text("blogSlug")
+    .notNull()
+    .references(() => blogs.slug, { onDelete: "cascade" }),
+  formData: jsonb("formData")
+    .notNull()
+    .$type<Record<string, string | boolean>>(),
+  status: text("status").notNull().default("unread"),
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
+export const messageRelations = relations(messages, ({ one }) => ({
+  blog: one(blogs, {
+    fields: [messages.blogSlug],
+    references: [blogs.slug],
+  }),
+}));
+
+export type Message = typeof messages.$inferSelect;
+export type NewMessage = typeof messages.$inferInsert;
 export type BlogAnalytics = typeof blogAnalytics.$inferSelect;
 export type NewBlogAnalytics = typeof blogAnalytics.$inferInsert;

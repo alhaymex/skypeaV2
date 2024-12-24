@@ -8,6 +8,7 @@ import { Form } from "@/components/templates/Form";
 import { getBlogForDisplay } from "@/actions/display-actions";
 import { Carousel } from "@/components/templates/Carousel";
 import DynamicBlogs from "@/components/templates/DynamicBlogs";
+import { DisplayForm } from "@/components/templates/DisplayForm";
 
 interface Page {
   id: string;
@@ -33,7 +34,7 @@ function renderComponent(component: ComponentData, slug: string) {
     case "hero":
       return <Hero key={component.id} {...component.data} />;
     case "form":
-      return <Form key={component.id} {...component.data} />;
+      return <DisplayForm key={component.id} {...component.data} slug={slug} />;
     case "grid":
       if (component.data.isDynamic) {
         return <DynamicBlogs slug={slug as string} />;
