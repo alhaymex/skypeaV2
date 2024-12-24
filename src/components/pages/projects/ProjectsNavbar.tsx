@@ -27,11 +27,11 @@ export default function ProjectsNavbar() {
       href: "/projects",
       current: pathname === "/projects",
     },
-    {
-      name: "Account Settings",
-      href: "/account",
-      current: pathname === "/account",
-    },
+    // {
+    //   name: "Account Settings",
+    //   href: "/account",
+    //   current: pathname === "/account",
+    // },
   ];
 
   const NavLinks = ({ className = "", onClick }: NavLinksProps) => (
