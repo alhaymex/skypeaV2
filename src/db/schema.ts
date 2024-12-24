@@ -260,7 +260,7 @@ export const messages = pgTable("messages", {
     .references(() => blogs.slug, { onDelete: "cascade" }),
   formData: jsonb("formData")
     .notNull()
-    .$type<Record<string, string | boolean>>(),
+    .$type<Record<string, { value: string | boolean; label: string }>>(),
   status: text("status").notNull().default("unread"),
   createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
     () => new Date()
