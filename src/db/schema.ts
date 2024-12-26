@@ -277,6 +277,28 @@ export const messageRelations = relations(messages, ({ one }) => ({
   }),
 }));
 
+export const purchases = pgTable("purchases", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  paymentId: text("paymentId").notNull(),
+  totalAmount: integer("totalAmount").notNull(),
+  currency: text("currency").notNull().default("USD"),
+  status: text("status").notNull(),
+  orderNumber: text("orderNumber").notNull(),
+  customerName: text("customerName"),
+  productName: text("productName").notNull(),
+  productId: text("productId").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
 export type Message = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;
 export type BlogAnalytics = typeof blogAnalytics.$inferSelect;
