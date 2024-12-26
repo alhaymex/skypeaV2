@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 
 const plans = [
   {
@@ -20,30 +21,19 @@ const plans = [
     price: { monthly: 0, annually: 0 },
     description:
       "Perfect for individuals starting with basic websites or blogs.",
-    features: [
-      "Up to 3 pages per site",
-      "Access to standard components",
-      "Basic templates",
-      "Community support",
-      "1,000 monthly visits",
-      "Basic SEO tools",
-    ],
+    features: ["Up to 3 pages per site", "1,000 monthly visits"],
     cta: "Get Started",
   },
   {
     name: "Pro",
-    price: { monthly: 9.99, annually: 99.99 },
+    price: { monthly: 6.99, annually: 69.99 },
     description:
       "For creators and businesses ready to take their websites to the next level.",
     features: [
       "Unlimited pages per site",
-      "Access to all components (standard and premium)",
-      "Professional templates",
       "Advanced analytics",
       "Custom domain support",
       "Unlimited monthly visits",
-      "Advanced SEO tools",
-      "Priority email support",
     ],
     cta: "Upgrade to Pro",
   },
@@ -129,9 +119,10 @@ function PricingCards({ billingPeriod }: { billingPeriod: string }) {
             <CardFooter>
               <Button
                 className="w-full"
+                asChild
                 variant={plan.name === "Pro" ? "default" : "outline"}
               >
-                {plan.cta}
+                <Link href="/login">{plan.cta}</Link>
               </Button>
             </CardFooter>
           </Card>
