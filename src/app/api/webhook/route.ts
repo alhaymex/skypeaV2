@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { purchases, users } from "@/db/schema";
 import crypto from "crypto";
 import { eq } from "drizzle-orm";
 
@@ -10,9 +10,11 @@ export async function POST(req: Request) {
     const eventType = req.headers.get("X-Event-Name");
     const body = await req.json();
 
+    // console.log("body", body);
+
     // Check signature
-    const secret = process.env.LEMON_SQUEEZY_WEBHOOK_SIGNATURE;
-    const hmac = crypto.createHmac("sha256", secret as string);
+    const secret = process.env.LEMON_SQUEEZY_WEBHOOK_SIGNATURE as string;
+    const hmac = crypto.createHmac("sha256", secret);
     const digest = Buffer.from(
       hmac.update(await clonedReq.text()).digest("hex"),
       "utf8"
@@ -23,23 +25,21 @@ export async function POST(req: Request) {
       throw new Error("Invalid signature.");
     }
 
-    console.log(body);
-
     // Logic according to event
-    if (eventType === "order_created") {
-      console.log(body.data.attributes);
-      const userId = body.meta.custom_data.user_id;
-      const isSuccessful = body.data.attributes.status === "paid";
+    if (eventType === "subscription_created") {
+      // console.log("subscription_created");
 
-      //   if (isSuccessful) {
-      //     await db
-      //       .update(users)
-      //       .set({
-      //         plan: "pro",
-      //         subscriptionEndsAt: new Date(body.data.attributes.ends_at),
-      //       })
-      //       .where(eq(users.id, userId));
-      //   }
+      const purchaseData = {
+        email: body.data.attributes.user_email!,
+        status: body.data.attributes.status!,
+        renewsAt: new Date(body.data.attributes.renews_at),
+        endsAt: new Date(body.data.attributes.ends_at),
+        cancelled: body.data.attributes.cancelled!,
+      };
+
+      console.log(purchaseData);
+
+      await db.insert(purchases).values(purchaseData);
     }
 
     return Response.json({ message: "Webhook received" });

@@ -27,10 +27,6 @@ export const users = pgTable("user", {
   image: text("image"),
   bio: text("bio"),
 
-  plan: text("plan").default("free").notNull(),
-  planStatus: text("plan_status").default("active").notNull(),
-  subscriptionEndsAt: timestamp("subscription_ends_at", { mode: "date" }),
-
   createdAt: timestamp("createdAt", { mode: "date" }),
   updatedAt: timestamp("updatedAt", { mode: "date" }),
 });
@@ -276,6 +272,24 @@ export const messageRelations = relations(messages, ({ one }) => ({
     references: [blogs.slug],
   }),
 }));
+
+export const purchases = pgTable("purchases", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  status: text("status").notNull(),
+  renewsAt: timestamp("renewsAt"),
+  endsAt: timestamp("endsAt"),
+  cancelled: boolean("cancelled").notNull().default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+});
 
 export type Message = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;

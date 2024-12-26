@@ -17,23 +17,33 @@ import Link from "next/link";
 
 const plans = [
   {
-    name: "Free",
+    name: "Starter",
     price: { monthly: 0, annually: 0 },
     description:
-      "Perfect for individuals starting with basic websites or blogs.",
-    features: ["Up to 3 pages per site", "1,000 monthly visits"],
+      "Great for individuals starting with basic blogs or newsletters.",
+    features: [
+      "1 Blog",
+      "3 pages per blog",
+      "5 blog posts per month",
+      "1,000 monthly visits",
+      "1,000 emails per month",
+      "Simple analytics",
+    ],
     cta: "Get Started",
   },
   {
     name: "Pro",
-    price: { monthly: 6.99, annually: 69.99 },
+    price: { monthly: 9.99, annually: 99.99 },
     description:
-      "For creators and businesses ready to take their websites to the next level.",
+      "Designed for creators looking to scale their blogs or newsletters.",
     features: [
-      "Unlimited pages per site",
-      "Advanced analytics",
+      "Unlimited blogs",
+      "Up to 10 pages per blog",
+      "Unlimited blog posts per month",
+      "50,000 monthly visits",
+      "10,000 emails per month",
       "Custom domain support",
-      "Unlimited monthly visits",
+      "Advanced analytics",
     ],
     cta: "Upgrade to Pro",
   },
@@ -44,7 +54,7 @@ export default function PricingSection() {
 
   return (
     <section id="pricing" className="py-20 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">
             Choose the Perfect Plan for Your Needs
@@ -84,7 +94,7 @@ export default function PricingSection() {
 
 function PricingCards({ billingPeriod }: { billingPeriod: string }) {
   return (
-    <div className="grid gap-8 md:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
       {plans.map((plan, index) => (
         <motion.div
           key={plan.name}

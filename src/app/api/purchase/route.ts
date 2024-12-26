@@ -1,46 +1,31 @@
-import getSession from "@/lib/getSession";
-import { lemonsqueezyApiInstance } from "@/utils/axios";
-import { NextRequest } from "next/server";
+import { lemonSqueezyApiInstance } from "@/utils/axios";
 
 export const dynamic = "force-dynamic";
 
-export const POST = async (req: NextRequest) => {
+export async function POST(req: Request) {
   try {
-    const session = await getSession();
-    const userId = session?.user?.id as string;
-
-    if (!session || !userId)
-      return Response.json({ message: "Unauthorized" }, { status: 401 });
-
     const reqData = await req.json();
 
     if (!reqData.productId)
       return Response.json(
-        { message: "Product ID is required" },
+        { message: "productId is required" },
         { status: 400 }
       );
 
-    const response = await lemonsqueezyApiInstance.post("/checkouts", {
+    const response = await lemonSqueezyApiInstance.post("/checkouts", {
       data: {
         type: "checkouts",
-        attributes: {
-          checkout_data: {
-            custom: {
-              userId: userId,
-            },
-          },
-        },
         relationships: {
           store: {
             data: {
               type: "stores",
-              id: process.env.LEMON_SQUEEZY_STORE_ID,
+              id: process.env.LEMON_SQUEEZY_STORE_ID?.toString() as string,
             },
           },
           variant: {
             data: {
               type: "variants",
-              id: reqData.productId.toString(),
+              id: reqData.productId.toString() as string,
             },
           },
         },
@@ -49,11 +34,11 @@ export const POST = async (req: NextRequest) => {
 
     const checkoutUrl = response.data.data.attributes.url;
 
-    console.log("Lemonsqueezy response", response.data);
+    // console.log(response.data);
 
     return Response.json({ checkoutUrl });
   } catch (error) {
     console.error(error);
-    return Response.json({ message: "Internal server error" }, { status: 500 });
+    return Response.json({ message: "An error occured" }, { status: 500 });
   }
-};
+}

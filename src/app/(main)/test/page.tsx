@@ -7,8 +7,10 @@ import React from "react";
 const page = () => {
   const handleBuy = async () => {
     const response = await axios.post("/api/purchase", {
-      productId: "640092",
+      productId: "622484",
     });
+
+    console.log(response.data);
 
     window.open(response.data.checkoutUrl, "_blank");
   };
