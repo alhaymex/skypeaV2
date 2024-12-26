@@ -24,6 +24,8 @@ import NewProjectButton from "@/components/pages/projects/NewProjectButton";
 import { getBlogs, togglePin } from "@/actions/blogs-actions";
 import { BlogIcon } from "@/components/pages/projects/BlogIcon";
 import SkeletonProjectList from "@/components/pages/projects/BlogsListSkeleton";
+import { canCreateBlog } from "@/lib/permissions";
+import { useSubscription } from "@/providers/SubscriptionProvider";
 
 interface Project {
   id: string;
@@ -40,6 +42,8 @@ export default function ProjectsDashboard() {
   const [projectList, setProjectList] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPinning, setIsPinning] = useState<string | null>(null);
+
+  const plan = useSubscription();
 
   const pinnedProjects = projectList.filter((p) => p.pinned);
   const otherProjects = projectList.filter((p) => !p.pinned);
@@ -134,7 +138,9 @@ export default function ProjectsDashboard() {
                 className="pl-9"
               />
             </div>
-            <NewProjectButton />
+            <NewProjectButton
+              canCreate={canCreateBlog(plan, projectList.length)}
+            />
           </div>
           <div className="space-y-8">
             {isLoading ? (

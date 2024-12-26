@@ -1,64 +1,125 @@
 "use client";
 
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { CheckIcon } from "lucide-react";
-import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { CheckIcon, XIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import useProModal from "@/hooks/userProModal";
 
-const freeFeatures: string[] = [
-  "1 Blog",
-  "3 pages per blog",
-  "5 blog posts per month",
-  "1,000 monthly visits",
-  "1,000 emails per month",
-  "Simple analytics",
-];
-const proFeatures: string[] = [
-  "Unlimited blogs",
-  "Up to 10 pages per blog",
-  "Unlimited blog posts",
-  "10,000 emails per month",
+const features = [
+  "Number of Blogs",
+  "Pages per blog",
+  "Blog posts per month",
+  "Monthly visits",
+  "Emails per month",
+  "Analytics",
   "Custom domain support",
-  "Advanced analytics",
+];
+
+const plans = [
+  {
+    name: "Free",
+    price: "$0",
+    features: ["1", "3", "5", "1,000", "1,000", "Simple", ""],
+    buttonText: "Continue with Free",
+    buttonVariant: "outline",
+  },
+  {
+    name: "Pro",
+    price: "$19",
+    features: [
+      "Unlimited",
+      "10",
+      "Unlimited",
+      "10,000",
+      "10,000",
+      "Advanced",
+      "✓",
+    ],
+    buttonText: "Upgrade to Pro",
+    buttonVariant: "default",
+  },
 ];
 
 const ProModal = () => {
   const { open, setOpen } = useProModal();
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Skypea Pro</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">
+            Upgrade to access more features
+          </DialogTitle>
         </DialogHeader>
-        <div className="space-y-6">
-          <p>Get Skypea Pro to unlock more blogs</p>
-          <div className="flex">
-            <div className="flex w-1/2 flex-col space-y-5">
-              <h3 className="text-center text-lg font-bold">Free</h3>
-              <ul className="list-inside space-y-2">
-                {freeFeatures.map((feature) => (
-                  <li key={feature} className="flex items-center space-x-2">
-                    <CheckIcon className="h-4 w-4" />
-                    <p>{feature}</p>
-                  </li>
-                ))}
-              </ul>
-              <Button>Continue with free plan</Button>
-            </div>
-            <div className="border-l mx-6" />
-            <div className="flex w-1/2 flex-col space-y-5">
-              <h3 className="text-center text-lg font-bold">Pro</h3>
-              <ul className="list-inside space-y-2">
-                {proFeatures.map((feature) => (
-                  <li key={feature} className="flex items-center space-x-2">
-                    <CheckIcon className="h-4 w-4" />
-                    <p>{feature}</p>
-                  </li>
-                ))}
-              </ul>
-              <Button>Upgrade to Pro</Button>
-            </div>
+        <div className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {plans.map((plan, planIndex) => (
+              <motion.div
+                key={plan.name}
+                className="bg-card rounded-lg shadow-lg overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: planIndex * 0.2 }}
+              >
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-center mb-2">
+                    {plan.name}
+                  </h3>
+                  <p className="text-3xl font-bold text-center mb-6">
+                    {plan.price}
+                    <span className="text-sm font-normal">/month</span>
+                  </p>
+                  <ul className="space-y-3">
+                    {features.map((feature, index) => (
+                      <li key={feature} className="flex items-center space-x-3">
+                        {plan.features[index] ? (
+                          <>
+                            <CheckIcon className="h-5 w-5 text-green-500 flex-shrink-0" />
+                            <span className="text-sm">
+                              {feature}: <strong>{plan.features[index]}</strong>
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <XIcon className="h-5 w-5 text-red-500 flex-shrink-0" />
+                            <span className="text-sm text-muted-foreground">
+                              {feature}
+                            </span>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="p-6 bg-muted mt-6">
+                  {plan.name == "Free" ? (
+                    <Button
+                      variant={plan.buttonVariant as "outline" | "default"}
+                      className="w-full"
+                      onClick={() => {
+                        setOpen(false);
+                      }}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant={plan.buttonVariant as "outline" | "default"}
+                      className="w-full"
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  )}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </DialogContent>

@@ -1,11 +1,10 @@
 import NextAuth from "next-auth";
 
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { db, purchases, users } from "@/db/schema";
+import { db } from "@/db/schema";
 
 import Google from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
-import { eq } from "drizzle-orm";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: DrizzleAdapter(db),
