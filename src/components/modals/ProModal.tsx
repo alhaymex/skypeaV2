@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { CheckIcon } from "lucide-react";
 import { Button } from "../ui/button";
+import useProModal from "@/hooks/userProModal";
 
 const freeFeatures: string[] = [
   "1 Blog",
@@ -21,8 +24,9 @@ const proFeatures: string[] = [
 ];
 
 const ProModal = () => {
+  const { open, setOpen } = useProModal();
   return (
-    <Dialog open>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Skypea Pro</DialogTitle>
