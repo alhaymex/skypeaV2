@@ -27,10 +27,6 @@ export const users = pgTable("user", {
   image: text("image"),
   bio: text("bio"),
 
-  plan: text("plan").default("free").notNull(),
-  planStatus: text("plan_status").default("active").notNull(),
-  subscriptionEndsAt: timestamp("subscription_ends_at", { mode: "date" }),
-
   createdAt: timestamp("createdAt", { mode: "date" }),
   updatedAt: timestamp("updatedAt", { mode: "date" }),
 });
@@ -283,14 +279,10 @@ export const purchases = pgTable("purchases", {
     .$defaultFn(() => crypto.randomUUID()),
   userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
   email: text("email").notNull(),
-  paymentId: text("paymentId").notNull(),
-  totalAmount: integer("totalAmount").notNull(),
-  currency: text("currency").notNull().default("USD"),
   status: text("status").notNull(),
-  orderNumber: text("orderNumber").notNull(),
-  customerName: text("customerName"),
-  productName: text("productName").notNull(),
-  productId: text("productId").notNull(),
+  renewsAt: timestamp("renewsAt"),
+  endsAt: timestamp("endsAt"),
+  cancelled: boolean("cancelled").notNull().default(false),
   createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
     () => new Date()
   ),

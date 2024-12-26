@@ -15,13 +15,6 @@ export async function POST(req: Request) {
     const response = await lemonSqueezyApiInstance.post("/checkouts", {
       data: {
         type: "checkouts",
-        attributes: {
-          checkout_data: {
-            custom: {
-              user_id: "123",
-            },
-          },
-        },
         relationships: {
           store: {
             data: {

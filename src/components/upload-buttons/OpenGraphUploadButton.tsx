@@ -84,14 +84,15 @@ export default function OpenGraphUploadButton({
           </DialogContent>
         </Dialog>
       </div>
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden w-[300px]">
         <CardContent className="p-0">
           <div className="relative aspect-[1200/630] w-full">
             <Image
               src={image}
               alt="OpenGraph Preview"
-              fill
-              className="object-cover"
+              width={1200}
+              height={630}
+              className="object-cover w-full h-full"
               unoptimized
             />
           </div>
