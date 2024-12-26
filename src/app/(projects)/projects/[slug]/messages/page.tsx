@@ -26,12 +26,6 @@ import { InferModel } from "drizzle-orm";
 import { messages } from "@/db/schema";
 import { useParams } from "next/navigation";
 
-type FormDataValue = {
-  value: string | boolean;
-  label: string;
-};
-
-type DbMessage = InferModel<typeof messages>;
 type Message = {
   id: string;
   blogSlug: string;
