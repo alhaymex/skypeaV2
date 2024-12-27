@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/dialog";
 import { addBlogPage, deleteBlogPage } from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
+import NewBlogPageButton from "./NewBlogPageButton";
 
-interface Page {
+export interface Page {
   id: string;
   name: string;
   slug: string;
@@ -59,6 +60,7 @@ export function MainContent({
   const [newPageName, setNewPageName] = useState("");
   const [isValidPageName, setIsValidPageName] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
+
   const { toast } = useToast();
 
   const validatePageName = useCallback(
@@ -187,33 +189,16 @@ export function MainContent({
               </TabsTrigger>
             ))}
           </TabsList>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="ml-2">
-                <Plus className="h-4 w-4 mr-2" /> Add Page
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Page</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Input
-                    value={newPageName}
-                    onChange={(e) => setNewPageName(e.target.value)}
-                    placeholder="Enter page name"
-                  />
-                  <Button onClick={addNewPage} disabled={!isValidPageName}>
-                    Add
-                  </Button>
-                </div>
-                {validationMessage && (
-                  <p className="text-sm text-red-500">{validationMessage}</p>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
+          <NewBlogPageButton
+            isDialogOpen={isDialogOpen}
+            setIsDialogOpen={setIsDialogOpen}
+            newPageName={newPageName}
+            setNewPageName={setNewPageName}
+            addNewPage={addNewPage}
+            isValidPageName={isValidPageName}
+            validationMessage={validationMessage}
+            pages={pages}
+          />
         </div>
         {pages.map((page) => (
           <TabsContent key={page.id} value={page.id}>
