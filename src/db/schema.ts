@@ -291,6 +291,23 @@ export const purchases = pgTable("purchases", {
   ),
 });
 
+export const subscribers = pgTable("subscribers", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  email: text("email").notNull(),
+  blogSlug: text("blogSlug")
+    .notNull()
+    .references(() => blogs.slug, { onDelete: "cascade" }),
+  status: text("status").notNull().default("subscribed"),
+  createdAt: timestamp("createdAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).$defaultFn(
+    () => new Date()
+  ),
+});
+
 export type Message = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;
 export type BlogAnalytics = typeof blogAnalytics.$inferSelect;
