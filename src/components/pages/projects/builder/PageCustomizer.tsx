@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { colorOptions } from "@/utils/colors";
 
 interface PageCustomizationAccordionProps {
   pageState: {
@@ -22,16 +23,6 @@ interface PageCustomizationAccordionProps {
     fontFamily: string;
   }) => void;
 }
-
-const presetColors = [
-  { name: "White", value: "#ffffff" },
-  { name: "Light Gray", value: "#f3f4f6" },
-  { name: "Dark Gray", value: "#1f2937" },
-  { name: "Black", value: "#000000" },
-  { name: "Primary", value: "#3b82f6" },
-  { name: "Secondary", value: "#10b981" },
-  { name: "Accent", value: "#8b5cf6" },
-];
 
 const fontOptions = [
   { name: "Sans Serif", value: "sans-serif" },
@@ -52,52 +43,122 @@ export function PageCustomizationAccordion({
   };
 
   return (
-    <AccordionItem value="page-customization">
-      <AccordionTrigger>Page Customization</AccordionTrigger>
+    <AccordionItem value="page-customization" className="border-amber-200">
+      <AccordionTrigger className="text-amber-900 hover:text-amber-700">
+        Page Customization
+      </AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4">
-          <div>
-            <Label>Background Color</Label>
+          {/* Background Color Section */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900 mb-2 block">
+              Background Color
+            </Label>
             <Select
               value={pageState.backgroundColor}
               onValueChange={handleBackgroundColorChange}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select color" />
+              <SelectTrigger className="border-amber-200 focus:ring-amber-400">
+                <SelectValue placeholder="Select color">
+                  <div className="flex items-center">
+                    {pageState.backgroundColor && (
+                      <>
+                        <div
+                          className="w-4 h-4 rounded-full mr-2 border border-amber-200"
+                          style={{ backgroundColor: pageState.backgroundColor }}
+                        />
+                        {
+                          colorOptions.find(
+                            (c) => c.value === pageState.backgroundColor
+                          )?.label
+                        }
+                      </>
+                    )}
+                  </div>
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent>
-                {presetColors.map((color) => (
-                  <SelectItem key={color.value} value={color.value}>
+              <SelectContent className="bg-white border-amber-200">
+                {colorOptions.map((color) => (
+                  <SelectItem
+                    key={color.value}
+                    value={color.value}
+                    className="hover:bg-amber-50"
+                  >
                     <div className="flex items-center">
                       <div
-                        className="w-4 h-4 rounded-full mr-2"
+                        className="w-4 h-4 rounded-full mr-2 border border-amber-200"
                         style={{ backgroundColor: color.value }}
                       />
-                      {color.name}
+                      <span className="text-amber-900">{color.label}</span>
                     </div>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label>Font Family</Label>
+
+          {/* Font Family Section */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900 mb-2 block">Font Family</Label>
             <Select
               value={pageState.fontFamily}
               onValueChange={handleFontFamilyChange}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select font" />
+              <SelectTrigger className="border-amber-200 focus:ring-amber-400">
+                <SelectValue placeholder="Select font">
+                  {pageState.fontFamily && (
+                    <span style={{ fontFamily: pageState.fontFamily }}>
+                      {
+                        fontOptions.find(
+                          (f) => f.value === pageState.fontFamily
+                        )?.name
+                      }
+                    </span>
+                  )}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 {fontOptions.map((font) => (
-                  <SelectItem key={font.value} value={font.value}>
-                    {font.name}
+                  <SelectItem
+                    key={font.value}
+                    value={font.value}
+                    className="hover:bg-amber-50"
+                  >
+                    <span
+                      className="text-amber-900"
+                      style={{ fontFamily: font.value }}
+                    >
+                      {font.name}
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
+            {/* Font Preview */}
+            {pageState.fontFamily && (
+              <div className="mt-4 p-3 bg-white/50 rounded-lg border border-amber-200">
+                <p
+                  className="text-amber-900"
+                  style={{ fontFamily: pageState.fontFamily }}
+                >
+                  Font Preview: The quick brown fox jumps over the lazy dog
+                </p>
+              </div>
+            )}
           </div>
+
+          {/* Color Preview */}
+          {pageState.backgroundColor && (
+            <div className="mt-4 overflow-hidden rounded-lg border border-amber-200">
+              <div
+                className="p-4 text-center text-sm"
+                style={{ backgroundColor: pageState.backgroundColor }}
+              >
+                Background Color Preview
+              </div>
+            </div>
+          )}
         </div>
       </AccordionContent>
     </AccordionItem>

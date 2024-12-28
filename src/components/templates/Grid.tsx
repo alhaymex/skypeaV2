@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
 
 interface GridItem {
   id: string;
@@ -29,7 +28,7 @@ interface GridProps {
 }
 
 export function Grid({ items, columns, template }: GridProps) {
-  const gridClassName = `grid gap-4 ${
+  const gridClassName = `grid gap-8 ${
     columns === 1
       ? "grid-cols-1"
       : columns === 2
@@ -40,53 +39,82 @@ export function Grid({ items, columns, template }: GridProps) {
   }`;
 
   const renderBlogCard = (item: GridItem) => (
-    <Card key={item.id}>
-      <CardHeader>
-        <img
-          src={item.imageUrl}
-          alt={item.title}
-          className="w-full h-48 object-cover rounded-t-lg"
-        />
+    <Card
+      key={item.id}
+      className="group hover:shadow-xl transition-all duration-300 bg-gradient-to-b from-amber-50 to-white border-amber-200 overflow-hidden"
+      style={{
+        clipPath:
+          "polygon(5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%)",
+      }}
+    >
+      <CardHeader className="p-0">
+        <div className="relative">
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-amber-900/20 to-transparent" />
+        </div>
       </CardHeader>
-      <CardContent>
-        <CardTitle>{item.title}</CardTitle>
-        <CardDescription>{item.description}</CardDescription>
+      <CardContent className="pt-6">
+        <CardTitle className="text-amber-900">{item.title}</CardTitle>
+        <CardDescription className="text-amber-700 mt-2">
+          {item.description}
+        </CardDescription>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-between bg-amber-50/50">
         <div className="flex items-center">
-          <Avatar className="h-8 w-8 mr-2">
+          <Avatar className="h-8 w-8 mr-2 ring-2 ring-amber-200">
             <AvatarImage
               src={`https://api.dicebear.com/6.x/initials/svg?seed=${item.author}`}
             />
-            <AvatarFallback>{item.author?.charAt(0)}</AvatarFallback>
+            <AvatarFallback className="bg-amber-200 text-amber-900">
+              {item.author?.charAt(0)}
+            </AvatarFallback>
           </Avatar>
-          <span className="text-sm text-muted-foreground">{item.author}</span>
+          <span className="text-sm text-amber-700">{item.author}</span>
         </div>
-        <span className="text-sm text-muted-foreground">{item.date}</span>
+        <span className="text-sm text-amber-600">{item.date}</span>
       </CardFooter>
     </Card>
   );
 
   const renderTestimonialCard = (item: GridItem) => (
-    <Card key={item.id}>
+    <Card
+      key={item.id}
+      className="group hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-amber-50 to-white border-amber-200"
+      style={{
+        clipPath:
+          "polygon(5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%)",
+      }}
+    >
       <CardContent className="pt-6">
         <div className="flex items-center mb-4">
-          <Avatar className="h-10 w-10 mr-4">
+          <Avatar className="h-12 w-12 mr-4 ring-2 ring-amber-200">
             <AvatarImage src={item.imageUrl} />
-            <AvatarFallback>{item.author?.charAt(0)}</AvatarFallback>
+            <AvatarFallback className="bg-amber-200 text-amber-900">
+              {item.author?.charAt(0)}
+            </AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-lg">{item.author}</CardTitle>
-            <CardDescription>{item.role}</CardDescription>
+            <CardTitle className="text-lg text-amber-900">
+              {item.author}
+            </CardTitle>
+            <CardDescription className="text-amber-700">
+              {item.role}
+            </CardDescription>
           </div>
         </div>
-        <p className="text-muted-foreground">{item.description}</p>
+        <p className="text-amber-700 italic">
+          &ldquo;{item.description}&rdquo;
+        </p>
         <div className="mt-4 flex">
           {[...Array(5)].map((_, i) => (
             <svg
               key={i}
               className={`h-5 w-5 ${
-                i < (item.rating || 0) ? "text-yellow-400" : "text-gray-300"
+                i < (item.rating || 0) ? "text-amber-400" : "text-amber-200"
               }`}
               fill="currentColor"
               viewBox="0 0 20 20"
@@ -100,24 +128,37 @@ export function Grid({ items, columns, template }: GridProps) {
   );
 
   const renderFeatureCard = (item: GridItem) => (
-    <Card key={item.id}>
+    <Card
+      key={item.id}
+      className="group hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-amber-50 to-white border-amber-200"
+      style={{
+        clipPath:
+          "polygon(5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%)",
+      }}
+    >
       <CardHeader>
-        <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center mb-4">
+        <div className="w-16 h-16 rounded-full bg-amber-100 ring-4 ring-amber-200 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform duration-300">
           <img
             src={item.imageUrl}
             alt={item.title + "'s image"}
-            className="w-6 h-6"
+            className="w-8 h-8"
           />
         </div>
-        <CardTitle>{item.title}</CardTitle>
+        <CardTitle className="text-amber-900">{item.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <CardDescription>{item.description}</CardDescription>
+        <CardDescription className="text-amber-700">
+          {item.description}
+        </CardDescription>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-wrap gap-2">
         {item.tags &&
           item.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="mr-2">
+            <Badge
+              key={tag}
+              variant="secondary"
+              className="bg-amber-100 text-amber-800 hover:bg-amber-200"
+            >
               {tag}
             </Badge>
           ))}
@@ -126,21 +167,29 @@ export function Grid({ items, columns, template }: GridProps) {
   );
 
   return (
-    <div className="max-w-6xl mx-auto my-12">
-      <div className={gridClassName}>
-        {items.map((item) => {
-          switch (template) {
-            case "blog":
-              return renderBlogCard(item);
-            case "testimonial":
-              return renderTestimonialCard(item);
-            case "feature":
-              return renderFeatureCard(item);
-            default:
-              return null;
-          }
-        })}
+    <div className="max-w-6xl mx-auto my-12 px-4">
+      <div className="relative">
+        {/* Decorative hexagon patterns */}
+        <div className="absolute -top-8 -left-8 w-16 h-16 bg-amber-100 opacity-20 rotate-45" />
+        <div className="absolute -bottom-8 -right-8 w-16 h-16 bg-amber-200 opacity-20 rotate-45" />
+
+        <div className={gridClassName}>
+          {items.map((item) => {
+            switch (template) {
+              case "blog":
+                return renderBlogCard(item);
+              case "testimonial":
+                return renderTestimonialCard(item);
+              case "feature":
+                return renderFeatureCard(item);
+              default:
+                return null;
+            }
+          })}
+        </div>
       </div>
     </div>
   );
 }
+
+export default Grid;

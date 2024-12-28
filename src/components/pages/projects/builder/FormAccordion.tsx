@@ -18,15 +18,7 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, Trash2 } from "lucide-react";
 import { FormField, FormState } from "@/types/components";
 import { Slider } from "@/components/ui/slider";
-
-const colorOptions = [
-  { label: "White", value: "#ffffff" },
-  { label: "Light Gray", value: "#f3f4f6" },
-  { label: "Dark Gray", value: "#374151" },
-  { label: "Black", value: "#000000" },
-  { label: "Primary", value: "#3b82f6" },
-  { label: "Secondary", value: "#10b981" },
-];
+import { colorOptions } from "@/utils/colors";
 
 interface FormAccordionProps {
   formState: FormState;
@@ -82,8 +74,10 @@ export function FormAccordion({
   };
 
   return (
-    <AccordionItem value="form">
-      <AccordionTrigger>Form</AccordionTrigger>
+    <AccordionItem value="form" className="border-amber-200">
+      <AccordionTrigger className="text-amber-900 hover:text-amber-700">
+        Form
+      </AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
@@ -91,11 +85,16 @@ export function FormAccordion({
               id="newsletter-mode"
               checked={formState.isNewsletter}
               onCheckedChange={handleNewsletterToggle}
+              className="text-amber-600"
             />
-            <Label htmlFor="newsletter-mode">Newsletter Mode</Label>
+            <Label htmlFor="newsletter-mode" className="text-amber-900">
+              Newsletter Mode
+            </Label>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="text-color">Text Color</Label>
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="text-color" className="text-amber-900">
+              Text Color
+            </Label>
             <Select
               value={formState.textColor}
               onValueChange={(value) =>
@@ -105,10 +104,13 @@ export function FormAccordion({
                 }))
               }
             >
-              <SelectTrigger id="text-color">
+              <SelectTrigger
+                id="text-color"
+                className="mt-2 border-amber-200 focus:ring-amber-400"
+              >
                 <SelectValue placeholder="Select text color" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 {colorOptions.map((color) => (
                   <SelectItem key={color.value} value={color.value}>
                     <div className="flex items-center space-x-2">
@@ -123,8 +125,10 @@ export function FormAccordion({
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label htmlFor="form-title">Form Title</Label>
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="form-title" className="text-amber-900">
+              Form Title
+            </Label>
             <Input
               id="form-title"
               value={formState.title}
@@ -134,10 +138,13 @@ export function FormAccordion({
                   title: e.target.value,
                 }))
               }
+              className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
             />
           </div>
-          <div>
-            <Label htmlFor="form-description">Form Description</Label>
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="form-description" className="text-amber-900">
+              Form Description
+            </Label>
             <Input
               id="form-description"
               value={formState.description}
@@ -147,10 +154,11 @@ export function FormAccordion({
                   description: e.target.value,
                 }))
               }
+              className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
             />
           </div>
-          <div>
-            <Label>Form Fields</Label>
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Form Fields</Label>
             {formState.fields.map((field: FormField) => (
               <div key={field.id} className="space-y-2 mt-2">
                 <Input
@@ -159,6 +167,7 @@ export function FormAccordion({
                   onChange={(e) =>
                     updateFormField(field.id, "label", e.target.value)
                   }
+                  className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                 />
                 <Select
                   value={field.type}
@@ -166,10 +175,10 @@ export function FormAccordion({
                     updateFormField(field.id, "type", value)
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="border-amber-200 focus:ring-amber-400">
                     <SelectValue placeholder="Field Type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border-amber-200">
                     <SelectItem value="text">Text</SelectItem>
                     <SelectItem value="email">Email</SelectItem>
                     <SelectItem value="textarea">Textarea</SelectItem>
@@ -183,6 +192,7 @@ export function FormAccordion({
                     onChange={(e) =>
                       updateFormField(field.id, "placeholder", e.target.value)
                     }
+                    className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                   />
                 )}
                 <div className="flex items-center space-x-2">
@@ -192,18 +202,20 @@ export function FormAccordion({
                     onCheckedChange={(checked) =>
                       updateFormField(field.id, "required", checked)
                     }
+                    className="border-amber-200 focus:ring-amber-400"
                   />
-                  <label
+                  <Label
                     htmlFor={`required-${field.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className="text-sm font-medium leading-none text-amber-900"
                   >
                     Required
-                  </label>
+                  </Label>
                 </div>
                 <Button
-                  variant="destructive"
+                  variant="ghost"
                   size="sm"
                   onClick={() => removeFormField(field.id)}
+                  className="text-amber-700 hover:bg-amber-50 hover:text-amber-800"
                 >
                   <Trash2 className="h-4 w-4 mr-2" /> Remove Field
                 </Button>
@@ -213,13 +225,15 @@ export function FormAccordion({
               variant="outline"
               size="sm"
               onClick={addFormField}
-              className="mt-2"
+              className="mt-2 border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
             >
               <Plus className="mr-2 h-4 w-4" /> Add Field
             </Button>
           </div>
-          <div>
-            <Label htmlFor="submit-button-text">Submit Button Text</Label>
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="submit-button-text" className="text-amber-900">
+              Submit Button Text
+            </Label>
             <Input
               id="submit-button-text"
               value={formState.submitButtonText}
@@ -229,10 +243,13 @@ export function FormAccordion({
                   submitButtonText: e.target.value,
                 }))
               }
+              className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="button-text-color">Button Text Color</Label>
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="button-text-color" className="text-amber-900">
+              Button Text Color
+            </Label>
             <Select
               value={formState.buttonTextColor}
               onValueChange={(value) =>
@@ -242,10 +259,13 @@ export function FormAccordion({
                 }))
               }
             >
-              <SelectTrigger id="button-text-color">
+              <SelectTrigger
+                id="button-text-color"
+                className="mt-2 border-amber-200 focus:ring-amber-400"
+              >
                 <SelectValue placeholder="Select button text color" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 {colorOptions.map((color) => (
                   <SelectItem key={color.value} value={color.value}>
                     <div className="flex items-center space-x-2">
@@ -260,8 +280,8 @@ export function FormAccordion({
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="button-background-color">
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="button-background-color" className="text-amber-900">
               Button Background Color
             </Label>
             <Select
@@ -273,10 +293,13 @@ export function FormAccordion({
                 }))
               }
             >
-              <SelectTrigger id="button-background-color">
+              <SelectTrigger
+                id="button-background-color"
+                className="mt-2 border-amber-200 focus:ring-amber-400"
+              >
                 <SelectValue placeholder="Select button background color" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 {colorOptions.map((color) => (
                   <SelectItem key={color.value} value={color.value}>
                     <div className="flex items-center space-x-2">
@@ -291,8 +314,10 @@ export function FormAccordion({
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="button-border-radius">Button Border Radius</Label>
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="button-border-radius" className="text-amber-900">
+              Button Border Radius
+            </Label>
             <Slider
               id="button-border-radius"
               min={0}
@@ -305,6 +330,7 @@ export function FormAccordion({
                   buttonBorderRadius: value[0].toString(),
                 }))
               }
+              className="mt-2 border-amber-200 focus:ring-amber-400"
             />
             <div className="flex justify-between text-xs text-gray-500">
               <span>0px</span>
@@ -314,7 +340,14 @@ export function FormAccordion({
               <span>24px</span>
             </div>
           </div>
-          <Button onClick={() => addComponent("form")} className="w-full">
+          <Button
+            onClick={() => addComponent("form")}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+            style={{
+              clipPath:
+                "polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%)",
+            }}
+          >
             Add Form
           </Button>
         </div>
