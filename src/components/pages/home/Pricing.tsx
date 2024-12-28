@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import axios from "axios";
 
 const plans = [
   {
@@ -54,7 +55,7 @@ export default function PricingSection() {
 
   return (
     <section id="pricing" className="py-20 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">
             Choose the Perfect Plan for Your Needs
@@ -93,8 +94,28 @@ export default function PricingSection() {
 }
 
 function PricingCards({ billingPeriod }: { billingPeriod: string }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleBuyMonthly = async () => {
+    setLoading(true);
+    const response = await axios.post("/api/purchase", {
+      productId: "622484",
+    });
+    window.open(response.data.checkoutUrl, "_blank");
+    setLoading(false);
+  };
+
+  const handleBuyAnnually = async () => {
+    setLoading(true);
+    const response = await axios.post("/api/purchase", {
+      productId: "622484",
+    });
+    window.open(response.data.checkoutUrl, "_blank");
+    setLoading(false);
+  };
+
   return (
-    <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
       {plans.map((plan, index) => (
         <motion.div
           key={plan.name}
@@ -127,13 +148,37 @@ function PricingCards({ billingPeriod }: { billingPeriod: string }) {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button
-                className="w-full"
-                asChild
-                variant={plan.name === "Pro" ? "default" : "outline"}
-              >
-                <Link href="/login">{plan.cta}</Link>
-              </Button>
+              {plan.name === "Starter" && (
+                <Button className="w-full" asChild variant={"outline"}>
+                  <Link href="/login">{plan.cta}</Link>
+                </Button>
+              )}
+              {plan.name === "Pro" && billingPeriod === "monthly" && (
+                <Button
+                  className="w-full"
+                  onClick={() => handleBuyMonthly()}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader className="h-4 w-4 animate-spin" />
+                  ) : (
+                    plan.cta
+                  )}
+                </Button>
+              )}
+              {plan.name === "Pro" && billingPeriod === "annually" && (
+                <Button
+                  className="w-full"
+                  onClick={() => handleBuyAnnually()}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader className="h-4 w-4 animate-spin" />
+                  ) : (
+                    plan.cta
+                  )}
+                </Button>
+              )}
             </CardFooter>
           </Card>
         </motion.div>

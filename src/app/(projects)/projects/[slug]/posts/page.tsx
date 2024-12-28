@@ -1,16 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { deletePost, getBlogPosts } from "@/actions/posts-actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,14 +10,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PenSquare, MoreHorizontal, Trash2, Eye, Plus } from "lucide-react";
-import Link from "next/link";
-import { deletePost, getBlogPosts } from "@/actions/posts-actions";
-import { useParams } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
+import { Eye, MoreHorizontal, PenSquare, Trash2 } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import NewPostButton from "./NewPostButton";
 
-type Post = {
+export type Post = {
   id: string;
   title: string;
   slug: string;
@@ -53,7 +53,6 @@ export default function PostsPage() {
       setIsLoading(true);
       try {
         const result = await getBlogPosts(blogSlug);
-
         if (result.success && result.posts) {
           setPosts(result.posts);
           setError(null);
@@ -101,11 +100,7 @@ export default function PostsPage() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Posts</h1>
-        <Button asChild>
-          <Link href="./posts/new">
-            <Plus className="mr-2 h-4 w-4" /> New Post
-          </Link>
-        </Button>
+        <NewPostButton posts={posts} />
       </div>
       <div className="mb-4 flex justify-between items-center">
         <Input

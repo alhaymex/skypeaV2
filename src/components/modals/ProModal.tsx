@@ -1,16 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckIcon, XIcon } from "lucide-react";
+import { CheckIcon, Loader, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import useProModal from "@/hooks/userProModal";
+import axios from "axios";
 
 const features = [
   "Number of Blogs",
@@ -26,19 +27,19 @@ const plans = [
   {
     name: "Free",
     price: "$0",
-    features: ["1", "3", "5", "1,000", "1,000", "Simple", ""],
+    features: ["1", "1", "5", "500", "1,000", "Simple", ""],
     buttonText: "Continue with Free",
     buttonVariant: "outline",
   },
   {
     name: "Pro",
-    price: "$19",
+    price: "$6.99",
     features: [
       "Unlimited",
       "10",
+      "30+",
       "Unlimited",
-      "10,000",
-      "10,000",
+      "Unlimited",
       "Advanced",
       "✓",
     ],
@@ -49,6 +50,25 @@ const plans = [
 
 const ProModal = () => {
   const { open, setOpen } = useProModal();
+  const [loading, setLoading] = useState(false);
+
+  const handleBuyMonthly = async () => {
+    setLoading(true);
+    const response = await axios.post("/api/purchase", {
+      productId: "622484",
+    });
+    window.open(response.data.checkoutUrl, "_blank");
+    setLoading(false);
+  };
+
+  const handleBuyAnnually = async () => {
+    setLoading(true);
+    const response = await axios.post("/api/purchase", {
+      productId: "622484",
+    });
+    window.open(response.data.checkoutUrl, "_blank");
+    setLoading(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -113,8 +133,14 @@ const ProModal = () => {
                     <Button
                       variant={plan.buttonVariant as "outline" | "default"}
                       className="w-full"
+                      onClick={() => handleBuyMonthly()}
+                      disabled={loading}
                     >
-                      {plan.buttonText}
+                      {loading ? (
+                        <Loader className="h-4 w-4 animate-spin" />
+                      ) : (
+                        plan.buttonText
+                      )}
                     </Button>
                   )}
                 </div>

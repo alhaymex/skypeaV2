@@ -1,3 +1,4 @@
+import { BlogPost } from "@/app/[blogSlug]/p/[slug]/BlogPage";
 import { Subscription } from "./subscribtion";
 
 export const canCreateBlog = (
@@ -19,7 +20,7 @@ export const canCreateBlogPage = (
   currentPagesCount: number
 ) => {
   const maxPagesMap: Record<Subscription, number> = {
-    free: 3,
+    free: 1,
     pro: 10,
   };
 
@@ -30,16 +31,23 @@ export const canCreateBlogPage = (
 
 export const canCreateBlogPost = (
   subscription: Subscription,
-  currentPostsCount: number
-) => {
-  const maxPostsMap: Record<Subscription, number> = {
+  posts: BlogPost[]
+): boolean => {
+  const maxMonthlyPostsMap: Record<Subscription, number> = {
     free: 5,
-    pro: Infinity,
+    pro: 30,
   };
 
-  const maxPosts = maxPostsMap[subscription];
+  const currentDate = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(currentDate.getDate() - 30);
 
-  return currentPostsCount < maxPosts;
+  const recentPosts = posts.filter((post) => {
+    const postDate = new Date(post.createdAt);
+    return postDate >= thirtyDaysAgo && postDate <= currentDate;
+  });
+
+  return recentPosts.length < maxMonthlyPostsMap[subscription];
 };
 
 export const canCreateEmail = (
@@ -47,7 +55,7 @@ export const canCreateEmail = (
   currentEmailsCount: number
 ) => {
   const maxEmailsMap: Record<Subscription, number> = {
-    free: 1000,
+    free: 500,
     pro: 50000,
   };
 

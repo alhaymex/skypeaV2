@@ -10,6 +10,8 @@ import { AccountDropdown } from "./AccountDropdown";
 import ThemeToggleButton from "./ThemeToggleButton";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
+import { useSubscription } from "@/providers/SubscriptionProvider";
+import useProModal from "@/hooks/userProModal";
 
 interface NavLinksProps {
   className?: string;
@@ -17,6 +19,9 @@ interface NavLinksProps {
 }
 
 export default function ProjectsNavbar() {
+  const plan = useSubscription();
+  const proModal = useProModal();
+
   const pathname = usePathname();
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -120,12 +125,15 @@ export default function ProjectsNavbar() {
             <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary"></span>
           </Button>
 
-          <Button
-            variant="default"
-            className="hidden sm:flex bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            Upgrade
-          </Button>
+          {plan === "free" && (
+            <Button
+              onClick={() => proModal.setOpen(true)}
+              variant="default"
+              className="hidden sm:flex bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Upgrade
+            </Button>
+          )}
 
           <ThemeToggleButton />
 
