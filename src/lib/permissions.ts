@@ -20,7 +20,7 @@ export const canCreateBlogPage = (
   currentPagesCount: number
 ) => {
   const maxPagesMap: Record<Subscription, number> = {
-    free: 3,
+    free: 1,
     pro: 10,
   };
 
@@ -55,7 +55,7 @@ export const canCreateEmail = (
   currentEmailsCount: number
 ) => {
   const maxEmailsMap: Record<Subscription, number> = {
-    free: 1000,
+    free: 500,
     pro: 50000,
   };
 
