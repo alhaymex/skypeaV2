@@ -71,17 +71,17 @@ export function Carousel({ carouselState }: CarouselProps) {
       {showArrows && (
         <>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/50 text-white border-white hover:bg-white hover:text-black transition-colors"
+            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-amber-600/50 text-white hover:bg-amber-700/70 transition-colors"
             onClick={goToPrevious}
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/50 text-white border-white hover:bg-white hover:text-black transition-colors"
+            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-amber-600/50 text-white hover:bg-amber-700/70 transition-colors"
             onClick={goToNext}
           >
             <ChevronRight className="h-6 w-6" />
@@ -93,10 +93,10 @@ export function Carousel({ carouselState }: CarouselProps) {
           {images.map((_, index) => (
             <button
               key={index}
-              className={`w-2 h-2 rounded-full transition-colors ${
+              className={`w-3 h-3 rounded-full transition-colors ${
                 index === currentIndex
-                  ? "bg-white"
-                  : "bg-gray-400 hover:bg-gray-300"
+                  ? "bg-amber-600"
+                  : "bg-gray-400 hover:bg-amber-500"
               }`}
               onClick={() => setCurrentIndex(index)}
             />

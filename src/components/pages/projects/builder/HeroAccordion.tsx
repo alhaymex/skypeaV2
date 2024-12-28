@@ -22,12 +22,17 @@ export function HeroAccordion({
   addComponent,
 }: HeroAccordionProps) {
   return (
-    <AccordionItem value="hero">
-      <AccordionTrigger>Hero</AccordionTrigger>
+    <AccordionItem value="hero" className="border-amber-200">
+      <AccordionTrigger className="text-amber-900 hover:text-amber-700">
+        Hero
+      </AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4">
-          <div>
-            <Label htmlFor="hero-title">Hero Title</Label>
+          {/* Title Section */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="hero-title" className="text-amber-900">
+              Hero Title
+            </Label>
             <Input
               id="hero-title"
               value={heroState.title}
@@ -37,10 +42,16 @@ export function HeroAccordion({
                   title: e.target.value,
                 }))
               }
+              className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
+              placeholder="Enter hero title"
             />
           </div>
-          <div>
-            <Label htmlFor="hero-subtitle">Hero Subtitle</Label>
+
+          {/* Subtitle Section */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label htmlFor="hero-subtitle" className="text-amber-900">
+              Hero Subtitle
+            </Label>
             <Input
               id="hero-subtitle"
               value={heroState.subtitle}
@@ -50,55 +61,89 @@ export function HeroAccordion({
                   subtitle: e.target.value,
                 }))
               }
+              className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
+              placeholder="Enter hero subtitle"
             />
           </div>
-          <div>
-            <Label>Background Image</Label>
-            <div className="space-y-2">
+
+          {/* Background Image Section */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Background Image</Label>
+            <div className="space-y-2 mt-2">
               <HeroImageUploadButton
                 setHeroState={setHeroState}
                 currentImageUrl={heroState.backgroundImage}
               />
-              {heroState.backgroundImage && (
-                <div className="relative w-full h-40">
+              {heroState.backgroundImage ? (
+                <div className="relative w-full h-40 rounded-lg overflow-hidden border border-amber-200">
                   <Image
                     src={heroState.backgroundImage}
                     alt="Hero background"
                     layout="fill"
                     objectFit="cover"
-                    className="rounded-md"
+                    className="transition-transform duration-300 hover:scale-105"
                   />
+                </div>
+              ) : (
+                <div className="w-full h-40 rounded-lg border-2 border-dashed border-amber-200 flex items-center justify-center bg-amber-50/30">
+                  <div className="text-center text-amber-600">
+                    <ImageIcon className="mx-auto h-12 w-12 opacity-50 mb-2" />
+                    <p className="text-sm">No image uploaded</p>
+                  </div>
                 </div>
               )}
             </div>
           </div>
-          <div>
-            <Label htmlFor="hero-cta-text">CTA Button Text</Label>
-            <Input
-              id="hero-cta-text"
-              value={heroState.ctaText}
-              onChange={(e) =>
-                setHeroState((prev: any) => ({
-                  ...prev,
-                  ctaText: e.target.value,
-                }))
-              }
-            />
+
+          {/* CTA Button Section */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="hero-cta-text" className="text-amber-900">
+                  CTA Button Text
+                </Label>
+                <Input
+                  id="hero-cta-text"
+                  value={heroState.ctaText}
+                  onChange={(e) =>
+                    setHeroState((prev: any) => ({
+                      ...prev,
+                      ctaText: e.target.value,
+                    }))
+                  }
+                  className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
+                  placeholder="Enter button text"
+                />
+              </div>
+              <div>
+                <Label htmlFor="hero-cta-link" className="text-amber-900">
+                  CTA Button Link
+                </Label>
+                <Input
+                  id="hero-cta-link"
+                  value={heroState.ctaLink}
+                  onChange={(e) =>
+                    setHeroState((prev: any) => ({
+                      ...prev,
+                      ctaLink: e.target.value,
+                    }))
+                  }
+                  className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
+                  placeholder="Enter button link"
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <Label htmlFor="hero-cta-link">CTA Button Link</Label>
-            <Input
-              id="hero-cta-link"
-              value={heroState.ctaLink}
-              onChange={(e) =>
-                setHeroState((prev: any) => ({
-                  ...prev,
-                  ctaLink: e.target.value,
-                }))
-              }
-            />
-          </div>
-          <Button onClick={() => addComponent("hero")} className="w-full">
+
+          {/* Add Hero Button */}
+          <Button
+            onClick={() => addComponent("hero")}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+            style={{
+              clipPath:
+                "polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%)",
+            }}
+          >
             Add Hero
           </Button>
         </div>

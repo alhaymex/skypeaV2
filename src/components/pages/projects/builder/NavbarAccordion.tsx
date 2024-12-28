@@ -21,21 +21,13 @@ import { NavLink } from "@/types/types";
 import { navbarLayouts } from "@/lib/constants";
 import NavbarLogoUploadButton from "@/components/upload-buttons/NavbarLogoUploadButton";
 import Image from "next/image";
+import { colorOptions } from "@/utils/colors";
 
 interface NavbarAccordionProps {
   navbarState: any;
   setNavbarState: (value: any) => void;
   addComponent: (componentType: string) => void;
 }
-
-const colorOptions = [
-  { label: "White", value: "#ffffff" },
-  { label: "Light Gray", value: "#f3f4f6" },
-  { label: "Dark Gray", value: "#374151" },
-  { label: "Black", value: "#000000" },
-  { label: "Primary", value: "#3b82f6" },
-  { label: "Secondary", value: "#10b981" },
-];
 
 export function NavbarAccordion({
   navbarState,
@@ -173,22 +165,24 @@ export function NavbarAccordion({
   );
 
   return (
-    <AccordionItem value="navbar">
-      <AccordionTrigger>Navbar</AccordionTrigger>
+    <AccordionItem value="navbar" className="border-amber-200">
+      <AccordionTrigger className="text-amber-900 hover:text-amber-700">
+        Navbar
+      </AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4">
-          <div>
-            <Label>Navbar Layout</Label>
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Navbar Layout</Label>
             <Select
               value={navbarState.layout}
               onValueChange={(value) =>
                 setNavbarState((prev: any) => ({ ...prev, layout: value }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="mt-2 border-amber-200 focus:ring-amber-400">
                 <SelectValue placeholder="Select layout" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 {navbarLayouts.map((layout) => (
                   <SelectItem key={layout.value} value={layout.value}>
                     {layout.label}
@@ -197,8 +191,9 @@ export function NavbarAccordion({
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label>Navbar Title Type</Label>
+
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Navbar Title Type</Label>
             <RadioGroup
               value={navbarState.titleType}
               onValueChange={(value) =>
@@ -207,53 +202,72 @@ export function NavbarAccordion({
               className="flex space-x-4 mt-2"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="text" id="title-text" />
-                <Label htmlFor="title-text">Text</Label>
+                <RadioGroupItem
+                  value="text"
+                  id="title-text"
+                  className="text-amber-600"
+                />
+                <Label htmlFor="title-text" className="text-amber-900">
+                  Text
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="image" id="title-image" />
-                <Label htmlFor="title-image">Image</Label>
+                <RadioGroupItem
+                  value="image"
+                  id="title-image"
+                  className="text-amber-600"
+                />
+                <Label htmlFor="title-image" className="text-amber-900">
+                  Image
+                </Label>
               </div>
             </RadioGroup>
           </div>
-          {navbarState.titleType === "text" ? (
-            <div>
-              <Label htmlFor="navbar-title">Navbar Title</Label>
-              <Input
-                id="navbar-title"
-                value={navbarState.title}
-                onChange={(e) =>
-                  setNavbarState((prev: any) => ({
-                    ...prev,
-                    title: e.target.value,
-                  }))
-                }
-              />
-            </div>
-          ) : (
-            <div>
-              <Label>Navbar Logo</Label>
-              <div className="space-y-2">
-                <NavbarLogoUploadButton
-                  setNavbarState={setNavbarState}
-                  currentLogoUrl={navbarState.logoUrl}
+
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            {navbarState.titleType === "text" ? (
+              <div>
+                <Label htmlFor="navbar-title" className="text-amber-900">
+                  Navbar Title
+                </Label>
+                <Input
+                  id="navbar-title"
+                  value={navbarState.title}
+                  onChange={(e) =>
+                    setNavbarState((prev: any) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }))
+                  }
+                  className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
                 />
-                {navbarState.logoUrl && (
-                  <div className="relative w-full h-20">
-                    <Image
-                      src={navbarState.logoUrl}
-                      alt="Navbar logo"
-                      layout="fill"
-                      objectFit="contain"
-                      className="rounded-md"
-                    />
-                  </div>
-                )}
               </div>
-            </div>
-          )}
-          <div>
-            <Label>Background Color</Label>
+            ) : (
+              <div>
+                <Label className="text-amber-900">Navbar Logo</Label>
+                <div className="space-y-2 mt-2">
+                  <NavbarLogoUploadButton
+                    setNavbarState={setNavbarState}
+                    currentLogoUrl={navbarState.logoUrl}
+                  />
+                  {navbarState.logoUrl && (
+                    <div className="relative w-full h-20 rounded-lg overflow-hidden border border-amber-200">
+                      <Image
+                        src={navbarState.logoUrl}
+                        alt="Navbar logo"
+                        layout="fill"
+                        objectFit="contain"
+                        className="rounded-md"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Background Color</Label>
             <Select
               value={navbarState.backgroundColor}
               onValueChange={(value) =>
@@ -263,10 +277,10 @@ export function NavbarAccordion({
                 }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="mt-2 border-amber-200 focus:ring-amber-400">
                 <SelectValue placeholder="Select background color" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 {colorOptions.map((color) => (
                   <SelectItem key={color.value} value={color.value}>
                     <div className="flex items-center">
@@ -281,18 +295,19 @@ export function NavbarAccordion({
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label>Text Color</Label>
+
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Text Color</Label>
             <Select
               value={navbarState.textColor}
               onValueChange={(value) =>
                 setNavbarState((prev: any) => ({ ...prev, textColor: value }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="mt-2 border-amber-200 focus:ring-amber-400">
                 <SelectValue placeholder="Select text color" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 {colorOptions.map((color) => (
                   <SelectItem key={color.value} value={color.value}>
                     <div className="flex items-center">
@@ -307,29 +322,36 @@ export function NavbarAccordion({
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label>Navigation Links</Label>
+
+          <div className="space-y-3">
+            <Label className="text-amber-900">Navigation Links</Label>
             {navbarState.links.map((link: NavLink) => (
-              <Accordion key={link.id} type="single" collapsible>
+              <Accordion
+                key={link.id}
+                type="single"
+                collapsible
+                className="border-amber-200"
+              >
                 <AccordionItem value={`link-${link.id}`}>
-                  <AccordionTrigger>
+                  <AccordionTrigger className="text-amber-900 hover:text-amber-700">
                     {link.text || `Link ${link.id}`}
                   </AccordionTrigger>
                   <AccordionContent>
                     {renderNavLinkFields(link)}
                     {link.dropdownItems && (
-                      <div className="mt-2 space-y-2">
-                        <Label>Dropdown Items</Label>
+                      <div className="mt-3 space-y-2">
+                        <Label className="text-amber-900">Dropdown Items</Label>
                         {link.dropdownItems.map((dropdownLink) => (
                           <Accordion
                             key={dropdownLink.id}
                             type="single"
                             collapsible
+                            className="border-amber-200"
                           >
                             <AccordionItem
                               value={`dropdown-${dropdownLink.id}`}
                             >
-                              <AccordionTrigger>
+                              <AccordionTrigger className="text-amber-900 hover:text-amber-700">
                                 {dropdownLink.text ||
                                   `Dropdown Item ${dropdownLink.id}`}
                               </AccordionTrigger>
@@ -349,12 +371,20 @@ export function NavbarAccordion({
               variant="outline"
               size="sm"
               onClick={() => addNavLink()}
-              className="mt-2"
+              className="mt-2 border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
             >
               <Plus className="mr-2 h-4 w-4" /> Add Link
             </Button>
           </div>
-          <Button onClick={() => addComponent("navbar")} className="w-full">
+
+          <Button
+            onClick={() => addComponent("navbar")}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+            style={{
+              clipPath:
+                "polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%)",
+            }}
+          >
             Add Navbar
           </Button>
         </div>

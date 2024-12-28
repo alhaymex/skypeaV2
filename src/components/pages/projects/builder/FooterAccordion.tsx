@@ -136,12 +136,15 @@ export function FooterAccordion({
   );
 
   return (
-    <AccordionItem value="footer">
-      <AccordionTrigger>Footer</AccordionTrigger>
+    <AccordionItem value="footer" className="border-amber-200">
+      <AccordionTrigger className="text-amber-900 hover:text-amber-700">
+        Footer
+      </AccordionTrigger>
       <AccordionContent>
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Design</Label>
+          {/* Design Selection */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Design</Label>
             <Select
               value={footerState.design}
               onValueChange={(value) =>
@@ -151,10 +154,10 @@ export function FooterAccordion({
                 })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="mt-2 border-amber-200 focus:ring-amber-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 <SelectItem value="simple">Simple</SelectItem>
                 <SelectItem value="multicolumn">Multi-column</SelectItem>
                 <SelectItem value="newsletter">Newsletter</SelectItem>
@@ -162,8 +165,9 @@ export function FooterAccordion({
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label>Company Name</Label>
+          {/* Company Name */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Company Name</Label>
             <Input
               value={footerState.companyName}
               onChange={(e) =>
@@ -173,71 +177,80 @@ export function FooterAccordion({
                 })
               }
               placeholder="Enter company name"
+              className="mt-2 border-amber-200 focus:border-amber-400 focus:ring-amber-400"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Background Color</Label>
-            <Select
-              value={footerState.backgroundColor}
-              onValueChange={(value) =>
-                setFooterState({
-                  ...footerState,
-                  backgroundColor: value,
-                })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {colorOptions.map((color) => (
-                  <SelectItem key={color.value} value={color.value}>
-                    <div className="flex items-center">
-                      <div
-                        className="w-4 h-4 rounded-full mr-2"
-                        style={{ backgroundColor: color.value }}
-                      />
-                      {color.label}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {/* Color Selectors */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <div className="space-y-4">
+              {/* Background Color */}
+              <div>
+                <Label className="text-amber-900">Background Color</Label>
+                <Select
+                  value={footerState.backgroundColor}
+                  onValueChange={(value) =>
+                    setFooterState({
+                      ...footerState,
+                      backgroundColor: value,
+                    })
+                  }
+                >
+                  <SelectTrigger className="mt-2 border-amber-200 focus:ring-amber-400">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-amber-200">
+                    {colorOptions.map((color) => (
+                      <SelectItem key={color.value} value={color.value}>
+                        <div className="flex items-center">
+                          <div
+                            className="w-4 h-4 rounded-full mr-2 border border-amber-200"
+                            style={{ backgroundColor: color.value }}
+                          />
+                          {color.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Text Color */}
+              <div>
+                <Label className="text-amber-900">Text Color</Label>
+                <Select
+                  value={footerState.textColor}
+                  onValueChange={(value) =>
+                    setFooterState({
+                      ...footerState,
+                      textColor: value,
+                    })
+                  }
+                >
+                  <SelectTrigger className="mt-2 border-amber-200 focus:ring-amber-400">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-amber-200">
+                    {colorOptions.map((color) => (
+                      <SelectItem key={color.value} value={color.value}>
+                        <div className="flex items-center">
+                          <div
+                            className="w-4 h-4 rounded-full mr-2 border border-amber-200"
+                            style={{ backgroundColor: color.value }}
+                          />
+                          {color.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Text Color</Label>
-            <Select
-              value={footerState.textColor}
-              onValueChange={(value) =>
-                setFooterState({
-                  ...footerState,
-                  textColor: value,
-                })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {colorOptions.map((color) => (
-                  <SelectItem key={color.value} value={color.value}>
-                    <div className="flex items-center">
-                      <div
-                        className="w-4 h-4 rounded-full mr-2"
-                        style={{ backgroundColor: color.value }}
-                      />
-                      {color.label}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Show Newsletter</Label>
+          {/* Newsletter Toggle */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <Label className="text-amber-900">Show Newsletter</Label>
             <Select
               value={footerState.showNewsletter ? "yes" : "no"}
               onValueChange={(value) =>
@@ -247,114 +260,141 @@ export function FooterAccordion({
                 })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="mt-2 border-amber-200 focus:ring-amber-400">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border-amber-200">
                 <SelectItem value="yes">Yes</SelectItem>
                 <SelectItem value="no">No</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <Label>Columns</Label>
-              <Button variant="outline" size="sm" onClick={handleAddColumn}>
-                Add Column
-              </Button>
-            </div>
+          {/* Columns Section */}
+          <div className="p-4 bg-gradient-to-b from-amber-50/50 to-transparent rounded-lg border border-amber-100">
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <Label className="text-amber-900">Columns</Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddColumn}
+                  className="border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
+                >
+                  Add Column
+                </Button>
+              </div>
 
-            {footerState.columns.map((column, columnIndex) => (
-              <div
-                key={`column-${columnIndex}`}
-                className="space-y-4 border rounded-lg p-4"
-              >
-                <div className="flex justify-between items-start gap-2">
-                  <div className="flex-1 space-y-2">
-                    <Label>Column Title</Label>
-                    <Input
-                      value={column.title}
-                      onChange={(e) =>
-                        handleUpdateColumn(columnIndex, "title", e.target.value)
-                      }
-                    />
-                  </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleRemoveColumn(columnIndex)}
-                  >
-                    Remove
-                  </Button>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <Label>Links</Label>
+              {footerState.columns.map((column, columnIndex) => (
+                <div
+                  key={`column-${columnIndex}`}
+                  className="space-y-4 border border-amber-200 rounded-lg p-4 bg-white/50"
+                >
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex-1 space-y-2">
+                      <Label className="text-amber-900">Column Title</Label>
+                      <Input
+                        value={column.title}
+                        onChange={(e) =>
+                          handleUpdateColumn(
+                            columnIndex,
+                            "title",
+                            e.target.value
+                          )
+                        }
+                        className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
+                      />
+                    </div>
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
-                      onClick={() => handleAddLink(columnIndex)}
+                      onClick={() => handleRemoveColumn(columnIndex)}
+                      className="bg-red-500 hover:bg-red-600"
                     >
-                      Add Link
+                      Remove
                     </Button>
                   </div>
 
-                  {column.links.map((link, linkIndex) => (
-                    <div
-                      key={`link-${columnIndex}-${linkIndex}`}
-                      className="space-y-2 border rounded-lg p-4"
-                    >
-                      <div className="flex justify-between items-start gap-2">
-                        <div className="flex-1 space-y-4">
-                          <div className="space-y-2">
-                            <Label>Link Text</Label>
-                            <Input
-                              value={link.text}
-                              onChange={(e) =>
-                                handleUpdateLink(
-                                  columnIndex,
-                                  linkIndex,
-                                  "text",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Link URL</Label>
-                            <Input
-                              value={link.url}
-                              onChange={(e) =>
-                                handleUpdateLink(
-                                  columnIndex,
-                                  linkIndex,
-                                  "url",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() =>
-                            handleRemoveLink(columnIndex, linkIndex)
-                          }
-                        >
-                          Remove
-                        </Button>
-                      </div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-amber-900">Links</Label>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleAddLink(columnIndex)}
+                        className="border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
+                      >
+                        Add Link
+                      </Button>
                     </div>
-                  ))}
+
+                    {column.links.map((link, linkIndex) => (
+                      <div
+                        key={`link-${columnIndex}-${linkIndex}`}
+                        className="space-y-2 border border-amber-200 rounded-lg p-4 bg-white/50"
+                      >
+                        <div className="flex justify-between items-start gap-2">
+                          <div className="flex-1 space-y-4">
+                            <div className="space-y-2">
+                              <Label className="text-amber-900">
+                                Link Text
+                              </Label>
+                              <Input
+                                value={link.text}
+                                onChange={(e) =>
+                                  handleUpdateLink(
+                                    columnIndex,
+                                    linkIndex,
+                                    "text",
+                                    e.target.value
+                                  )
+                                }
+                                className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-amber-900">Link URL</Label>
+                              <Input
+                                value={link.url}
+                                onChange={(e) =>
+                                  handleUpdateLink(
+                                    columnIndex,
+                                    linkIndex,
+                                    "url",
+                                    e.target.value
+                                  )
+                                }
+                                className="border-amber-200 focus:border-amber-400 focus:ring-amber-400"
+                              />
+                            </div>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() =>
+                              handleRemoveLink(columnIndex, linkIndex)
+                            }
+                            className="bg-red-500 hover:bg-red-600"
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <Button className="w-full" onClick={() => addComponent("footer")}>
+          <Button
+            onClick={() => addComponent("footer")}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+            style={{
+              clipPath:
+                "polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%)",
+            }}
+          >
             Add Footer
           </Button>
         </div>

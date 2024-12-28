@@ -1,20 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { addBlogPage } from "@/actions/blogs-actions";
 import { Button } from "@/components/ui/button";
-import { ComponentData } from "@/types/types";
-import { Eye, EyeOff, Trash2, Plus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { addBlogPage, deleteBlogPage } from "@/actions/blogs-actions";
 import { useToast } from "@/hooks/use-toast";
+import { ComponentData } from "@/types/types";
+import { Eye, EyeOff, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import NewBlogPageButton from "./NewBlogPageButton";
 
 export interface Page {
@@ -142,12 +134,16 @@ export function MainContent({
   const currentPage = pages.find((page) => page.id === currentPageId);
 
   return (
-    <div className="flex-1 overflow-auto">
-      <div className="sticky top-0 z-20 bg-background border-b p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Blog Builder: {slug}</h1>
+    <div className="flex-1 overflow-auto bg-gradient-to-b from-amber-50/30 to-white">
+      {/* Header */}
+      <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-amber-200 p-4 flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-amber-900">
+          Blog Builder: {slug}
+        </h1>
         <Button
           variant="outline"
           size="sm"
+          className="border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
           onClick={() => setIsPreviewMode(!isPreviewMode)}
         >
           {isPreviewMode ? (
@@ -161,29 +157,31 @@ export function MainContent({
           )}
         </Button>
       </div>
+
+      {/* Tabs */}
       <Tabs
         value={currentPageId || undefined}
         onValueChange={setCurrentPageId}
         className="w-full"
       >
-        <div className="flex items-center border-b px-4">
-          <TabsList>
+        <div className="flex items-center border-b border-amber-200 px-4 bg-white">
+          <TabsList className="bg-amber-50/50">
             {pages.map((page) => (
               <TabsTrigger
                 key={page.id}
                 value={page.id}
-                className="flex items-center group"
+                className="flex items-center group data-[state=active]:bg-amber-100 data-[state=active]:text-amber-900 text-amber-700 hover:text-amber-800"
               >
                 <span>{page.name}</span>
                 {page.name !== "Home" && (
                   <span
-                    className="ml-2 p-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="ml-2 p-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeletePage(page.id);
                     }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4 text-red-500" />
                   </span>
                 )}
               </TabsTrigger>
@@ -200,6 +198,8 @@ export function MainContent({
             pages={pages}
           />
         </div>
+
+        {/* Page Content */}
         {pages.map((page) => (
           <TabsContent key={page.id} value={page.id}>
             <div
@@ -215,20 +215,20 @@ export function MainContent({
                     key={component.id}
                     className={`relative mb-8 group ${
                       !isPreviewMode
-                        ? "border-2 border-dashed border-gray-300 p-4"
+                        ? "border-2 border-dashed border-amber-200 rounded-lg p-4 transition-all hover:border-amber-300"
                         : ""
                     }`}
                   >
                     {renderComponent(component)}
                     {!isPreviewMode && (
                       <>
-                        <div className="absolute -top-3 left-4 bg-white px-2 text-sm text-gray-500 z-10">
+                        <div className="absolute -top-3 left-4 bg-white px-2 text-sm text-amber-600 z-10 font-medium border border-amber-200 rounded-full">
                           {component.type}
                         </div>
                         <Button
                           variant="destructive"
                           size="sm"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-50 bg-red-500 hover:bg-red-600"
                           onClick={() => removeComponent(page.id, component.id)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -239,10 +239,29 @@ export function MainContent({
                 ))}
                 {!isPreviewMode && page.components.length === 0 && (
                   <div className="text-center py-12">
-                    <p className="text-gray-500">
-                      No components added yet. Use the sidebar to add
-                      components.
-                    </p>
+                    <div className="p-8 rounded-lg border-2 border-dashed border-amber-200 bg-amber-50/30">
+                      <div className="relative">
+                        {/* Decorative hexagons */}
+                        <div
+                          className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-amber-100 opacity-50"
+                          style={{
+                            clipPath:
+                              "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)",
+                          }}
+                        />
+                        <div
+                          className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-amber-200 opacity-30"
+                          style={{
+                            clipPath:
+                              "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)",
+                          }}
+                        />
+                        <p className="text-amber-700 relative z-10">
+                          No components added yet. Use the sidebar to add
+                          components.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
