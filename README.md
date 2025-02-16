@@ -66,24 +66,6 @@ After installation, you can:
 4. Manage your subscribers and send newsletters
 5. View analytics to track your blog's performance
 
-For more detailed instructions, please refer to our [User Guide](docs/USER_GUIDE.md).
-
-## Contributing
-
-We welcome contributions to Skypea! Please see our [Contributing Guide](CONTRIBUTING.md) for more details on how to get started.
-
-## License
-
-Skypea is released under the [MIT License](LICENSE).
-
-## Support
-
-If you encounter any issues or have questions, please:
-
-1. Check our [FAQ](docs/FAQ.md)
-2. Search for existing issues on our [GitHub Issues](https://github.com/alhaymex/skypeaV2/issues) page
-3. If you can't find a solution, open a new issue with a detailed description of the problem
-
 ## Acknowledgements
 
 Skypea is built with:
